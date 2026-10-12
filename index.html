@@ -196,8 +196,9 @@ html { scroll-behavior: smooth; }
       <div class="legend"><span class="l-why">왜 알아야 하나</span><span class="l-mine">내 환경에서</span><span class="l-warn">자주 하는 오해</span></div>
       <div class="now" id="now">
         <h2>지금 학습 위치</h2>
-        <p>실습 C: StatefulSet <code>bitcoin-node</code>(replicas 2)을 썼다. 지금 headless Service <code>bitcoin-node</code>를 쓰고 있다. 다음은 실습 D(노드끼리 연결)다. 먼저 읽을 개념: <a href="#headless">headless Service</a>, <a href="#k8sdns">클러스터 DNS</a>, <a href="#listen">-listen과 피어</a>.</p>
+        <p>실습 A–D 완료. Bitcoin 노드 3개가 실행 중이다: 기존 <code>bitcoin-signet</code>(Deployment)과 새 <code>bitcoin-node-0</code>, <code>bitcoin-node-1</code>(StatefulSet). node-0 → node-1 연결을 확인했다. 새 노드 2개는 지금 IBD(초기 동기화) 중이다. 다음은 실습 E: IBD 중 CPU, 메모리, 디스크 I/O 관찰. 먼저 읽을 개념: <a href="#fullnode">풀 노드가 하는 일</a>, <a href="#cgroup">cgroup</a>, <a href="#resources">requests와 limits</a>, <a href="#memory">메모리와 페이지 캐시</a>, <a href="#iometrics">IOPS와 지연</a>, <a href="#use">성능을 보는 순서</a>.</p>
         <ul class="upd" id="changelog">
+          <li><b>2026-10-12 (2)</b> 실습 D까지 반영. 새 카드 3개: kubectl exec의 구조, 네트워크 인터페이스, Pod IP와 CNI. 보충: Service, headless, Deployment(strategy), StatefulSet, YAML(---, 오류 경로), namespace, PV와 PVC, -listen, du, IP와 CIDR.</li>
           <li><b>2026-10-12</b> 처음 만듦. 개념 41개, 그림 21개.</li>
         </ul>
       </div>
@@ -206,12 +207,12 @@ html { scroll-behavior: smooth; }
         <div class="tbl"><table>
           <thead><tr><th>실습</th><th>먼저 읽을 개념</th></tr></thead>
           <tbody>
-            <tr><td>시작 전</td><td><a href="#map">전체 지도</a>, <a href="#hier">세 가지 계층</a>, <a href="#controlplane">control plane</a>, <a href="#twonodes">"노드"의 두 뜻</a>, <a href="#pod">Pod와 컨테이너</a></td></tr>
-            <tr><td>A. 디스크 확인</td><td><a href="#mount">파일시스템과 마운트</a>, <a href="#dudf">du와 df</a>, <a href="#mountns">mount namespace</a></td></tr>
-            <tr><td>B. replicas: 3 실패</td><td><a href="#deployment">Deployment</a>, <a href="#pvpvc">PV와 PVC</a>, <a href="#datadir">데이터 디렉터리와 .lock</a></td></tr>
-            <tr><td>C. StatefulSet</td><td><a href="#yaml">YAML 구조</a>, <a href="#statefulset">StatefulSet</a>, <a href="#headless">headless Service</a></td></tr>
-            <tr><td>D. 노드끼리 연결</td><td><a href="#ipport">IP·포트·TCP</a>, <a href="#k8sdns">클러스터 DNS</a>, <a href="#listen">-listen과 피어</a></td></tr>
-            <tr><td>E. 자원 관찰</td><td><a href="#cgroup">cgroup</a>, <a href="#memory">메모리와 페이지 캐시</a>, <a href="#use">성능을 보는 순서</a></td></tr>
+            <tr><td>시작 전</td><td><a href="#map">전체 지도</a>, <a href="#hier">세 가지 계층</a>, <a href="#controlplane">control plane</a>, <a href="#twonodes">"노드"의 두 뜻</a>, <a href="#pod">Pod와 컨테이너</a>, <a href="#kexec">kubectl exec의 구조</a></td></tr>
+            <tr><td>A. 디스크 확인 ✓</td><td><a href="#mount">파일시스템과 마운트</a>, <a href="#dudf">du와 df</a>, <a href="#mountns">mount namespace</a></td></tr>
+            <tr><td>B. replicas: 3 실패 ✓</td><td><a href="#deployment">Deployment</a>, <a href="#pvpvc">PV와 PVC</a>, <a href="#datadir">데이터 디렉터리와 .lock</a></td></tr>
+            <tr><td>C. StatefulSet ✓</td><td><a href="#yaml">YAML 구조</a>, <a href="#statefulset">StatefulSet</a>, <a href="#headless">headless Service</a></td></tr>
+            <tr><td>D. 노드끼리 연결 ✓</td><td><a href="#ipport">IP·포트·TCP</a>, <a href="#netif">네트워크 인터페이스</a>, <a href="#podip">Pod IP와 CNI</a>, <a href="#k8sdns">클러스터 DNS</a>, <a href="#listen">-listen과 피어</a></td></tr>
+            <tr><td><b>E. 자원 관찰 (다음)</b></td><td><a href="#cgroup">cgroup</a>, <a href="#memory">메모리와 페이지 캐시</a>, <a href="#use">성능을 보는 순서</a></td></tr>
             <tr><td>F. 자원 제한 실험</td><td><a href="#resources">requests와 limits</a>, <a href="#dbcache">UTXO와 dbcache</a>, <a href="#experiment">실험 설계</a></td></tr>
           </tbody>
         </table></div>
@@ -295,7 +296,7 @@ kubectl get nodes -o wide</pre>
         <article class="c" id="twonodes" data-k="노드 두 가지 뜻 kubernetes 노드 bitcoin 노드 서버 pod 워커">
           <div class="c-head"><h3>"노드"의 두 가지 뜻</h3></div>
           <p class="why"><b>왜 알아야 하나</b>이 프로젝트에서는 "노드"라는 말이 두 가지 뜻으로 쓰인다. 뜻을 섞으면 "노드 3개를 띄운다"가 서버 3대처럼 들린다.</p>
-          <figure class="fig"><div class="sc"><svg viewBox="0 0 720 236" role="img" aria-label="Kubernetes 노드 1대 위에 Bitcoin 노드 3개가 있다" style="min-width:620px;max-width:720px"><rect class="bg" x="20" y="20" width="500" height="200" rx="5"/><text class="tb" x="36" y="44" text-anchor="start">Kubernetes 노드 = 서버 1대</text><text class="mono" x="36" y="64" text-anchor="start">bitcoin-lab-control-plane  (kubectl get nodes)</text><rect class="hl" x="36" y="82" width="148" height="76" rx="5"/><text class="tb" x="110" y="102" text-anchor="middle">Bitcoin 노드</text><text class="mono" x="110" y="122" text-anchor="middle">bitcoin-signet-…</text><text class="ts" x="110" y="142" text-anchor="middle">Pod 1개 · Deployment</text><rect class="hl" x="196" y="82" width="148" height="76" rx="5"/><text class="tb" x="270" y="102" text-anchor="middle">Bitcoin 노드</text><text class="mono" x="270" y="122" text-anchor="middle">bitcoin-node-0</text><text class="ts" x="270" y="142" text-anchor="middle">Pod 1개 · StatefulSet</text><rect class="hl" x="356" y="82" width="148" height="76" rx="5"/><text class="tb" x="430" y="102" text-anchor="middle">Bitcoin 노드</text><text class="mono" x="430" y="122" text-anchor="middle">bitcoin-node-1</text><text class="ts" x="430" y="142" text-anchor="middle">Pod 1개 · StatefulSet</text><path class="la" d="M430,158 V184 H270 V160" marker-end="url(#aa)"/><text class="ts" x="350" y="204" text-anchor="middle">P2P 38333 (addnode)</text><path class="la" d="M520,120 H578" marker-end="url(#aa)"/><text class="ts" x="550" y="112" text-anchor="middle">outbound</text><rect class="bx" x="580" y="82" width="120" height="76" rx="5"/><text class="tb" x="640" y="108" text-anchor="middle">인터넷의</text><text class="tb" x="640" y="126" text-anchor="middle">Signet 피어</text><text class="ts" x="640" y="146" text-anchor="middle">다른 사람의 노드</text></svg></div><figcaption>"노드"는 두 가지 뜻이다. Kubernetes 노드는 Pod를 실행하는 서버다. Bitcoin 노드는 bitcoind 하나, 여기서는 Pod 하나다.</figcaption></figure>
+          <figure class="fig"><div class="sc"><svg viewBox="0 0 720 236" role="img" aria-label="Kubernetes 노드 1대 위에 Bitcoin 노드 3개가 있다" style="min-width:620px;max-width:720px"><rect class="bg" x="20" y="20" width="500" height="200" rx="5"/><text class="tb" x="36" y="44" text-anchor="start">Kubernetes 노드 = 서버 1대</text><text class="mono" x="36" y="64" text-anchor="start">bitcoin-lab-control-plane  (kubectl get nodes)</text><rect class="hl" x="36" y="82" width="148" height="76" rx="5"/><text class="tb" x="110" y="102" text-anchor="middle">Bitcoin 노드</text><text class="mono" x="110" y="122" text-anchor="middle">bitcoin-signet-…</text><text class="ts" x="110" y="142" text-anchor="middle">Pod 1개 · Deployment</text><rect class="hl" x="196" y="82" width="148" height="76" rx="5"/><text class="tb" x="270" y="102" text-anchor="middle">Bitcoin 노드</text><text class="mono" x="270" y="122" text-anchor="middle">bitcoin-node-0</text><text class="ts" x="270" y="142" text-anchor="middle">Pod 1개 · StatefulSet</text><rect class="hl" x="356" y="82" width="148" height="76" rx="5"/><text class="tb" x="430" y="102" text-anchor="middle">Bitcoin 노드</text><text class="mono" x="430" y="122" text-anchor="middle">bitcoin-node-1</text><text class="ts" x="430" y="142" text-anchor="middle">Pod 1개 · StatefulSet</text><path class="la" d="M270,158 V184 H430 V160" marker-end="url(#aa)"/><text class="ts" x="350" y="204" text-anchor="middle">P2P 38333 (addnode)</text><path class="la" d="M520,120 H578" marker-end="url(#aa)"/><text class="ts" x="550" y="112" text-anchor="middle">outbound</text><rect class="bx" x="580" y="82" width="120" height="76" rx="5"/><text class="tb" x="640" y="108" text-anchor="middle">인터넷의</text><text class="tb" x="640" y="126" text-anchor="middle">Signet 피어</text><text class="ts" x="640" y="146" text-anchor="middle">다른 사람의 노드</text></svg></div><figcaption>"노드"는 두 가지 뜻이다. Kubernetes 노드는 Pod를 실행하는 서버다. Bitcoin 노드는 bitcoind 하나, 여기서는 Pod 하나다.</figcaption></figure>
           <div class="tbl"><table>
             <thead><tr><th></th><th>Kubernetes 노드</th><th>Bitcoin 노드</th></tr></thead>
             <tbody>
@@ -366,6 +367,7 @@ lsblk -f                 <span class="cm"># 장치와 파일시스템</span></pr
               <tr><td>범위</td><td>지정한 경로 아래, 내가 볼 수 있는 파일</td><td>마운트된 파일시스템 전체</td></tr>
             </tbody>
           </table></div>
+          <p><code>du -h</code>는 모든 하위 디렉터리를 한 줄씩 보인다. 마지막 줄이 합계다. <code>du -sh</code>는 합계 한 줄만 보인다(<code>-s</code> = summary). 어느 디렉터리가 큰지 볼 때는 <code>du -h --max-depth=1</code>을 쓴다.</p>
           <p>값이 다른 이유:</p>
           <ul>
             <li><b>지워졌지만 열려 있는 파일.</b> 프로세스가 파일을 열고 있으면 삭제 후에도 공간이 남는다. du는 못 보고 df는 센다.</li>
@@ -482,6 +484,7 @@ sudo lsns -t net         <span class="cm"># 호스트의 모든 net namespace</s
             <li>파일은 디스크에 한 번만 저장된다. 경로만 층마다 다르다.</li>
             <li>그래서 호스트의 <code>du</code>와 Pod의 <code>du</code>는 같은 파일을 셀 수 있다. 두 값을 더하면 안 된다.</li>
           </ul>
+          <div class="warn"><b>자주 하는 오해</b><code>kubectl exec … -- du -h /var/lib/docker</code>는 실패한다(No such file or directory). <code>--</code> 뒤의 명령은 컨테이너 안에서 실행되고, <code>/var/lib/docker</code>는 호스트에만 있기 때문이다. 호스트 경로는 kubectl 없이 호스트에서 본다.</div>
           <div class="mine"><b>내 환경에서</b>위 경로는 kind의 기본 StorageClass(<code>standard</code>, local-path)를 쓸 때의 구조다. 실제 경로는 아래 명령으로 확인한다. 추측하지 않는다.</div>
           <details class="try"><summary>직접 확인</summary>
 <pre>kubectl -n bitcoin-lab get pvc
@@ -572,6 +575,8 @@ kubectl -n bitcoin-lab get events --sort-by=.lastTimestamp       <span class="cm
             <li>같은 깊이에 있는 키는 같은 부모에 속한다. 깊이는 공백으로 정한다. 탭은 쓰지 않는다.</li>
             <li><code>-</code>는 "리스트의 새 항목"이다. 그 뒤의 키들은 그 항목에 속한다.</li>
             <li>모든 매니페스트는 4개의 최상위 키를 가진다: <code>apiVersion</code>, <code>kind</code>, <code>metadata</code>, <code>spec</code>.</li>
+            <li><code>---</code>는 문서 구분선이다. 파일 하나에 객체 여러 개를 넣을 때 쓴다. <code>kubectl apply</code>는 이 선으로 나누어 객체를 하나씩 보낸다.</li>
+            <li><code>- </code> 다음 첫 글자가 그 목록 항목의 기준선이다. 같은 항목의 키는 이 기준선에 맞춘다. 하위 키는 2칸 더 들어간다.</li>
           </ul>
 <pre>apiVersion: apps/v1          <span class="cm"># 어느 API 그룹, 버전</span>
 kind: Deployment             <span class="cm"># 어떤 객체</span>
@@ -587,6 +592,7 @@ spec:                        <span class="cm"># 원하는 상태</span>
         image: …             <span class="cm"># name과 같은 깊이 = 같은 항목</span>
         args: ["-signet"]</pre>
           <div class="warn"><b>자주 하는 오해</b><code>image:</code>가 <code>- name:</code>보다 두 칸 왼쪽에 있으면, image는 컨테이너 항목이 아니라 <code>spec</code>에 붙는다. 파일을 적용하기 전에 <code>kubectl apply --dry-run=server -f 파일</code>로 검사한다.</div>
+          <p><b>오류 경로 읽기.</b> <code>unknown field "spec.volumeClaimTemplates[0].name"</code>에서 점(<code>.</code>)은 "안으로", <code>[0]</code>은 "목록의 첫 항목"이다. 기대한 경로는 <code>…[0].metadata.name</code>이었다. 즉 <code>name</code>이 한 단계 덜 들어가 있었다. API 서버는 종류마다 허용 키 목록(스키마)을 알고, 모르는 키는 거부한다(strict decoding).</p>
           <details class="try"><summary>직접 확인</summary>
 <pre>kubectl explain deployment.spec.template.spec.containers   <span class="cm"># 어떤 키가 어디에 오는가</span>
 kubectl apply --dry-run=server -f bitcoin.yaml</pre>
@@ -601,9 +607,10 @@ kubectl apply --dry-run=server -f bitcoin.yaml</pre>
             <li>namespace는 API 객체를 묶는 이름 공간이다. 폴더와 비슷하다.</li>
             <li>같은 namespace 안에서는 이름이 겹칠 수 없다. 다른 namespace에서는 겹쳐도 된다.</li>
             <li><code>-n</code>을 안 쓰면 <code>default</code> namespace를 본다.</li>
+            <li>namespace에 속하지 않는 객체도 있다. Namespace 자체, Node, PV, StorageClass는 클러스터 전체에 속한다. 그래서 <code>kubectl get ns</code>, <code>kubectl get nodes</code>에는 <code>-n</code>을 쓰지 않는다. 목록: <code>kubectl api-resources --namespaced=false</code>.</li>
             <li>namespace만으로는 CPU, 메모리가 나뉘지 않는다. 한도는 <a href="#resources">limits</a>나 ResourceQuota로 건다.</li>
           </ul>
-          <div class="mine"><b>내 환경에서</b>노드 객체는 전부 <code>bitcoin-lab</code> namespace에 있다. 매번 <code>-n bitcoin-lab</code>을 쓴다. 아니면 기본값을 바꾼다: <code>kubectl config set-context --current --namespace=bitcoin-lab</code>.</div>
+          <div class="mine"><b>내 환경에서</b>노드 객체는 전부 <code>bitcoin-lab</code> namespace에 있다. 매번 <code>-n bitcoin-lab</code>을 쓴다. 아니면 기본값을 바꾼다: <code>kubectl config set-context --current --namespace=bitcoin-lab</code>. 다른 namespace: <code>kube-system</code>(control plane, CoreDNS), <code>local-path-storage</code>(PVC 공간을 만드는 프로그램).</div>
           <p class="rel">연결: <a href="#namespace">리눅스 namespace (다른 것)</a><a href="#k8sdns">클러스터 DNS</a></p>
         </article>
 
@@ -635,6 +642,7 @@ kubectl -n bitcoin-lab describe pod -l app=bitcoin-signet   <span class="cm"># �
         <article class="c" id="deployment" data-k="deployment replicaset replicas 복제 롤링 업데이트 무상태">
           <div class="c-head"><h3>Deployment</h3></div>
           <p class="why"><b>왜 알아야 하나</b>지금 노드는 Deployment로 실행된다. 실습 B에서 <code>replicas: 3</code>이 왜 실패하는지 이해하려면 Deployment가 Pod를 어떻게 만드는지 알아야 한다.</p>
+          <figure class="fig"><div class="sc"><svg viewBox="0 0 720 198" role="img" aria-label="RollingUpdate는 새 Pod와 옛 Pod가 겹치고, Recreate는 겹치지 않는다" style="min-width:560px;max-width:720px"><text class="tb" x="10" y="52" text-anchor="start">RollingUpdate</text><text class="ts" x="10" y="70" text-anchor="start">(기본값)</text><rect class="bx" x="120" y="34" width="300" height="22" rx="5"/><text class="ts" x="270" y="50" text-anchor="middle">옛 Pod</text><rect class="hl" x="320" y="60" width="380" height="22" rx="5"/><text class="ts" x="510" y="76" text-anchor="middle">새 Pod</text><rect class="bg" x="320" y="30" width="100" height="56" rx="5" fill="none" stroke-dasharray="4 3" style="stroke:var(--warn);fill:none"/><text class="ts tw" x="428" y="50" text-anchor="start">겹침: 두 Pod가 같은 PVC</text><text class="tb" x="10" y="142" text-anchor="start">Recreate</text><text class="ts mono" x="10" y="160" text-anchor="start">(bitcoin-signet)</text><rect class="bx" x="120" y="124" width="260" height="22" rx="5"/><text class="ts" x="250" y="140" text-anchor="middle">옛 Pod</text><rect class="hl" x="440" y="148" width="260" height="22" rx="5"/><text class="ts" x="570" y="164" text-anchor="middle">새 Pod</text><text class="ts ta" x="410" y="188" text-anchor="middle">잠깐 중단, 겹침 없음</text><text class="ts" x="700" y="108" text-anchor="end">시간 →</text></svg></div><figcaption>RollingUpdate에서는 새 bitcoind가 <code>.lock</code>을 얻지 못해 시작하지 못한다. 그래서 같은 데이터 디렉터리를 쓰는 bitcoin-signet은 Recreate를 쓴다.</figcaption></figure>
           <div class="dia"><div class="flow">
             <div class="box hl"><span class="lbl"><b>Deployment</b></span>"이 모양의 Pod를 N개"</div>
             <div class="arrow">만든다 →</div>
@@ -645,7 +653,8 @@ kubectl -n bitcoin-lab describe pod -l app=bitcoin-signet   <span class="cm"># �
           <ul>
             <li>Deployment는 Pod가 <b>서로 바꿔도 되는 것</b>이라고 가정한다. 웹 서버 같은 무상태 프로그램에 맞다.</li>
             <li>모든 Pod는 같은 템플릿에서 나온다. 그래서 같은 PVC를 가리킨다.</li>
-            <li>YAML을 바꾸면 새 ReplicaSet을 만들고 Pod를 차례로 바꾼다(롤링 업데이트).</li>
+            <li>YAML을 바꾸면 새 ReplicaSet을 만들고 Pod를 바꾼다.</li>
+            <li><code>strategy.type</code>은 Pod를 바꾸는 순서다. <code>RollingUpdate</code>(기본값)는 새 Pod를 먼저 띄운다. <code>Recreate</code>는 옛 Pod를 먼저 끈다. <code>bitcoin-signet</code>은 <code>Recreate</code>를 쓴다.</li>
           </ul>
           <div class="mine"><b>내 환경에서</b><code>replicas: 3</code>이면 세 Pod가 같은 PVC(<code>bitcoin-data</code>), 같은 데이터 디렉터리를 쓴다. 첫 bitcoind가 <code>.lock</code>을 잡는다. 나머지는 시작하지 못한다. 노드마다 자기 데이터가 필요하면 <a href="#statefulset">StatefulSet</a>을 쓴다.</div>
           <p class="rel">연결: <a href="#datadir">.lock</a><a href="#pvpvc">PV와 PVC</a><a href="#statefulset">StatefulSet</a></p>
@@ -670,7 +679,8 @@ kubectl -n bitcoin-lab describe pod -l app=bitcoin-signet   <span class="cm"># �
             <li>Pod는 PV를 직접 모른다. PVC 이름만 안다. 그래서 저장소 종류를 바꿔도 Pod YAML은 같다.</li>
             <li><code>RWO</code>(ReadWriteOnce)는 "한 노드에서만 쓰기 마운트"라는 뜻이다. 한 Pod만이라는 뜻은 아니다.</li>
           </ul>
-          <div class="warn"><b>자주 하는 오해</b>local-path의 기본 reclaim 정책은 <code>Delete</code>다. PVC를 지우면 PV와 데이터도 지워진다. 지우기 전에 <code>kubectl get pv</code>의 RECLAIM POLICY를 본다. 또 local-path는 PVC 크기(예: 20Gi)를 강제하지 않는다. 실제 한도는 호스트 디스크의 여유 공간이다.</div>
+          <p><b>비유.</b> Pod는 트랙터, PVC는 트레일러(화물칸)다. 트랙터가 고장 나면 바꾸지만 트레일러는 남는다. 새 트랙터가 같은 트레일러를 다시 연결한다. Deployment는 배차 담당자다.</p>
+          <div class="warn"><b>자주 하는 오해</b>local-path의 기본 reclaim 정책은 <code>Delete</code>다. PVC를 지우면 PV와 데이터도 지워진다. 지우기 전에 <code>kubectl get pv</code>의 RECLAIM POLICY를 본다. 또 local-path는 PVC 크기를 강제하지 않는다. 실제로 <code>bitcoin-data</code>는 20Gi를 요청했지만 27G를 쓴다. 실제 한도는 호스트 디스크의 여유 공간이다.</div>
           <details class="try"><summary>직접 확인</summary>
 <pre>kubectl -n bitcoin-lab get pvc
 kubectl get pv
@@ -697,18 +707,24 @@ kubectl get storageclass</pre>
             <li><code>volumeClaimTemplates</code>는 PVC의 틀이다. Pod 하나마다 PVC 하나를 만든다. 예: <code>data-bitcoin-node-0</code>.</li>
             <li>StatefulSet은 <code>serviceName</code>으로 <a href="#headless">headless Service</a>를 가리킨다. 이것이 고정된 DNS 이름을 만든다.</li>
             <li>StatefulSet을 지워도 PVC는 남는다(기본값). 데이터를 보호하기 위해서다.</li>
+            <li>StatefulSet은 틀을 두 개 가진다. <code>template</code>(Pod 틀)과 <code>volumeClaimTemplates</code>(PVC 틀)이다. 두 키는 같은 깊이에 쓴다.</li>
           </ul>
+          <div class="warn"><b>자주 하는 오해</b>bitcoind의 <code>replicas: 2</code>는 무중단용 복사본이 아니다. 각자 데이터와 피어를 가진 독립 노드 2개다. 그리고 "꺼지면 다시 켜기"는 replicas 수와 관계없다. <code>replicas: 1</code>이어도 컨트롤러가 죽은 Pod를 다시 만든다.</div>
+          <div class="mine"><b>내 환경에서</b>2026-10-12에 직접 쓴 <code>bitcoin-node.yaml</code>로 만들었다. <code>bitcoin-node-0</code>이 먼저 시작하고 약 5초 뒤 <code>bitcoin-node-1</code>이 시작했다. PVC는 <code>data-bitcoin-node-0</code>, <code>data-bitcoin-node-1</code>(각 40Gi 요청)이다.</div>
           <p class="rel">연결: <a href="#headless">headless Service</a><a href="#pvpvc">PV와 PVC</a><a href="#deployment">Deployment</a></p>
         </article>
 
         <article class="c" id="service" data-k="service clusterip 서비스 로드밸런싱 selector label 라벨 endpoint 가상 ip">
           <div class="c-head"><h3>Service</h3></div>
           <p class="why"><b>왜 알아야 하나</b>Pod IP는 바뀐다. 다른 Pod가 바뀌는 IP를 따라갈 수 없다. Service는 바뀌지 않는 이름과 주소를 준다.</p>
+          <figure class="fig"><div class="sc"><svg viewBox="0 0 720 144" role="img" aria-label="일반 Service의 가상 IP로 보낸 패킷은 커널 규칙이 받는 주소를 Pod IP로 바꿔 쓴다" style="min-width:560px;max-width:720px"><rect class="bx" x="10" y="50" width="140" height="50" rx="5"/><text class="tb" x="80" y="72" text-anchor="middle">클라이언트 Pod</text><text class="ts" x="80" y="90" text-anchor="middle">받는 주소: 가상 IP</text><path class="la" d="M150,75 H248" marker-end="url(#aa)"/><text class="mono" x="199" y="67" text-anchor="middle">10.96.0.20</text><rect class="hl" x="250" y="40" width="220" height="70" rx="5"/><text class="tb" x="360" y="64" text-anchor="middle">커널 규칙 (kube-proxy가 만듦)</text><text class="ts" x="360" y="84" text-anchor="middle">받는 주소를 Pod IP로</text><text class="ts" x="360" y="100" text-anchor="middle">바꿔 쓴다 (DNAT)</text><path class="la" d="M470,75 H568" marker-end="url(#aa)"/><text class="mono" x="519" y="67" text-anchor="middle">10.244.0.11</text><rect class="bx" x="570" y="50" width="140" height="50" rx="5"/><text class="tb" x="640" y="72" text-anchor="middle">대상 Pod</text><text class="ts" x="640" y="90" text-anchor="middle">실제 인터페이스 있음</text><text class="ts tw" x="360" y="134" text-anchor="middle">10.96.0.20을 가진 인터페이스는 어디에도 없다</text></svg></div><figcaption>가상 IP는 커널 규칙 속에만 있다. 그래서 <code>ping</code>은 응답이 없을 수 있지만, 정해진 포트의 연결은 동작한다. IP 값은 예시다.</figcaption></figure>
           <ul>
             <li>Service는 <b>라벨 선택자</b>(selector)로 Pod를 고른다. 라벨이 맞는 Pod가 대상이다.</li>
             <li>기본 종류(ClusterIP)는 가상 IP 하나를 준다. 그 IP로 오는 연결을 대상 Pod 중 하나에 나눠 보낸다.</li>
+            <li>이 가상 IP를 가진 인터페이스는 없다. kube-proxy가 만든 커널 규칙(iptables 또는 nftables)이 받는 주소를 Pod IP로 바꿔 쓴다.</li>
             <li>이름으로도 접속한다: <code>서비스이름.namespace.svc.cluster.local</code>.</li>
           </ul>
+          <div class="warn"><b>자주 하는 오해</b>Service는 실행되는 프로그램(데몬)이 아니다. etcd에 저장된 기록(객체)이다. 내용은 "이 이름 = 이 라벨의 Pod들"이라는 규칙 하나다. 그리고 Pod가 다시 생기면 바뀌는 것은 포트가 아니라 IP다.</div>
           <div class="warn"><b>자주 하는 오해</b>Service가 대상을 못 찾으면 보통 라벨이 틀린 것이다. <code>kubectl get endpointslices</code>로 대상 Pod 목록을 확인한다.</div>
           <p class="rel">연결: <a href="#headless">headless Service</a><a href="#k8sdns">클러스터 DNS</a><a href="#pod">Pod</a></p>
         </article>
@@ -716,14 +732,15 @@ kubectl get storageclass</pre>
         <article class="c" id="headless" data-k="headless service clusterip none dns pod 이름 statefulset bitcoin-0.bitcoin">
           <div class="c-head"><h3>headless Service</h3></div>
           <p class="why"><b>왜 알아야 하나</b>노드끼리 연결할 때(실습 D), 각 노드는 "아무 노드"가 아니라 "특정 노드"에 연결해야 한다. headless Service가 Pod마다 고정 DNS 이름을 준다.</p>
-          <figure class="fig"><div class="sc"><svg viewBox="0 0 720 244" role="img" aria-label="일반 Service는 가상 IP가 아무 Pod로 나눠 보내고, headless Service는 DNS가 특정 Pod의 IP를 직접 준다" style="min-width:620px;max-width:720px"><path class="ln" d="M355,10 V240" stroke-dasharray="4 4"/><text class="tb" x="170" y="22" text-anchor="middle">일반 Service (ClusterIP)</text><rect class="bx" x="100" y="40" width="140" height="36" rx="5"/><text class="mono" x="170" y="63" text-anchor="middle">bitcoin-node-1</text><path class="ln" d="M170,76 V114" marker-end="url(#am)"/><text class="ts" x="178" y="99" text-anchor="start">연결</text><rect class="hl" x="90" y="116" width="160" height="40" rx="5"/><text class="tb" x="170" y="134" text-anchor="middle">가상 IP 1개</text><text class="mono" x="170" y="150" text-anchor="middle">10.96.x.x</text><path class="ln" d="M150,156 L95,194" marker-end="url(#am)"/><path class="ln" d="M190,156 L245,194" marker-end="url(#am)"/><text class="ts" x="170" y="186" text-anchor="middle">무작위</text><rect class="bx" x="30" y="196" width="120" height="36" rx="5"/><text class="mono" x="90" y="219" text-anchor="middle">Pod A</text><rect class="bx" x="190" y="196" width="120" height="36" rx="5"/><text class="mono" x="250" y="219" text-anchor="middle">Pod B</text><text class="tb" x="540" y="22" text-anchor="middle">headless Service (clusterIP: None)</text><rect class="bx" x="380" y="50" width="140" height="36" rx="5"/><text class="mono" x="450" y="73" text-anchor="middle">bitcoin-node-1</text><rect class="hl" x="580" y="50" width="120" height="36" rx="5"/><text class="tb" x="640" y="73" text-anchor="middle">CoreDNS</text><path class="ln" d="M520,60 H578" marker-end="url(#am)"/><text class="ts" x="550" y="46" text-anchor="middle">① 이름</text><path class="ln" d="M580,78 H522" marker-end="url(#am)"/><text class="ts" x="550" y="102" text-anchor="middle">② Pod IP</text><text class="ts" x="640" y="112" text-anchor="middle">가상 IP 없음</text><path class="la" d="M450,86 V194" marker-end="url(#aa)"/><text class="ts ta" x="458" y="146" text-anchor="start">③ 직접 연결</text><rect class="hl" x="380" y="196" width="140" height="36" rx="5"/><text class="mono" x="450" y="219" text-anchor="middle">bitcoin-node-0</text></svg></div><figcaption>P2P에서는 "노드 0"처럼 특정 상대를 골라야 한다. 그래서 가상 IP로 나눠 보내는 일반 Service 대신 headless Service를 쓴다.</figcaption></figure>
+          <figure class="fig"><div class="sc"><svg viewBox="0 0 720 244" role="img" aria-label="일반 Service는 가상 IP가 아무 Pod로 나눠 보내고, headless Service는 DNS가 특정 Pod의 IP를 직접 준다" style="min-width:620px;max-width:720px"><path class="ln" d="M355,10 V240" stroke-dasharray="4 4"/><text class="tb" x="170" y="22" text-anchor="middle">일반 Service (ClusterIP)</text><rect class="bx" x="100" y="40" width="140" height="36" rx="5"/><text class="mono" x="170" y="63" text-anchor="middle">bitcoin-node-0</text><path class="ln" d="M170,76 V114" marker-end="url(#am)"/><text class="ts" x="178" y="99" text-anchor="start">연결</text><rect class="hl" x="90" y="116" width="160" height="40" rx="5"/><text class="tb" x="170" y="134" text-anchor="middle">가상 IP 1개</text><text class="mono" x="170" y="150" text-anchor="middle">10.96.x.x</text><path class="ln" d="M150,156 L95,194" marker-end="url(#am)"/><path class="ln" d="M190,156 L245,194" marker-end="url(#am)"/><text class="ts" x="170" y="186" text-anchor="middle">무작위</text><rect class="bx" x="30" y="196" width="120" height="36" rx="5"/><text class="mono" x="90" y="219" text-anchor="middle">Pod A</text><rect class="bx" x="190" y="196" width="120" height="36" rx="5"/><text class="mono" x="250" y="219" text-anchor="middle">Pod B</text><text class="tb" x="540" y="22" text-anchor="middle">headless Service (clusterIP: None)</text><rect class="bx" x="380" y="50" width="140" height="36" rx="5"/><text class="mono" x="450" y="73" text-anchor="middle">bitcoin-node-0</text><rect class="hl" x="580" y="50" width="120" height="36" rx="5"/><text class="tb" x="640" y="73" text-anchor="middle">CoreDNS</text><path class="ln" d="M520,60 H578" marker-end="url(#am)"/><text class="ts" x="550" y="46" text-anchor="middle">① 이름</text><path class="ln" d="M580,78 H522" marker-end="url(#am)"/><text class="ts" x="550" y="102" text-anchor="middle">② Pod IP</text><text class="ts" x="640" y="112" text-anchor="middle">가상 IP 없음</text><path class="la" d="M450,86 V194" marker-end="url(#aa)"/><text class="ts ta" x="458" y="146" text-anchor="start">③ 직접 연결</text><rect class="hl" x="380" y="196" width="140" height="36" rx="5"/><text class="mono" x="450" y="219" text-anchor="middle">bitcoin-node-1</text></svg></div><figcaption>P2P에서는 "노드 0"처럼 특정 상대를 골라야 한다. 그래서 가상 IP로 나눠 보내는 일반 Service 대신 headless Service를 쓴다.</figcaption></figure>
           <ul>
             <li>headless Service는 <code>clusterIP: None</code>인 Service다. 가상 IP가 없고, 나눠 보내지도 않는다.</li>
             <li>대신 DNS가 <b>Pod IP를 직접</b> 돌려준다.</li>
             <li>StatefulSet과 같이 쓰면 Pod마다 이름이 생긴다: <code>bitcoin-node-0.bitcoin-node.bitcoin-lab.svc.cluster.local</code>. 형식은 <code>&lt;Pod 이름&gt;.&lt;Service 이름&gt;</code>이다.</li>
             <li>Pod가 다시 생겨서 IP가 바뀌어도 이 이름은 같다.</li>
           </ul>
-          <div class="mine"><b>내 환경에서</b>bitcoind에 <code>-addnode=bitcoin-node-0.bitcoin-node:38333</code>처럼 쓴다. 같은 namespace 안에서는 뒷부분을 줄여도 된다. 연결 결과는 <code>bitcoin-cli getpeerinfo</code>로 본다.</div>
+          <div class="warn"><b>자주 하는 오해</b>headless에도 DNS가 있다. 없는 것은 가상 IP다. 그리고 <code>clusterIP</code>에 <code>127.0.0.1</code>을 쓰면 거부된다. 127.0.0.1은 각 Pod 자신을 가리키고, Service IP는 <code>10.96.0.0/16</code>에서 자동으로 받거나(일반) <code>None</code>(headless)이어야 하기 때문이다.</div>
+          <div class="mine"><b>내 환경에서</b>bitcoind에 <code>-addnode=bitcoin-node-0.bitcoin-node:38333</code>처럼 쓴다. 같은 namespace 안에서는 뒷부분을 줄여도 된다. 2026-10-12 관찰: 연결된 주소가 <code>10.244.0.11</code>(Pod 범위)였다. Service 범위(10.96)가 아니다. 가상 IP 없이 Pod에 직접 연결한다는 증거다.</div>
           <details class="try"><summary>직접 확인</summary>
 <pre>kubectl -n bitcoin-lab exec bitcoin-node-1 -- getent hosts bitcoin-node-0.bitcoin-node</pre>
           <p>이미지에 <code>getent</code>가 없으면 임시 디버그 Pod를 쓴다.</p>
@@ -792,7 +809,33 @@ docker exec bitcoin-lab-control-plane crictl ps    <span class="cm"># kind 노�
               <tr><td><code>OOMKilled</code></td><td>메모리 limits</td></tr>
             </tbody>
           </table></div>
-          <p class="rel">연결: <a href="#desired">desired state</a><a href="#resources">limits</a><a href="#datadir">.lock</a></p>
+          <p class="rel">연결: <a href="#kexec">kubectl exec의 구조</a><a href="#desired">desired state</a><a href="#resources">limits</a><a href="#datadir">.lock</a></p>
+        </article>
+
+        <article class="c" id="kexec" data-k="kubectl exec 구조 -- 구분선 resource/name 대상 deploy alias btc 오류 슬래시 command 명령">
+          <div class="c-head"><h3>kubectl exec 명령의 구조</h3></div>
+          <p class="why"><b>왜 알아야 하나</b>명령의 앞부분은 호스트의 kubectl이 읽는다. <code>--</code> 뒷부분은 컨테이너 안의 프로그램이 읽는다. 이 경계를 모르면 경로를 kubectl에게 주거나, 호스트 경로를 컨테이너에서 찾는 실수를 한다.</p>
+          <figure class="fig"><div class="sc"><svg viewBox="0 0 720 146" role="img" aria-label="kubectl exec 명령: -- 앞은 kubectl이, 뒤는 컨테이너 안의 프로그램이 읽는다" style="min-width:620px;max-width:720px"><rect class="bx" x="10" y="40" width="70" height="36" rx="5"/><text class="mono" x="45.0" y="63" text-anchor="middle">kubectl</text><rect class="hl" x="86" y="40" width="118" height="36" rx="5"/><text class="mono" x="145.0" y="63" text-anchor="middle">-n bitcoin-lab</text><text class="ts" x="145.0" y="94" text-anchor="middle">어디에서</text><rect class="bx" x="210" y="40" width="50" height="36" rx="5"/><text class="mono" x="235.0" y="63" text-anchor="middle">exec</text><rect class="hl" x="266" y="40" width="170" height="36" rx="5"/><text class="mono" x="351.0" y="63" text-anchor="middle">deploy/bitcoin-signet</text><text class="ts" x="351.0" y="94" text-anchor="middle">누구 안에서 (종류/이름)</text><rect class="wr" x="442" y="40" width="34" height="36" rx="5"/><text class="mono" x="459.0" y="63" text-anchor="middle">--</text><text class="ts" x="459.0" y="94" text-anchor="middle">구분선</text><rect class="hl" x="482" y="40" width="228" height="36" rx="5"/><text class="mono" x="596.0" y="63" text-anchor="middle">du -sh /home/…/signet</text><text class="ts" x="596.0" y="94" text-anchor="middle">무엇을</text><path class="ln" d="M10,112 V118 H476 V112"/><text class="ts" x="243" y="136" text-anchor="middle">호스트의 kubectl이 읽는다</text><path class="la" d="M482,112 V118 H710 V112"/><text class="ts ta" x="596" y="136" text-anchor="middle">컨테이너 안의 du가 읽는다</text></svg></div><figcaption><code>--</code>가 경계다. 앞은 "어디의 누구 안에서", 뒤는 "무엇을"이다. 경로는 뒤쪽 프로그램의 인수이므로 <code>--</code> 뒤에 둔다.</figcaption></figure>
+          <div class="tbl"><table>
+            <thead><tr><th>실제로 본 오류</th><th>원인</th></tr></thead>
+            <tbody>
+              <tr><td><code>you must specify at least one command for the container</code></td><td><code>--</code> 뒤에 실행할 명령이 없다</td></tr>
+              <tr><td><code>arguments in resource/name form may not have more than one slash</code></td><td>대상 자리에 경로를 썼다. 대상은 <code>종류/이름</code> 형식이다</td></tr>
+              <tr><td><code>du: cannot access '/var/lib/docker'</code></td><td>호스트 경로를 컨테이너 안에서 찾았다 (<a href="#mountns">mount namespace</a>)</td></tr>
+            </tbody>
+          </table></div>
+          <ul>
+            <li><code>deploy/bitcoin-signet</code>: Deployment가 현재 Pod를 골라 준다. Pod 이름은 무작위라서 이 형식을 쓴다.</li>
+            <li><code>bitcoin-node-0</code>: StatefulSet Pod는 이름이 고정이므로 Pod 이름만 쓴다.</li>
+            <li>이름을 기억할 필요는 없다. 클러스터에 묻는다: <code>kubectl -n bitcoin-lab get deploy</code>, <code>get pod</code>.</li>
+            <li>kubectl은 API 서버에 HTTP 요청을 보내는 클라이언트일 뿐이다. <code>bitcoin-cli</code>가 bitcoind에 RPC를 보내는 것과 같다.</li>
+          </ul>
+          <div class="mine"><b>내 환경에서</b><code>btc</code> 별칭은 <code>kubectl -n bitcoin-lab exec deploy/bitcoin-signet -- bitcoin-cli -signet -datadir=/home/bitcoin/.bitcoin</code>의 줄임이다 (정확한 내용은 <code>alias btc</code>로 본다). 새 노드에 쓰려면 대상만 <code>bitcoin-node-0</code>으로 바꾼다.</div>
+          <details class="try"><summary>직접 확인</summary>
+<pre>alias btc                                <span class="cm"># 별칭의 실제 내용</span>
+kubectl -n bitcoin-lab get deploy -v=6   <span class="cm"># kubectl이 보내는 HTTP 요청(GET https://…)이 보인다</span></pre>
+          </details>
+          <p class="rel">연결: <a href="#kubectl">kubectl로 읽기</a><a href="#mountns">컨테이너와 호스트 경로</a><a href="#rpccookie">쿠키 인증</a></p>
         </article>
       </div>
     </section>
@@ -812,6 +855,16 @@ docker exec bitcoin-lab-control-plane crictl ps    <span class="cm"># kind 노�
             <li>TCP 연결은 네 값으로 구분한다: 내 IP, 내 포트, 상대 IP, 상대 포트.</li>
             <li>서버는 한 포트에서 <b>listen</b>(대기)한다. 클라이언트가 <b>connect</b>(접속)한다.</li>
           </ul>
+          <p><b>IP의 본질.</b> IP 주소는 "패킷을 어디로 보낼지"를 정하는 번호다. 패킷마다 보내는 주소와 받는 주소가 있다. 라우터와 커널은 받는 주소만 보고 다음 방향을 정한다. IP는 기계가 아니라 <a href="#netif">네트워크 인터페이스</a>에 붙는다. IP는 기계까지, 포트는 그 안의 프로그램까지 데려간다.</p>
+          <div class="tbl"><table>
+            <thead><tr><th>범위 (CIDR)</th><th>내 환경에서의 뜻</th></tr></thead>
+            <tbody>
+              <tr><td><code>127.0.0.0/8</code></td><td>loopback. 자기 자신. Pod 안에서는 그 Pod 자신이다</td></tr>
+              <tr><td><code>10.244.0.0/16</code></td><td>Pod IP 범위 (kind 기본값). 예: node-1 = <code>10.244.0.11</code></td></tr>
+              <tr><td><code>10.96.0.0/16</code></td><td>Service 가상 IP 범위. API 서버가 자동으로 준다</td></tr>
+            </tbody>
+          </table></div>
+          <p><code>/16</code>은 "32비트 중 앞 16비트가 네트워크 번호"라는 뜻이다. 우편 주소의 도시와 같다. 뒤 16비트는 번지다. 라우터는 보통 앞부분만 보고 방향을 정한다.</p>
           <div class="tbl"><table>
             <thead><tr><th>Signet 포트</th><th>용도</th><th>누가 접속하나</th></tr></thead>
             <tbody>
@@ -823,7 +876,53 @@ docker exec bitcoin-lab-control-plane crictl ps    <span class="cm"># kind 노�
 <pre>ss -tlnp            <span class="cm"># 듣고 있는 TCP 포트 (Pod 안에서 실행하면 Pod 기준)</span>
 ss -tnp state established</pre>
           </details>
-          <p class="rel">연결: <a href="#listen">-listen과 피어</a><a href="#bindaddr">리슨 주소</a><a href="#nat">NAT</a></p>
+          <p class="rel">연결: <a href="#netif">네트워크 인터페이스</a><a href="#listen">-listen과 피어</a><a href="#bindaddr">리슨 주소</a><a href="#nat">NAT</a></p>
+        </article>
+
+        <article class="c" id="netif" data-k="네트워크 인터페이스 veth lo loopback bridge 브리지 랜카드 nic eth0 ip addr 가상 물리">
+          <div class="c-head"><h3>네트워크 인터페이스: 랜카드, lo, veth</h3></div>
+          <p class="why"><b>왜 알아야 하나</b>IP는 기계가 아니라 인터페이스에 붙는다. Pod IP가 왜 생기고 왜 사라지는지 알려면 인터페이스를 알아야 한다.</p>
+          <figure class="fig"><div class="sc"><svg viewBox="0 0 720 252" role="img" aria-label="호스트의 물리 랜카드, lo, kind 브리지, veth 쌍, Pod 안의 eth0" style="min-width:620px;max-width:720px"><rect class="bg" x="10" y="10" width="700" height="232" rx="5"/><text class="tb" x="24" y="32" text-anchor="start">호스트 promet</text><rect class="bx" x="24" y="50" width="124" height="46" rx="5"/><text class="tb" x="86" y="70" text-anchor="middle">물리 랜카드</text><text class="ts" x="86" y="87" text-anchor="middle">192.168.x.x (예시)</text><rect class="bx" x="24" y="112" width="124" height="40" rx="5"/><text class="mono" x="86" y="130" text-anchor="middle">lo</text><text class="ts" x="86" y="146" text-anchor="middle">127.0.0.1</text><path class="ln" d="M180,73 H150" marker-end="url(#am)"/><text class="ts tw" x="165" y="64" text-anchor="middle">NAT</text><rect class="hl" x="182" y="50" width="120" height="46" rx="5"/><text class="mono" x="242" y="70" text-anchor="middle">br-… (kind)</text><text class="ts" x="242" y="87" text-anchor="middle">가상 스위치</text><path class="la" d="M302,73 H350"/><text class="ts ta" x="326" y="64" text-anchor="middle">veth</text><rect class="bx" x="352" y="36" width="344" height="196" rx="5"/><text class="tb" x="366" y="56" text-anchor="start">kind 노드 (자기 net namespace)</text><text class="ts mono" x="366" y="74" text-anchor="start">eth0 172.18.0.x · 커널 라우팅 표</text><path class="la" d="M442,84 V142"/><text class="ts ta" x="450" y="116" text-anchor="start">veth 쌍</text><rect class="hl" x="372" y="144" width="140" height="76" rx="5"/><text class="mono" x="442" y="164" text-anchor="middle">bitcoin-node-0</text><text class="ts" x="442" y="184" text-anchor="middle">eth0 10.244.0.x</text><text class="ts" x="442" y="204" text-anchor="middle">lo 127.0.0.1</text><path class="la" d="M610,84 V142"/><text class="ts ta" x="618" y="116" text-anchor="start">veth 쌍</text><rect class="hl" x="540" y="144" width="140" height="76" rx="5"/><text class="mono" x="610" y="164" text-anchor="middle">bitcoin-node-1</text><text class="ts" x="610" y="184" text-anchor="middle">eth0 10.244.0.11</text><text class="ts" x="610" y="204" text-anchor="middle">lo 127.0.0.1</text></svg></div><figcaption>물리 랜카드 뒤에만 실제 장치가 있다. 나머지는 커널이 만든 가상 인터페이스다. veth는 항상 한 쌍이고, 한쪽 끝은 Pod 안에서 eth0이 된다. 10.244.0.11은 2026-10-12 관찰 값, 나머지 주소는 예시다.</figcaption></figure>
+          <p>네트워크 인터페이스는 커널 안의 "패킷 출입구" 객체다. 출입구 뒤에 무엇이 있는지는 종류마다 다르다.</p>
+          <div class="tbl"><table>
+            <thead><tr><th>종류</th><th>뒤에 있는 것</th><th>예</th></tr></thead>
+            <tbody>
+              <tr><td>물리</td><td>실제 랜카드. 패킷이 케이블로 나간다</td><td><code>eno1</code>, <code>enp3s0</code> (이름은 장치마다 다르다)</td></tr>
+              <tr><td><code>lo</code></td><td>없음. 보낸 패킷이 바로 자기에게 돌아온다</td><td><code>127.0.0.1</code></td></tr>
+              <tr><td><code>veth</code></td><td>가상 케이블. 항상 양 끝 한 쌍으로 생긴다</td><td>Pod의 <code>eth0</code>과 노드 쪽 <code>veth…</code></td></tr>
+              <tr><td>bridge</td><td>가상 스위치. 여러 veth를 묶는다</td><td><code>docker0</code>, <code>br-…</code> (kind 네트워크)</td></tr>
+            </tbody>
+          </table></div>
+          <ul>
+            <li>Pod를 만들 때 veth 한 쌍이 생긴다. 한쪽 끝은 Pod의 net namespace로 들어가서 <code>eth0</code>이 된다.</li>
+            <li>Pod는 자기가 랜카드를 가졌다고 생각한다. 실제로는 가상 케이블의 한쪽 끝이다.</li>
+            <li>Pod가 지워지면 veth도, 그 IP도 사라진다.</li>
+          </ul>
+          <div class="warn"><b>자주 하는 오해</b>인터페이스가 곧 랜카드는 아니다. 호스트의 인터페이스 대부분은 커널이 만든 가상 장치다.</div>
+          <details class="try"><summary>직접 확인</summary>
+<pre>ip -br addr      <span class="cm"># 호스트에서. 물리, lo, docker0, br-…, veth…를 구분한다</span></pre>
+          </details>
+          <p class="rel">연결: <a href="#ipport">IP와 포트</a><a href="#podip">Pod IP와 CNI</a><a href="#namespace">리눅스 namespace</a></p>
+        </article>
+
+        <article class="c" id="podip" data-k="pod ip cni ipam 바뀌는 이유 kubelet containerd veth coredns netlink kindnet 이름">
+          <div class="c-head"><h3>Pod IP는 어디서 오고, 왜 바뀌는가</h3></div>
+          <p class="why"><b>왜 알아야 하나</b>Pod IP는 Pod를 다시 만들 때 바뀔 수 있다. 그래서 bitcoind 설정에 IP 대신 이름을 쓴다. 이 흐름을 알면 "왜 이름이 필요한가"를 설명할 수 있다.</p>
+          <figure class="fig"><div class="sc"><svg viewBox="0 0 720 198" role="img" aria-label="Pod IP가 정해지고 DNS에 반영되는 흐름" style="min-width:620px;max-width:720px"><rect class="bx" x="10" y="30" width="120" height="50" rx="5"/><text class="tb" x="70" y="52" text-anchor="middle">Pod 생성</text><text class="ts" x="70" y="70" text-anchor="middle">scheduler가 노드 지정</text><path class="ln" d="M130,55 H158" marker-end="url(#am)"/><rect class="bx" x="160" y="30" width="110" height="50" rx="5"/><text class="tb" x="215" y="60" text-anchor="middle">kubelet</text><path class="ln" d="M270,55 H298" marker-end="url(#am)"/><rect class="bx" x="300" y="30" width="120" height="50" rx="5"/><text class="tb" x="360" y="60" text-anchor="middle">containerd</text><path class="ln" d="M420,55 H448" marker-end="url(#am)"/><rect class="hl" x="450" y="30" width="260" height="50" rx="5"/><text class="tb" x="580" y="52" text-anchor="middle">CNI 플러그인</text><text class="ts" x="580" y="70" text-anchor="middle">veth 쌍 생성 + IPAM이 빈 IP 1개 선택</text><path class="la" d="M580,80 V118" marker-end="url(#aa)"/><text class="ts ta" x="588" y="104" text-anchor="start">IP 결정</text><rect class="bx" x="450" y="120" width="260" height="50" rx="5"/><text class="tb" x="580" y="142" text-anchor="middle">kubelet → API 서버</text><text class="mono" x="580" y="160" text-anchor="middle">status.podIP = 10.244.0.11</text><path class="ln" d="M448,145 H392" marker-end="url(#am)"/><text class="ts" x="420" y="137" text-anchor="middle">watch</text><rect class="hl" x="230" y="120" width="160" height="50" rx="5"/><text class="tb" x="310" y="142" text-anchor="middle">CoreDNS</text><text class="ts" x="310" y="160" text-anchor="middle">DNS 응답 갱신</text><path class="ln" d="M228,145 H192" marker-end="url(#am)" marker-start="url(#am)"/><text class="ts" x="210" y="188" text-anchor="middle">이름 질문 · IP 응답</text><rect class="bx" x="10" y="120" width="180" height="50" rx="5"/><text class="tb" x="100" y="142" text-anchor="middle">bitcoind (node-0)</text><text class="ts" x="100" y="160" text-anchor="middle">이름만 안다</text></svg></div><figcaption>Pod가 다시 생기면 이 흐름이 처음부터 다시 돈다. IPAM은 빈 주소를 고를 뿐, 같은 주소를 약속하지 않는다. 그래서 IP 대신 이름을 쓴다.</figcaption></figure>
+          <ol>
+            <li>scheduler가 Pod를 둘 노드를 정한다.</li>
+            <li>그 노드의 kubelet이 containerd에 컨테이너 생성을 요청한다.</li>
+            <li>containerd가 CNI 플러그인을 부른다. CNI는 netlink(커널 네트워크 설정용 소켓)로 veth 쌍을 만든다.</li>
+            <li>CNI의 IPAM(IP 주소 관리)이 노드의 Pod 범위에서 빈 주소 하나를 고른다.</li>
+            <li>kubelet이 그 IP를 API 서버에 보고한다 (<code>status.podIP</code>).</li>
+            <li>CoreDNS가 API 서버를 보고 DNS 응답을 바꾼다. bitcoind는 이름만 알면 된다.</li>
+          </ol>
+          <div class="warn"><b>자주 하는 오해</b>같은 IP가 다시 나올 수도 있다. 하지만 보장되지 않는다. 보장이 없으므로 이름이 필요하다.</div>
+          <div class="mine"><b>내 환경에서</b>kind의 기본 CNI는 kindnet이다. Pod 범위는 <code>10.244.0.0/16</code>이다. 2026-10-12 관찰: node-0에서 <code>bitcoin-node-1.bitcoin-node</code>가 <code>10.244.0.11</code>로 바뀌었다.</div>
+          <details class="try"><summary>직접 확인</summary>
+<pre>kubectl -n bitcoin-lab get pod -o wide   <span class="cm"># IP 열과 NODE 열</span></pre>
+          </details>
+          <p class="rel">연결: <a href="#netif">네트워크 인터페이스</a><a href="#k8sdns">클러스터 DNS</a><a href="#headless">headless Service</a></p>
         </article>
 
         <article class="c" id="bindaddr" data-k="리슨 주소 bind 127.0.0.1 0.0.0.0 localhost 접근 범위 rpcbind rpcallowip">
@@ -855,7 +954,7 @@ ss -tnp state established</pre>
         <article class="c" id="k8sdns" data-k="dns 이름 해석 coredns 클러스터 dns svc.cluster.local resolv.conf">
           <div class="c-head"><h3>DNS와 클러스터 DNS</h3></div>
           <p class="why"><b>왜 알아야 하나</b>노드끼리 IP 대신 이름으로 연결한다. 이름이 IP로 바뀌는 과정을 알아야 연결 실패를 추적할 수 있다.</p>
-          <figure class="fig"><div class="sc"><svg viewBox="0 0 720 134" role="img" aria-label="Pod가 CoreDNS에 이름을 묻고 Pod IP를 받는다. CoreDNS는 API 서버를 보고 답을 만든다" style="min-width:560px;max-width:720px"><rect class="bx" x="20" y="40" width="150" height="50" rx="5"/><text class="tb" x="95" y="62" text-anchor="middle">Pod</text><text class="mono" x="95" y="80" text-anchor="middle">bitcoin-node-1</text><path class="la" d="M170,56 H358" marker-end="url(#aa)"/><text class="mono" x="265" y="34" text-anchor="middle">① bitcoin-node-0.bitcoin-node ?</text><path class="ln" d="M358,76 H172" marker-end="url(#am)"/><text class="mono" x="265" y="104" text-anchor="middle">② 10.244.x.x (Pod IP)</text><rect class="hl" x="360" y="40" width="140" height="50" rx="5"/><text class="tb" x="430" y="70" text-anchor="middle">CoreDNS</text><path class="ln" d="M502,65 H568" marker-end="url(#am)" marker-start="url(#am)" stroke-dasharray="4 3"/><text class="ts" x="535" y="57" text-anchor="middle">watch</text><rect class="bx" x="570" y="40" width="130" height="50" rx="5"/><text class="tb" x="635" y="62" text-anchor="middle">API 서버</text><text class="ts" x="635" y="80" text-anchor="middle">Service · Pod 목록</text><text class="ts" x="20" y="124" text-anchor="start">resolv.conf: CoreDNS 주소와 검색 도메인 (bitcoin-lab.svc.cluster.local)</text></svg></div><figcaption>검색 도메인 때문에 같은 namespace에서는 짧은 이름만 써도 된다.</figcaption></figure>
+          <figure class="fig"><div class="sc"><svg viewBox="0 0 720 134" role="img" aria-label="Pod가 CoreDNS에 이름을 묻고 Pod IP를 받는다. CoreDNS는 API 서버를 보고 답을 만든다" style="min-width:560px;max-width:720px"><rect class="bx" x="20" y="40" width="150" height="50" rx="5"/><text class="tb" x="95" y="62" text-anchor="middle">Pod</text><text class="mono" x="95" y="80" text-anchor="middle">bitcoin-node-0</text><path class="la" d="M170,56 H358" marker-end="url(#aa)"/><text class="mono" x="265" y="34" text-anchor="middle">① bitcoin-node-1.bitcoin-node ?</text><path class="ln" d="M358,76 H172" marker-end="url(#am)"/><text class="mono" x="265" y="104" text-anchor="middle">② 10.244.0.11 (Pod IP)</text><rect class="hl" x="360" y="40" width="140" height="50" rx="5"/><text class="tb" x="430" y="70" text-anchor="middle">CoreDNS</text><path class="ln" d="M502,65 H568" marker-end="url(#am)" marker-start="url(#am)" stroke-dasharray="4 3"/><text class="ts" x="535" y="57" text-anchor="middle">watch</text><rect class="bx" x="570" y="40" width="130" height="50" rx="5"/><text class="tb" x="635" y="62" text-anchor="middle">API 서버</text><text class="ts" x="635" y="80" text-anchor="middle">Service · Pod 목록</text><text class="ts" x="20" y="124" text-anchor="start">resolv.conf: CoreDNS 주소와 검색 도메인 (bitcoin-lab.svc.cluster.local)</text></svg></div><figcaption>2026-10-12 관찰 값이다. 검색 도메인 때문에 같은 namespace에서는 짧은 이름만 써도 된다.</figcaption></figure>
           <ul>
             <li>DNS는 이름을 IP로 바꾸는 시스템이다.</li>
             <li>클러스터 안에는 CoreDNS가 있다. Service와 Pod 이름을 IP로 바꾼다.</li>
@@ -989,18 +1088,24 @@ ss -tnp state established</pre>
         <article class="c" id="listen" data-k="-listen inbound outbound 피어 연결 addnode connect maxconnections getpeerinfo">
           <div class="c-head"><h3>-listen과 피어 연결</h3></div>
           <p class="why"><b>왜 알아야 하나</b>노드끼리 연결하려면(실습 D) 한쪽은 들어오는 연결을 받아야 한다. <code>-listen</code>이 이것을 정한다.</p>
-          <figure class="fig"><div class="sc"><svg viewBox="0 0 720 182" role="img" aria-label="bitcoin-node-1이 bitcoin-node-0에 먼저 연결한다. node-0에게는 inbound, node-1에게는 outbound다" style="min-width:620px;max-width:720px"><rect class="hl" x="40" y="60" width="190" height="70" rx="5"/><text class="mono" x="135" y="84" text-anchor="middle">bitcoin-node-0</text><text class="mono" x="135" y="104" text-anchor="middle">-listen=1</text><text class="ts" x="135" y="121" text-anchor="middle">38333에서 기다린다</text><rect class="bx" x="300" y="60" width="190" height="70" rx="5"/><text class="mono" x="395" y="84" text-anchor="middle">bitcoin-node-1</text><text class="mono" x="395" y="104" text-anchor="middle">-addnode=…node-0</text><text class="ts" x="395" y="121" text-anchor="middle">먼저 연결한다</text><rect class="bx" x="570" y="60" width="130" height="70" rx="5"/><text class="tb" x="635" y="90" text-anchor="middle">인터넷 피어</text><text class="ts" x="635" y="110" text-anchor="middle">Signet 노드들</text><path class="la" d="M298,80 H232" marker-end="url(#aa)"/><text class="ts ta" x="265" y="72" text-anchor="middle">connect</text><path class="la" d="M492,80 H568" marker-end="url(#aa)"/><text class="ts ta" x="530" y="72" text-anchor="middle">outbound</text><path class="lw" d="M568,112 H494" marker-end="url(#aw)" stroke-dasharray="5 4"/><text class="ts tw" x="531" y="128" text-anchor="middle">NAT에서 막힘</text><text class="ts" x="135" y="154" text-anchor="middle">node-0의 getpeerinfo</text><text class="mono" x="135" y="172" text-anchor="middle">node-1: "inbound": true</text><text class="ts" x="395" y="154" text-anchor="middle">node-1의 getpeerinfo</text><text class="mono" x="395" y="172" text-anchor="middle">node-0: "inbound": false</text></svg></div><figcaption>같은 연결이 양쪽에서 다르게 보인다. 먼저 연결한 쪽은 outbound, 받은 쪽은 inbound다. 받으려면 listen해야 한다.</figcaption></figure>
+          <figure class="fig"><div class="sc"><svg viewBox="0 0 720 182" role="img" aria-label="bitcoin-node-0이 bitcoin-node-1에 먼저 연결한다. node-1에게는 inbound, node-0에게는 outbound다" style="min-width:620px;max-width:720px"><rect class="hl" x="40" y="60" width="190" height="70" rx="5"/><text class="mono" x="135" y="84" text-anchor="middle">bitcoin-node-1</text><text class="mono" x="135" y="104" text-anchor="middle">-listen=1</text><text class="ts" x="135" y="121" text-anchor="middle">38333에서 기다린다</text><rect class="bx" x="300" y="60" width="190" height="70" rx="5"/><text class="mono" x="395" y="84" text-anchor="middle">bitcoin-node-0</text><text class="mono" x="395" y="104" text-anchor="middle">-addnode=…node-1</text><text class="ts" x="395" y="121" text-anchor="middle">먼저 연결한다</text><rect class="bx" x="570" y="60" width="130" height="70" rx="5"/><text class="tb" x="635" y="90" text-anchor="middle">인터넷 피어</text><text class="ts" x="635" y="110" text-anchor="middle">Signet 노드들</text><path class="la" d="M298,80 H232" marker-end="url(#aa)"/><text class="ts ta" x="265" y="72" text-anchor="middle">connect</text><path class="la" d="M492,80 H568" marker-end="url(#aa)"/><text class="ts ta" x="530" y="72" text-anchor="middle">outbound</text><path class="lw" d="M568,112 H494" marker-end="url(#aw)" stroke-dasharray="5 4"/><text class="ts tw" x="531" y="128" text-anchor="middle">NAT에서 막힘</text><text class="ts" x="135" y="154" text-anchor="middle">node-1의 getpeerinfo</text><text class="mono" x="135" y="172" text-anchor="middle">node-0: "inbound": true</text><text class="ts" x="395" y="154" text-anchor="middle">node-0의 getpeerinfo</text><text class="mono" x="395" y="172" text-anchor="middle">node-1: "inbound": false</text></svg></div><figcaption>2026-10-12에 node-0의 getaddednodeinfo로 outbound를 확인했다. node-1 쪽 값은 같은 원리로 예상한 값이다. 같은 연결이 양쪽에서 다르게 보인다. 먼저 연결한 쪽은 outbound, 받은 쪽은 inbound다. 받으려면 listen해야 한다.</figcaption></figure>
           <ul>
             <li><b>outbound</b>: 내 노드가 먼저 연결한다. 기본으로 여러 개를 자동으로 만든다.</li>
             <li><b>inbound</b>: 다른 노드가 내 노드에 연결한다. 내 노드가 P2P 포트에서 listen해야 받는다.</li>
             <li><code>-listen=1</code>: P2P 포트(Signet 38333)에서 들어오는 연결을 받는다. 기본값은 켜짐이다. 단 <code>-connect</code>나 <code>-proxy</code>를 쓰면 기본값이 꺼짐으로 바뀐다.</li>
             <li><code>-addnode=주소</code>: 이 피어에 계속 연결을 시도한다. 다른 피어도 쓴다.</li>
             <li><code>-connect=주소</code>: <b>이 피어에만</b> 연결한다. 자동 연결을 끈다.</li>
+            <li><code>-listen</code>은 개수가 아니라 켜기/끄기(1/0)다. 연결 수는 <code>-maxconnections</code>가 정한다.</li>
+            <li>bitcoind는 피어를 보통 DNS seed(공개 주소 목록)에서 찾는다. 그래서 옆의 내 노드는 모른다. <code>-addnode</code>로 알려 준다.</li>
+            <li>자기 자신에게 연결하면 bitcoind가 nonce(무작위 번호)를 비교해서 알아채고 끊는다.</li>
           </ul>
-          <div class="mine"><b>내 환경에서</b><code>bitcoin-node-0</code>이 listen하고, <code>bitcoin-node-1</code>이 <code>-addnode=bitcoin-node-0.bitcoin-node</code>로 연결한다. 기존 <code>bitcoin-signet</code>은 <code>-listen=0</code>이므로 들어오는 연결을 받지 않는다.</div>
+          <div class="mine"><b>내 환경에서</b>두 새 노드는 모두 <code>-listen=1</code>이다. 같은 틀을 쓰므로 둘 다 <code>-addnode=bitcoin-node-0.bitcoin-node:38333</code>과 <code>-addnode=bitcoin-node-1.bitcoin-node:38333</code>을 가진다. 2026-10-12 관찰: node-0의 <code>getaddednodeinfo</code>에서 node-1이 <code>connected: true</code>, <code>outbound</code>, <code>10.244.0.11:38333</code>이었다. 자기 자신(node-0)은 <code>false</code>다. 기존 <code>bitcoin-signet</code>은 <code>-listen=0</code>이다.</div>
+          <div class="warn"><b>자주 하는 오해</b><code>connected: false</code>이면 먼저 포트를 본다. 실제로 <code>-addnode</code>에 39833을 써서 연결되지 않았다. Signet P2P 포트는 38333이다. bitcoind가 듣는 포트는 로그의 <code>Bound to</code> 줄에 있다.</div>
           <details class="try"><summary>직접 확인</summary>
-<pre>bitcoin-cli -signet getpeerinfo | grep -E '"addr"|"inbound"'
-bitcoin-cli -signet getnetworkinfo     <span class="cm"># localaddresses, connections_in, connections_out</span></pre>
+<pre>kubectl -n bitcoin-lab exec bitcoin-node-0 -- \
+  bitcoin-cli -signet -datadir=/home/bitcoin/.bitcoin getaddednodeinfo
+kubectl -n bitcoin-lab logs bitcoin-node-0 | grep Bound   <span class="cm"># 실제로 듣는 포트</span>
+<span class="cm"># getpeerinfo의 "inbound", getnetworkinfo의 connections_in/out도 본다</span></pre>
           </details>
           <p class="rel">연결: <a href="#headless">headless Service</a><a href="#ipport">IP와 포트</a><a href="#nat">NAT</a></p>
         </article>
@@ -1016,7 +1121,7 @@ bitcoin-cli -signet getnetworkinfo     <span class="cm"># localaddresses, connec
             <li>쿠키는 재시작할 때마다 바뀐다. bitcoind가 정상 종료하면 지워진다.</li>
             <li>결과: <b>파일을 읽을 수 있는 사용자 = RPC를 쓸 수 있는 사용자</b>. 인증이 파일 권한으로 바뀐다.</li>
           </ul>
-          <div class="mine"><b>내 환경에서</b>Pod 안에서 <code>bitcoin-cli -signet</code>을 실행하면 같은 데이터 디렉터리를 보므로 쿠키를 찾는다. 다른 사용자로 실행하거나 <code>-datadir</code>이 다르면 찾지 못한다. 고정된 계정이 필요하면 <code>-rpcauth</code>를 쓴다.</div>
+          <div class="mine"><b>내 환경에서</b>Pod 안에서 <code>bitcoin-cli -signet</code>을 실행하면 같은 데이터 디렉터리를 보므로 쿠키를 찾는다. 다른 사용자로 실행하거나 <code>-datadir</code>이 다르면 찾지 못한다. 그래서 <code>btc</code> 별칭에는 <code>-datadir=/home/bitcoin/.bitcoin</code>이 들어 있다. 고정된 계정이 필요하면 <code>-rpcauth</code>를 쓴다.</div>
           <p class="rel">연결: <a href="#bindaddr">리슨 주소</a><a href="#process">권한</a><a href="#datadir">데이터 디렉터리</a></p>
         </article>
 
