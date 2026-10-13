@@ -196,8 +196,9 @@ html { scroll-behavior: smooth; }
       <div class="legend"><span class="l-why">왜 알아야 하나</span><span class="l-mine">내 환경에서</span><span class="l-warn">자주 하는 오해</span></div>
       <div class="now" id="now">
         <h2>지금 학습 위치</h2>
-        <p>실습 A–D 완료. Bitcoin 노드 3개가 실행 중이다: 기존 <code>bitcoin-signet</code>(Deployment)과 새 <code>bitcoin-node-0</code>, <code>bitcoin-node-1</code>(StatefulSet). node-0 → node-1 연결을 확인했다. 새 노드 2개는 지금 IBD(초기 동기화) 중이다. 다음은 실습 E: IBD 중 CPU, 메모리, 디스크 I/O 관찰. 먼저 읽을 개념: <a href="#fullnode">풀 노드가 하는 일</a>, <a href="#cgroup">cgroup</a>, <a href="#resources">requests와 limits</a>, <a href="#memory">메모리와 페이지 캐시</a>, <a href="#iometrics">IOPS와 지연</a>, <a href="#use">성능을 보는 순서</a>.</p>
+        <p>실습 A–E 완료. 실습 E(2026-10-13)에서 IBD가 느린 원인을 찾았다. CPU가 아니었다. kind 상자(메모리 4GiB)가 가득 차서 page cache를 계속 잃었다(디스크 읽기 1.89TB, 그중 99.96%가 refault). 상자를 8GiB로 늘렸다. 지금은 실습 F의 실행 1이다: 상자 8GiB에서 <code>bitcoin-node-1</code>이 <code>-reindex-chainstate</code>를 하고 있다. 끝나면 측정값을 모으고 <code>bitcoin.conf</code>의 줄을 지운 다음, 4GiB에서 실행 2를 한다. 먼저 읽을 개념: <a href="#reindex">-reindex-chainstate</a>, <a href="#experiment">실험 설계</a>, <a href="#refault">refault</a>, <a href="#cputhrottle">cpu.max와 throttling</a>, <a href="#qos">QoS와 OOM 점수</a>.</p>
         <ul class="upd" id="changelog">
+          <li><b>2026-10-14</b> 10-13 학습(실습 E, F 시작) 반영. 새 카드 4개: CPU limit의 실체, 캐시를 잃으면(refault), QoS 등급과 OOM 점수, -reindex-chainstate. cgroup 그림을 측정 값으로 다시 그림. 보충: cgroup namespace, 메모리, requests와 limits, kind 상자, io.stat, 풀 노드(IBD 시간), dbcache, USE, 실험 설계, kubectl exec(sh -c, RPC 오류), StatefulSet.</li>
           <li><b>2026-10-12 (2)</b> 실습 D까지 반영. 새 카드 3개: kubectl exec의 구조, 네트워크 인터페이스, Pod IP와 CNI. 보충: Service, headless, Deployment(strategy), StatefulSet, YAML(---, 오류 경로), namespace, PV와 PVC, -listen, du, IP와 CIDR.</li>
           <li><b>2026-10-12</b> 처음 만듦. 개념 41개, 그림 21개.</li>
         </ul>
@@ -212,8 +213,8 @@ html { scroll-behavior: smooth; }
             <tr><td>B. replicas: 3 실패 ✓</td><td><a href="#deployment">Deployment</a>, <a href="#pvpvc">PV와 PVC</a>, <a href="#datadir">데이터 디렉터리와 .lock</a></td></tr>
             <tr><td>C. StatefulSet ✓</td><td><a href="#yaml">YAML 구조</a>, <a href="#statefulset">StatefulSet</a>, <a href="#headless">headless Service</a></td></tr>
             <tr><td>D. 노드끼리 연결 ✓</td><td><a href="#ipport">IP·포트·TCP</a>, <a href="#netif">네트워크 인터페이스</a>, <a href="#podip">Pod IP와 CNI</a>, <a href="#k8sdns">클러스터 DNS</a>, <a href="#listen">-listen과 피어</a></td></tr>
-            <tr><td><b>E. 자원 관찰 (다음)</b></td><td><a href="#cgroup">cgroup</a>, <a href="#memory">메모리와 페이지 캐시</a>, <a href="#use">성능을 보는 순서</a></td></tr>
-            <tr><td>F. 자원 제한 실험</td><td><a href="#resources">requests와 limits</a>, <a href="#dbcache">UTXO와 dbcache</a>, <a href="#experiment">실험 설계</a></td></tr>
+            <tr><td>E. 자원 관찰 ✓</td><td><a href="#cgroup">cgroup</a>, <a href="#cputhrottle">cpu.max와 throttling</a>, <a href="#memory">메모리와 페이지 캐시</a>, <a href="#refault">refault</a>, <a href="#iometrics">io.stat</a>, <a href="#use">성능을 보는 순서</a></td></tr>
+            <tr><td><b>F. 자원 제한 실험 (지금)</b></td><td><a href="#reindex">-reindex-chainstate</a>, <a href="#experiment">실험 설계</a>, <a href="#dbcache">UTXO와 dbcache</a>, <a href="#resources">requests와 limits</a>, <a href="#qos">QoS와 OOM 점수</a></td></tr>
           </tbody>
         </table></div>
       </div>
@@ -410,14 +411,48 @@ getent group docker            <span class="cm"># 누가 그룹에 있는가</sp
             <li>커널은 빈 메모리를 놀리지 않는다. 디스크에서 읽은 내용을 메모리에 남긴다. 이것이 <b>페이지 캐시</b>다.</li>
             <li>페이지 캐시는 필요하면 즉시 비울 수 있다. 그래서 <code>free</code>의 <b>available</b>을 본다. free 열은 거의 의미가 없다.</li>
             <li>스왑은 메모리 내용을 디스크로 내보내는 공간이다. 스왑이 많이 쓰이면 느려진다.</li>
-            <li>메모리 한도를 넘으면 커널의 OOM killer가 프로세스를 종료한다.</li>
+            <li>메모리 한도를 넘으면 커널의 OOM killer가 프로세스를 종료한다. 단, 그 전에 먼저 페이지 캐시를 버린다.</li>
+            <li>cgroup은 페이지 캐시도 그 cgroup의 메모리로 센다. 그래서 컨테이너의 메모리 사용량에는 캐시가 들어 있다.</li>
+            <li>스왑 used가 크면 과거에 메모리 압박이 있었다는 흔적이다. 커널은 그 내용이 다시 필요할 때까지 스왑에 둔다.</li>
           </ul>
           <div class="warn"><b>자주 하는 오해</b>같은 실험을 두 번 하면 두 번째가 빠를 수 있다. 데이터가 페이지 캐시에 남아 있기 때문이다. 이것을 "캐시 효과"라고 하고, 실험 기록에 남긴다.</div>
+          <div class="mine"><b>내 환경에서</b>promet의 메모리는 total 14Gi다. 2026-10-13 IBD가 끝난 뒤: available 9.7Gi, buff/cache 8.4Gi, 스왑 used 2.3Gi. 메모리를 나눠 쓰는 것: kind 상자(8G), indra-collector(2G), namu-crawler(2.5G), 한도 없는 indra 배치.</div>
           <details class="try"><summary>직접 확인</summary>
 <pre>free -h          <span class="cm"># available 열을 본다</span>
 vmstat 1 5       <span class="cm"># si, so 열: 스왑 입출력</span></pre>
           </details>
-          <p class="rel">연결: <a href="#cgroup">cgroup</a><a href="#dbcache">UTXO와 dbcache</a><a href="#experiment">실험 설계</a></p>
+          <p class="rel">연결: <a href="#refault">refault</a><a href="#cgroup">cgroup</a><a href="#dbcache">UTXO와 dbcache</a><a href="#experiment">실험 설계</a></p>
+        </article>
+
+        <article class="c" id="refault" data-k="refault thrashing 페이지 캐시 page cache evict workingset memory.stat memory.events memory.peak 다시 읽기 sock_throttled">
+          <div class="c-head"><h3>캐시를 잃으면: refault와 thrashing</h3></div>
+          <p class="why"><b>왜 알아야 하나</b>메모리가 부족해도 프로세스는 바로 죽지 않는다. 커널은 먼저 page cache를 버린다. 그러면 프로그램은 오류 없이 느려지기만 한다. 그래서 이 문제는 숫자로만 찾을 수 있다.</p>
+          <figure class="fig"><div class="sc"><svg viewBox="0 0 720 152" role="img" aria-label="디스크에서 읽은 데이터가 page cache에 들어가고, 상자가 가득 차서 버려지고, 다시 디스크에서 읽히는 반복" style="min-width:600px;max-width:720px"><rect class="bx" x="10" y="30" width="160" height="56" rx="5"/><text class="tb" x="90" y="54" text-anchor="middle">디스크 읽기</text><text class="ts" x="90" y="73" text-anchor="middle">chainstate/ (LevelDB)</text><rect class="hl" x="190" y="30" width="160" height="56" rx="5"/><text class="tb" x="270" y="54" text-anchor="middle">page cache</text><text class="ts" x="270" y="73" text-anchor="middle">다음 읽기는 빠르다</text><rect class="wr" x="370" y="30" width="160" height="56" rx="5"/><text class="tb" x="450" y="54" text-anchor="middle">kind 상자 가득 참</text><text class="ts" x="450" y="73" text-anchor="middle">커널이 캐시를 버림</text><rect class="bx" x="550" y="30" width="160" height="56" rx="5"/><text class="tb" x="630" y="54" text-anchor="middle">다시 필요</text><text class="ts" x="630" y="73" text-anchor="middle">refault로 센다</text><path class="ln" d="M170,58 H188" marker-end="url(#am)"/><path class="ln" d="M350,58 H368" marker-end="url(#am)"/><path class="ln" d="M530,58 H548" marker-end="url(#am)"/><path class="lw" d="M630,86 V120 H90 V88" marker-end="url(#aw)"/><text class="ts tw" x="360" y="140" text-anchor="middle">IBD 동안 반복: 약 1.89TB = 데이터(약 27GB)의 약 70배</text></svg></div><figcaption>이 반복을 thrashing이라고 한다. node-1에서는 디스크 읽기의 99.96%가 refault였다. 오류는 하나도 없었다. 느려지기만 했다.</figcaption></figure>
+          <ul>
+            <li>cgroup은 page cache도 그 cgroup의 메모리 사용량으로 센다.</li>
+            <li>cgroup이 한도에 닿으면 커널은 먼저 캐시를 버린다(evict). 그래도 모자라면 OOM killer가 프로세스를 종료한다.</li>
+            <li>버린 데이터를 다시 읽으면 커널은 <b>refault</b>로 센다. refault가 계속되는 상태가 <b>thrashing</b>이다.</li>
+          </ul>
+          <div class="tbl"><table>
+            <thead><tr><th>파일과 줄</th><th>뜻</th></tr></thead>
+            <tbody>
+              <tr><td><code>memory.stat</code> <code>workingset_refault_file</code></td><td>버렸다가 다시 읽은 파일 페이지 수. × 4KiB(보통의 페이지 크기) = 바이트</td></tr>
+              <tr><td><code>memory.peak</code></td><td>시작 뒤 가장 많이 쓴 메모리(바이트)</td></tr>
+              <tr><td><code>memory.events</code> <code>max</code></td><td>한도에 닿은 횟수</td></tr>
+              <tr><td><code>memory.events</code> <code>oom</code>, <code>oom_kill</code></td><td>OOM이 일어난 횟수, 종료된 프로세스 수</td></tr>
+              <tr><td><code>memory.events</code> <code>sock_throttled</code></td><td>메모리 압박 때문에 네트워크 소켓이 제한된 횟수</td></tr>
+            </tbody>
+          </table></div>
+          <div class="mine"><b>내 환경에서</b>2026-10-13, <code>bitcoin-node-1</code>의 IBD 기록: 디스크 읽기 약 1.89TB. refault 461,171,478 × 4KiB = 약 1.889TB. 즉 읽기의 99.96%가 refault였다. 데이터는 약 27GB이므로 같은 데이터를 약 70번 읽었다. 컨테이너는 <code>memory.peak</code> 약 1.55GB, <code>max 0</code>이었다. 자기 한도(2Gi)에 닿지 않았다. 부모인 kind 상자는 <code>max 24,428,625</code>였다. 이것이 원인이다.</div>
+          <div class="warn"><b>자주 하는 오해</b>"자기 한도에 닿지 않았으니 메모리 문제가 아니다"는 틀릴 수 있다. 위쪽 cgroup(Pod, kind 상자, 호스트)이 가득 차도 캐시를 잃는다. 그래서 각 층의 <code>memory.events</code>를 본다.</div>
+          <details class="try"><summary>직접 확인</summary>
+<pre>kubectl -n bitcoin-lab exec bitcoin-node-1 -- grep workingset_refault_file /sys/fs/cgroup/memory.stat
+kubectl -n bitcoin-lab exec bitcoin-node-1 -- cat /sys/fs/cgroup/memory.peak /sys/fs/cgroup/memory.events
+<span class="cm"># 호스트에서: kind 상자</span>
+id=$(docker inspect -f '{{.Id}}' bitcoin-lab-control-plane)
+cat /sys/fs/cgroup/system.slice/docker-$id.scope/memory.events</pre>
+          </details>
+          <p class="rel">연결: <a href="#memory">메모리와 페이지 캐시</a><a href="#cgroup">cgroup 나무</a><a href="#dbcache">UTXO와 dbcache</a><a href="#iometrics">io.stat</a></p>
         </article>
       </div>
     </section>
@@ -458,7 +493,8 @@ vmstat 1 5       <span class="cm"># si, so 열: 스왑 입출력</span></pre>
               <tr><td><code>pid</code></td><td>프로세스 번호</td><td>컨테이너 안의 첫 프로세스가 PID 1이다</td></tr>
               <tr><td><code>net</code></td><td>네트워크 장치, IP, 포트</td><td>컨테이너마다 IP와 포트 공간이 따로 있다</td></tr>
               <tr><td><code>uts</code></td><td>호스트 이름</td><td>컨테이너마다 이름이 다르다</td></tr>
-              <tr><td><code>ipc</code>, <code>user</code>, <code>cgroup</code></td><td>공유 메모리, UID 매핑, cgroup 경로</td><td>더 깊은 격리</td></tr>
+              <tr><td><code>cgroup</code></td><td>cgroup 나무의 보이는 범위</td><td>컨테이너 안의 <code>/sys/fs/cgroup</code>은 자기 가지에서 시작한다</td></tr>
+              <tr><td><code>ipc</code>, <code>user</code></td><td>공유 메모리, UID 매핑</td><td>더 깊은 격리</td></tr>
             </tbody>
           </table></div>
           <div class="warn"><b>자주 하는 오해</b>Kubernetes의 Namespace(<a href="#k8sns">k8s namespace</a>)는 이름만 같다. 그것은 API 객체를 묶는 논리적 폴더다. 리눅스 namespace와 관계없다.</div>
@@ -499,28 +535,58 @@ kubectl -n bitcoin-lab exec deploy/bitcoin-signet -- cat /proc/self/mountinfo</p
         <article class="c" id="cgroup" data-k="cgroup 자원 제한 cpu memory 메모리 한도 cpu.max memory.max memory-swap docker update">
           <div class="c-head"><h3>cgroup: 자원을 세고 제한하기</h3></div>
           <p class="why"><b>왜 알아야 하나</b>자원 실험(실습 E, F)은 전부 cgroup으로 한다. <code>kubectl top</code>, Docker 한도, Kubernetes <code>limits</code>는 모두 cgroup 값을 쓰거나 읽는다.</p>
-          <figure class="fig"><div class="sc"><svg viewBox="0 0 720 300" role="img" aria-label="cgroup 트리: 호스트, kind 노드, kubepods, Pod, 컨테이너" style="min-width:560px;max-width:720px"><rect class="bx" x="20" y="16" width="300" height="34" rx="5"/><text x="34" y="38" text-anchor="start">호스트 루트 cgroup</text><text class="ts mono" x="470" y="38" text-anchor="start">/sys/fs/cgroup</text><path class="ln" d="M330,33 H462" stroke-dasharray="2 4"/><path class="ln" d="M36,50 V87 H50"/><rect class="bx" x="50" y="70" width="300" height="34" rx="5"/><text x="64" y="92" text-anchor="start">kind 노드 컨테이너</text><text class="ts mono" x="470" y="92" text-anchor="start">Docker 한도: --memory, --cpus</text><path class="ln" d="M330,87 H462" stroke-dasharray="2 4"/><path class="ln" d="M66,104 V141 H80"/><rect class="bx" x="80" y="124" width="300" height="34" rx="5"/><text x="94" y="146" text-anchor="start">kubepods (kubelet)</text><text class="ts mono" x="470" y="146" text-anchor="start">노드 위 모든 Pod</text><path class="ln" d="M330,141 H462" stroke-dasharray="2 4"/><path class="ln" d="M96,158 V195 H110"/><rect class="bx" x="110" y="178" width="300" height="34" rx="5"/><text x="124" y="200" text-anchor="start">Pod bitcoin-node-0</text><text class="ts mono" x="470" y="200" text-anchor="start">Pod 안 컨테이너의 합</text><path class="ln" d="M330,195 H462" stroke-dasharray="2 4"/><path class="ln" d="M126,212 V249 H140"/><rect class="hl" x="140" y="232" width="300" height="34" rx="5"/><text class="tb" x="154" y="254" text-anchor="start">bitcoind 컨테이너</text><text class="ts mono" x="470" y="254" text-anchor="start">limits → memory.max, cpu.max</text><path class="ln" d="M330,249 H462" stroke-dasharray="2 4"/></svg></div><figcaption>자식은 부모의 한도를 넘을 수 없다. kind 노드에 Docker 한도를 걸면 그 아래 모든 Pod가 함께 제한된다.</figcaption></figure>
+          <figure class="fig"><div class="sc"><svg viewBox="0 0 720 302" role="img" aria-label="cgroup 나무: 호스트, kind 노드 컨테이너, kubepods, Pod, 컨테이너와 2026-10-13 측정 값" style="min-width:600px;max-width:720px"><rect class="bx" x="20" y="16" width="250" height="34" rx="5"/><text x="34" y="38" text-anchor="start">promet 호스트 (뿌리)</text><path class="ln" d="M272,33 H392" stroke-dasharray="2 4"/><text class="ts mono" x="400" y="37" text-anchor="start">/sys/fs/cgroup · 메모리 14Gi</text><path class="ln" d="M34,50 V87 H46"/><rect class="wr" x="46" y="70" width="250" height="34" rx="5"/><text class="tb" x="60" y="92" text-anchor="start">kind 노드 컨테이너</text><path class="ln" d="M298,87 H392" stroke-dasharray="2 4"/><text class="ts mono" x="400" y="83" text-anchor="start">system.slice/docker-&lt;id&gt;.scope</text><text class="ts tw" x="400" y="100" text-anchor="start">memory.max 4GiB · 가득 참 24,428,625번</text><path class="ln" d="M60,104 V141 H72"/><rect class="bx" x="72" y="124" width="250" height="34" rx="5"/><text x="86" y="146" text-anchor="start">kubepods (kubelet)</text><path class="ln" d="M324,141 H392" stroke-dasharray="2 4"/><text class="ts" x="400" y="145" text-anchor="start">노드 위 모든 Pod</text><path class="ln" d="M86,158 V195 H98"/><rect class="bx" x="98" y="178" width="250" height="34" rx="5"/><text x="112" y="200" text-anchor="start">Pod bitcoin-node-1</text><path class="ln" d="M350,195 H392" stroke-dasharray="2 4"/><text class="ts" x="400" y="199" text-anchor="start">Pod 안 컨테이너의 합</text><path class="ln" d="M112,212 V249 H124"/><rect class="hl" x="124" y="232" width="250" height="34" rx="5"/><text class="tb" x="138" y="254" text-anchor="start">bitcoind 컨테이너</text><path class="ln" d="M376,249 H392" stroke-dasharray="2 4"/><text class="ts mono" x="400" y="245" text-anchor="start">memory.max 2Gi · peak 1.55GB</text><text class="ts" x="400" y="262" text-anchor="start">자기 한도에 닿은 횟수 0</text><text class="ts ta" x="116" y="254" text-anchor="end">Pod 안의 뿌리 →</text><text class="ts" x="20" y="292" text-anchor="start">위 네 층은 호스트에서만 보인다. Pod 안에서는 맨 아래 칸이 뿌리처럼 보인다 (cgroup namespace).</text></svg></div><figcaption>2026-10-13 측정 값이다. 컨테이너는 자기 한도(2Gi)에 닿지 않았다. 그러나 부모인 kind 상자(4GiB)가 가득 차서 캐시를 잃었다. 자식은 부모의 한도를 넘을 수 없다. 같은 날 상자를 8GiB로 늘렸다.</figcaption></figure>
           <ul>
             <li>cgroup은 프로세스 묶음이다. 커널은 묶음마다 CPU, 메모리, I/O 사용량을 센다.</li>
             <li>묶음에 한도를 걸 수 있다. 예: <code>memory.max</code>, <code>cpu.max</code>.</li>
             <li>cgroup은 트리다. 자식은 부모의 한도를 넘을 수 없다.</li>
             <li>내 서버는 cgroup v2를 쓴다. 파일은 <code>/sys/fs/cgroup</code> 아래에 있다.</li>
+            <li><b>cgroup namespace</b>: 컨테이너 안의 <code>/sys/fs/cgroup</code>은 나무의 뿌리가 아니라 자기 가지다. 그래서 Pod 안에서 읽은 <code>memory.max</code>, <code>cpu.stat</code>은 그 컨테이너 자신의 값이다. 위쪽 층은 호스트에서 본다.</li>
           </ul>
           <div class="tbl"><table>
             <thead><tr><th></th><th>namespace</th><th>cgroup</th></tr></thead>
             <tbody>
               <tr><td>질문</td><td>무엇이 보이는가?</td><td>얼마나 쓸 수 있는가?</td></tr>
-              <tr><td>예</td><td>다른 프로세스가 안 보인다</td><td>메모리 2 GiB를 넘으면 종료된다</td></tr>
+              <tr><td>예</td><td>다른 프로세스가 안 보인다</td><td>메모리 한도에 닿으면 캐시를 버리고, 그래도 넘으면 종료된다</td></tr>
             </tbody>
           </table></div>
-          <div class="mine"><b>내 환경에서</b>트리는 대략 이렇다. 호스트 → Docker의 kind 노드 cgroup → kubelet의 Pod cgroup → 컨테이너 cgroup. kind 노드에 Docker 한도를 걸면 그 아래의 모든 Pod가 함께 제한된다. Docker의 <code>--memory-swap</code>은 "메모리 + 스왑"의 합계다. 그래서 <code>--memory</code>보다 작을 수 없다.</div>
+          <div class="mine"><b>내 환경에서</b>트리는 대략 이렇다. 호스트 → Docker의 kind 노드 cgroup → kubelet의 Pod cgroup → 컨테이너 cgroup. kind 노드에 Docker 한도를 걸면 그 아래의 모든 Pod가 함께 제한된다. Docker의 <code>--memory-swap</code>은 "메모리 + 스왑"의 합계다. 그래서 <code>--memory</code>보다 작을 수 없다. 이 서버의 Docker는 systemd 방식으로 cgroup을 만든다. 그래서 kind 상자는 호스트의 <code>/sys/fs/cgroup/system.slice/docker-&lt;id&gt;.scope/</code>에 있다. 2026-10-13 확인: 메모리 4GiB(같은 날 8GiB로 늘림), CPU 3.5코어.</div>
+          <div class="warn"><b>자주 하는 오해</b>"Pod 안에 <code>system.slice</code>가 없다"는 정상이다. cgroup namespace 때문에 Pod 안에서는 위쪽 층이 보이지 않는다. 컨테이너 파일시스템과 호스트 파일시스템이 다른 것(<a href="#mountns">mount namespace</a>)과 같은 원리다.</div>
           <details class="try"><summary>직접 확인</summary>
 <pre>cat /proc/self/cgroup                                <span class="cm"># 내 셸의 cgroup 경로</span>
 systemd-cgls --no-pager | head -40                    <span class="cm"># cgroup 트리</span>
 kubectl -n bitcoin-lab exec deploy/bitcoin-signet -- \
-  cat /sys/fs/cgroup/memory.max /sys/fs/cgroup/memory.current</pre>
+  cat /sys/fs/cgroup/memory.max /sys/fs/cgroup/memory.current
+cat /proc/$(pgrep -n bitcoind)/cgroup                <span class="cm"># 호스트에서: bitcoind의 전체 cgroup 경로</span></pre>
           </details>
-          <p class="rel">연결: <a href="#resources">requests와 limits</a><a href="#memory">메모리</a><a href="#map">전체 지도</a></p>
+          <p class="rel">연결: <a href="#cputhrottle">cpu.max와 throttling</a><a href="#refault">refault</a><a href="#resources">requests와 limits</a><a href="#memory">메모리</a><a href="#map">전체 지도</a></p>
+        </article>
+
+        <article class="c" id="cputhrottle" data-k="cpu.max throttling 스로틀링 cpu.stat usage_usec nr_throttled nr_periods quota period 밀리 1000m 코어 par 평균">
+          <div class="c-head"><h3>CPU limit의 실체: cpu.max와 throttling</h3></div>
+          <p class="why"><b>왜 알아야 하나</b>"CPU 한도가 느리게 했는가?"에는 추측하지 않고 숫자로 답할 수 있다. Kubernetes의 <code>limits.cpu</code>는 커널의 <code>cpu.max</code> 파일이 된다. 커널은 멈춘 횟수와 시간을 <code>cpu.stat</code>에 센다.</p>
+          <figure class="fig"><div class="sc"><svg viewBox="0 0 720 158" role="img" aria-label="CPU limit 1코어에서 스레드 2개가 창의 절반에 quota를 다 쓰고 나머지 절반은 멈춘다" style="min-width:560px;max-width:720px"><path class="ln" d="M110,28 V108" stroke-dasharray="3 3"/><path class="ln" d="M310,28 V108" stroke-dasharray="3 3"/><path class="ln" d="M510,28 V108" stroke-dasharray="3 3"/><path class="ln" d="M710,28 V108" stroke-dasharray="3 3"/><text class="ts" x="210" y="20" text-anchor="middle">창 1 (100ms)</text><text class="ts" x="410" y="20" text-anchor="middle">창 2 (100ms)</text><text class="ts" x="610" y="20" text-anchor="middle">창 3 (100ms)</text><text x="10" y="55" text-anchor="start">스레드 1</text><rect class="hl" x="112" y="38" width="96" height="26" rx="5"/><text class="ts" x="160" y="55" text-anchor="middle">실행</text><rect class="wr" x="212" y="38" width="96" height="26" rx="5"/><text class="ts tw" x="260" y="55" text-anchor="middle">멈춤</text><rect class="hl" x="312" y="38" width="96" height="26" rx="5"/><text class="ts" x="360" y="55" text-anchor="middle">실행</text><rect class="wr" x="412" y="38" width="96" height="26" rx="5"/><text class="ts tw" x="460" y="55" text-anchor="middle">멈춤</text><rect class="hl" x="512" y="38" width="96" height="26" rx="5"/><text class="ts" x="560" y="55" text-anchor="middle">실행</text><rect class="wr" x="612" y="38" width="96" height="26" rx="5"/><text class="ts tw" x="660" y="55" text-anchor="middle">멈춤</text><text x="10" y="89" text-anchor="start">스레드 2</text><rect class="hl" x="112" y="72" width="96" height="26" rx="5"/><text class="ts" x="160" y="89" text-anchor="middle">실행</text><rect class="wr" x="212" y="72" width="96" height="26" rx="5"/><text class="ts tw" x="260" y="89" text-anchor="middle">멈춤</text><rect class="hl" x="312" y="72" width="96" height="26" rx="5"/><text class="ts" x="360" y="89" text-anchor="middle">실행</text><rect class="wr" x="412" y="72" width="96" height="26" rx="5"/><text class="ts tw" x="460" y="89" text-anchor="middle">멈춤</text><rect class="hl" x="512" y="72" width="96" height="26" rx="5"/><text class="ts" x="560" y="89" text-anchor="middle">실행</text><rect class="wr" x="612" y="72" width="96" height="26" rx="5"/><text class="ts tw" x="660" y="89" text-anchor="middle">멈춤</text><text class="ts mono" x="110" y="130" text-anchor="start">cpu.max = 100000 100000 (1000m): 창마다 CPU 시간 100ms</text><text class="ts" x="110" y="148" text-anchor="start">스레드 2개 × 50ms = 100ms → 창의 절반에서 quota를 다 쓴다</text></svg></div><figcaption>최악의 경우를 그렸다. 멈춤 구간에는 빈 CPU가 있어도 기다린다. 실제 node-1의 IBD에서는 창의 약 2.6%에서만 멈췄다.</figcaption></figure>
+          <ul>
+            <li><code>m</code>은 밀리(1/1000)다. <code>1000m</code> = 1코어, <code>250m</code> = 0.25코어. 대문자 <code>M</code>은 메가(백만)다.</li>
+            <li><code>cpu.max</code>의 형식은 <code>&lt;quota&gt; &lt;period&gt;</code>이고, 단위는 마이크로초(µs)다. <code>100000 100000</code>은 "100ms마다 CPU 시간 100ms까지", 즉 1코어다. <code>500m</code>이면 <code>50000 100000</code>이다.</li>
+            <li>창 안에서 quota를 다 쓰면 커널은 다음 창까지 그 cgroup을 멈춘다. 이것이 <b>throttling</b>이다.</li>
+          </ul>
+          <div class="tbl"><table>
+            <thead><tr><th><code>cpu.stat</code>의 줄</th><th>뜻</th><th>계산</th></tr></thead>
+            <tbody>
+              <tr><td><code>usage_usec</code></td><td>지금까지 쓴 CPU 시간의 합</td><td>÷ 걸린 시간 = 평균 사용 코어 수</td></tr>
+              <tr><td><code>nr_periods</code></td><td>실행할 일이 있었던 창의 수</td><td>—</td></tr>
+              <tr><td><code>nr_throttled</code></td><td>그중 멈춘 창의 수</td><td>÷ <code>nr_periods</code> = 멈춘 창의 비율</td></tr>
+              <tr><td><code>throttled_usec</code></td><td>멈춘 시간의 합</td><td>한도를 없애면 줄일 수 있는 최대 시간</td></tr>
+            </tbody>
+          </table></div>
+          <div class="mine"><b>내 환경에서</b>2026-10-13에 <code>bitcoin-node-1</code>의 IBD 기록을 읽었다. limit <code>1000m</code> → <code>cpu.max</code> = <code>100000 100000</code>. 멈춘 창은 16,441 / 625,561(약 2.6%), 멈춘 시간은 약 625초(약 10분)였다. IBD는 약 4시간 53분이었으므로 CPU 한도는 주된 원인이 아니었다. 평균 사용은 약 7,922초 ÷ 17,570초 = 약 0.45코어였다. 즉 CPU는 시간의 절반 넘게 다른 것을 기다렸다.</div>
+          <div class="warn"><b>자주 하는 오해</b>throttling이 있다고 CPU가 원인인 것은 아니다. 비율과 시간을 계산한다. 평균 사용이 한도보다 훨씬 낮으면, CPU는 디스크나 네트워크를 기다린 것이다.</div>
+          <details class="try"><summary>직접 확인</summary>
+<pre>kubectl -n bitcoin-lab exec bitcoin-node-1 -- cat /sys/fs/cgroup/cpu.max
+kubectl -n bitcoin-lab exec bitcoin-node-1 -- cat /sys/fs/cgroup/cpu.stat</pre>
+          </details>
+          <p class="rel">연결: <a href="#cgroup">cgroup</a><a href="#resources">requests와 limits</a><a href="#use">성능을 보는 순서</a></p>
         </article>
 
         <article class="c" id="volume" data-k="볼륨 volume 바인드 마운트 bind mount 데이터 보존">
@@ -707,6 +773,7 @@ kubectl get storageclass</pre>
             <li><code>volumeClaimTemplates</code>는 PVC의 틀이다. Pod 하나마다 PVC 하나를 만든다. 예: <code>data-bitcoin-node-0</code>.</li>
             <li>StatefulSet은 <code>serviceName</code>으로 <a href="#headless">headless Service</a>를 가리킨다. 이것이 고정된 DNS 이름을 만든다.</li>
             <li>StatefulSet을 지워도 PVC는 남는다(기본값). 데이터를 보호하기 위해서다.</li>
+            <li>Pod 하나만 지우면(<code>kubectl delete pod bitcoin-node-1</code>) 컨트롤러가 같은 이름의 Pod를 다시 만들고 같은 PVC를 붙인다. 데이터는 남는다. 컨테이너는 새 cgroup을 받으므로 사용량 카운터는 0부터 다시 센다.</li>
             <li>StatefulSet은 틀을 두 개 가진다. <code>template</code>(Pod 틀)과 <code>volumeClaimTemplates</code>(PVC 틀)이다. 두 키는 같은 깊이에 쓴다.</li>
           </ul>
           <div class="warn"><b>자주 하는 오해</b>bitcoind의 <code>replicas: 2</code>는 무중단용 복사본이 아니다. 각자 데이터와 피어를 가진 독립 노드 2개다. 그리고 "꺼지면 다시 켜기"는 replicas 수와 관계없다. <code>replicas: 1</code>이어도 컨트롤러가 죽은 Pod를 다시 만든다.</div>
@@ -758,20 +825,49 @@ kubectl get storageclass</pre>
               <tr><td>의미</td><td>"최소 이만큼 필요하다"</td><td>"이만큼을 넘으면 안 된다"</td></tr>
               <tr><td>누가 쓰나</td><td>스케줄러(배치 결정), CPU 비율</td><td>커널 cgroup(강제)</td></tr>
               <tr><td>CPU 초과 시</td><td>—</td><td>느려진다 (throttling). 종료되지 않는다</td></tr>
-              <tr><td>메모리 초과 시</td><td>—</td><td>종료된다 (<code>OOMKilled</code>)</td></tr>
+              <tr><td>메모리 초과 시</td><td>—</td><td>먼저 캐시를 버린다. 그래도 넘으면 종료된다 (<code>OOMKilled</code>)</td></tr>
             </tbody>
           </table></div>
           <ul>
             <li>CPU 단위: <code>1</code> = 코어 1개, <code>500m</code> = 0.5 코어.</li>
             <li>메모리 단위: <code>Mi</code>, <code>Gi</code> (1024 기준).</li>
+            <li>limits는 상한이다. 보장이 아니다. 위쪽 층(kind 상자, 호스트)이 먼저 가득 차면 limits 아래에서도 캐시를 잃는다.</li>
+            <li>Kubernetes는 자기 밖의 한도를 모른다. kind 안의 kubelet은 노드 메모리를 호스트 기준(약 14Gi)으로 보고한다. 그래서 scheduler는 kind 상자보다 큰 Pod 묶음을 배치할 수 있다.</li>
           </ul>
-          <div class="mine"><b>내 환경에서</b>bitcoind의 <code>-dbcache</code>는 메모리 limits보다 충분히 작아야 한다. 아니면 동기화 중에 OOMKilled가 될 수 있다. kind 노드의 Docker 한도가 있다면, 모든 Pod의 합이 그 안에 있어야 한다.</div>
+          <div class="mine"><b>내 환경에서</b>bitcoind의 <code>-dbcache</code>는 메모리 limits보다 충분히 작아야 한다. 아니면 동기화 중에 OOMKilled가 될 수 있다. kind 노드의 Docker 한도가 있다면, 모든 Pod의 합이 그 안에 있어야 한다. 2026-10-13 측정: Pod 3개의 limit 합은 6Gi였고 kind 상자는 4GiB였다. node-1의 실제 peak는 약 1.55GB였다.</div>
           <details class="try"><summary>직접 확인</summary>
 <pre>kubectl -n bitcoin-lab top pod              <span class="cm"># metrics-server 필요</span>
 kubectl -n bitcoin-lab exec deploy/bitcoin-signet -- cat /sys/fs/cgroup/cpu.stat
 <span class="cm"># nr_throttled, throttled_usec: CPU 한도에 걸린 횟수와 시간</span></pre>
           </details>
-          <p class="rel">연결: <a href="#cgroup">cgroup</a><a href="#dbcache">dbcache</a><a href="#experiment">실험 설계</a></p>
+          <p class="rel">연결: <a href="#qos">QoS와 OOM 점수</a><a href="#cputhrottle">cpu.max와 throttling</a><a href="#cgroup">cgroup</a><a href="#dbcache">dbcache</a><a href="#experiment">실험 설계</a></p>
+        </article>
+
+        <article class="c" id="qos" data-k="qos guaranteed burstable besteffort oom score oom_score_adj 등급 request 예약 정직 종료 순서">
+          <div class="c-head"><h3>QoS 등급과 OOM 점수</h3></div>
+          <p class="why"><b>왜 알아야 하나</b>메모리가 부족하면 커널은 프로세스 하나를 골라 종료한다. 누구를 먼저 고를지는 점수로 정한다. Kubernetes는 requests와 limits로 이 점수를 정한다.</p>
+          <figure class="fig"><div class="sc"><svg viewBox="0 0 720 140" role="img" aria-label="OOM 점수가 큰 프로세스부터 종료된다: crawler 1000, bitcoind 약 965, 배치 200, collector 0, Guaranteed −997" style="min-width:600px;max-width:720px"><rect class="bx" x="20" y="20" width="128" height="70" rx="5"/><text class="tb" x="84" y="42" text-anchor="middle">1000</text><text class="ts mono" x="84" y="61" text-anchor="middle">namu-crawler</text><text class="ts" x="84" y="79" text-anchor="middle">호스트 서비스</text><rect class="wr" x="158" y="20" width="128" height="70" rx="5"/><text class="tb" x="222" y="42" text-anchor="middle">약 965</text><text class="ts mono" x="222" y="61" text-anchor="middle">bitcoind Pod</text><text class="ts" x="222" y="79" text-anchor="middle">Burstable</text><rect class="bx" x="296" y="20" width="128" height="70" rx="5"/><text class="tb" x="360" y="42" text-anchor="middle">200</text><text class="ts mono" x="360" y="61" text-anchor="middle">indra 배치</text><text class="ts" x="360" y="79" text-anchor="middle">호스트 서비스</text><rect class="bx" x="434" y="20" width="128" height="70" rx="5"/><text class="tb" x="498" y="42" text-anchor="middle">0</text><text class="ts mono" x="498" y="61" text-anchor="middle">indra-collector</text><text class="ts" x="498" y="79" text-anchor="middle">호스트 서비스</text><rect class="hl" x="572" y="20" width="128" height="70" rx="5"/><text class="tb" x="636" y="42" text-anchor="middle">−997</text><text class="ts mono" x="636" y="61" text-anchor="middle">Guaranteed Pod</text><text class="ts" x="636" y="79" text-anchor="middle">예시: request = limit</text><path class="ln" d="M20,110 H690" marker-end="url(#am)"/><text class="ts" x="20" y="130" text-anchor="start">메모리가 부족할 때 커널이 먼저 고르는 쪽</text><text class="ts" x="700" y="130" text-anchor="end">나중</text></svg></div><figcaption>호스트 서비스의 점수는 사용자의 호스트 설정 표(2026-10-13)에서 왔다. bitcoind의 점수는 Kubernetes가 request로 계산한다. Guaranteed Pod는 내 환경에 없는 예시다.</figcaption></figure>
+          <div class="tbl"><table>
+            <thead><tr><th>등급</th><th>조건</th><th>점수 (<code>oom_score_adj</code>)</th></tr></thead>
+            <tbody>
+              <tr><td>Guaranteed</td><td>모든 컨테이너에서 CPU와 메모리의 request = limit</td><td>−997 (거의 마지막)</td></tr>
+              <tr><td>Burstable</td><td>request가 있지만 limit과 다르다</td><td>1000 − 1000 × request ÷ 노드 메모리. request가 작을수록 높다</td></tr>
+              <tr><td>BestEffort</td><td>request와 limit이 모두 없다</td><td>1000 (가장 먼저)</td></tr>
+            </tbody>
+          </table></div>
+          <ul>
+            <li>request는 "이만큼 예약해 주세요"다. scheduler는 request의 합으로 배치를 계산한다.</li>
+            <li>request보다 더 쓰는 부분은 예약이 아니다. 남는 공간에서 빌려 쓰는 것이다. 그래서 메모리가 부족하면 많이 빌린 Pod부터 줄인다.</li>
+            <li>정직한 request는 작은 값이 아니다. 실제 사용량에 가까운 값이다.</li>
+          </ul>
+          <div class="mine"><b>내 환경에서</b>bitcoind Pod는 request 512Mi, limit 2Gi이므로 Burstable이다. 계산: 1000 − 1000 × 512Mi ÷ 약 14Gi ≈ 965. 호스트 설정 표(2026-10-13)에는 967로 적혀 있다. 측정한 peak는 약 1.55GB로, request의 약 3배다. request를 측정값(예: <code>1536Mi</code>)에 맞추면 점수가 내려간다. 단, 바꾸면 Pod가 다시 만들어지므로 실습 F가 끝난 뒤에 바꾼다.</div>
+          <div class="warn"><b>자주 하는 오해</b>QoS 등급은 Kubernetes 안의 규칙이다. 호스트 서비스(crawler, collector, 배치)는 Kubernetes 밖에 있다. 그 점수는 Docker나 systemd 설정으로 정한다.</div>
+          <details class="try"><summary>직접 확인</summary>
+<pre>kubectl -n bitcoin-lab get pod bitcoin-node-1 -o jsonpath='{.status.qosClass}'
+<span class="cm"># 호스트에서: 가장 최근에 시작한 bitcoind의 점수</span>
+cat /proc/$(pgrep -n bitcoind)/oom_score_adj</pre>
+          </details>
+          <p class="rel">연결: <a href="#resources">requests와 limits</a><a href="#memory">메모리</a><a href="#refault">refault</a></p>
         </article>
 
         <article class="c" id="kind" data-k="kind kubernetes in docker 노드 컨테이너 control-plane 로컬 클러스터 포트 매핑">
@@ -783,7 +879,8 @@ kubectl -n bitcoin-lab exec deploy/bitcoin-signet -- cat /sys/fs/cgroup/cpu.stat
             <li>그래서 호스트의 <code>docker ps</code>에는 Pod가 안 보인다. kind 노드만 보인다.</li>
             <li>클러스터 네트워크는 Docker 네트워크 안에 있다. 외부에서 Pod로 들어오려면 별도 포트 매핑이 필요하다.</li>
           </ul>
-          <div class="mine"><b>내 환경에서</b>노드는 <code>bitcoin-lab-control-plane</code> 하나다. 모든 Pod가 이 컨테이너 안에서 같은 SSD, 같은 CPU를 나눠 쓴다. "노드 여러 개"는 Kubernetes 노드가 아니라 bitcoind Pod 여러 개다. <a href="#twonodes">"노드"의 두 뜻</a>을 본다.</div>
+          <div class="mine"><b>내 환경에서</b>노드는 <code>bitcoin-lab-control-plane</code> 하나다. 모든 Pod가 이 컨테이너 안에서 같은 SSD, 같은 CPU를 나눠 쓴다. "노드 여러 개"는 Kubernetes 노드가 아니라 bitcoind Pod 여러 개다. <a href="#twonodes">"노드"의 두 뜻</a>을 본다. kind 노드 컨테이너에는 Docker 한도가 있다. 2026-10-13 확인: 메모리 4GiB(같은 날 8GiB로 늘림), CPU 3.5코어. 바꾸는 명령: <code>docker update --memory 8g --memory-swap 8g bitcoin-lab-control-plane</code>. 컨테이너는 재시작하지 않는다.</div>
+          <div class="warn"><b>자주 하는 오해</b>kind 안의 kubelet은 이 Docker 한도를 모른다. 그래서 <code>kubectl describe node</code>의 메모리는 상자 크기가 아니라 호스트 메모리다. 2026-10-13의 IBD가 느렸던 원인이 이 차이였다(<a href="#refault">refault</a>).</div>
           <details class="try"><summary>직접 확인</summary>
 <pre>kind get clusters
 docker exec bitcoin-lab-control-plane crictl ps    <span class="cm"># kind 노드 안의 컨테이너 목록</span></pre>
@@ -822,17 +919,22 @@ docker exec bitcoin-lab-control-plane crictl ps    <span class="cm"># kind 노�
               <tr><td><code>you must specify at least one command for the container</code></td><td><code>--</code> 뒤에 실행할 명령이 없다</td></tr>
               <tr><td><code>arguments in resource/name form may not have more than one slash</code></td><td>대상 자리에 경로를 썼다. 대상은 <code>종류/이름</code> 형식이다</td></tr>
               <tr><td><code>du: cannot access '/var/lib/docker'</code></td><td>호스트 경로를 컨테이너 안에서 찾았다 (<a href="#mountns">mount namespace</a>)</td></tr>
+              <tr><td><code>error code: -32601</code> <code>Method not found</code></td><td>bitcoind까지 도착했다. 연결과 인증은 성공했고 RPC 이름이 틀렸다 (예: <code>getblcokchaininfo</code>). 같이 나온 <code>exit code 89</code>는 32601을 256으로 나눈 나머지다. 종료 코드는 0–255만 쓸 수 있기 때문이다</td></tr>
             </tbody>
           </table></div>
           <ul>
             <li><code>deploy/bitcoin-signet</code>: Deployment가 현재 Pod를 골라 준다. Pod 이름은 무작위라서 이 형식을 쓴다.</li>
             <li><code>bitcoin-node-0</code>: StatefulSet Pod는 이름이 고정이므로 Pod 이름만 쓴다.</li>
             <li>이름을 기억할 필요는 없다. 클러스터에 묻는다: <code>kubectl -n bitcoin-lab get deploy</code>, <code>get pod</code>.</li>
+            <li><code>exec</code>는 Pod를 실행하지 않는다. 이미 실행 중인 컨테이너 안에 새 프로세스 하나를 추가로 시작한다. 이 프로세스는 컨테이너와 같은 namespace에 들어간다. 그래서 컨테이너 안의 경로가 보인다. 요청의 길: kubectl → API 서버 → kubelet → containerd → 새 프로세스.</li>
+            <li><code>&gt;</code>(파일로 보내기)는 호스트의 셸이 먼저 읽는다. 그래서 <code>exec … -- echo x &gt; 파일</code>은 호스트에 파일을 만든다. 컨테이너 안에서 하려면 명령 전체를 컨테이너의 셸에 넘긴다: <code>exec … -- sh -c 'echo x &gt; 파일'</code>.</li>
             <li>kubectl은 API 서버에 HTTP 요청을 보내는 클라이언트일 뿐이다. <code>bitcoin-cli</code>가 bitcoind에 RPC를 보내는 것과 같다.</li>
           </ul>
+          <div class="warn"><b>자주 하는 오해</b>오류 문장만 읽고 고치지 않는다. 먼저 오류가 어느 층에서 왔는지 본다: kubectl(대상, 형식), 컨테이너 안의 프로그램(경로), bitcoind의 응답(RPC 오류 번호). 층을 알면 원인이 빨리 좁혀진다.</div>
           <div class="mine"><b>내 환경에서</b><code>btc</code> 별칭은 <code>kubectl -n bitcoin-lab exec deploy/bitcoin-signet -- bitcoin-cli -signet -datadir=/home/bitcoin/.bitcoin</code>의 줄임이다 (정확한 내용은 <code>alias btc</code>로 본다). 새 노드에 쓰려면 대상만 <code>bitcoin-node-0</code>으로 바꾼다.</div>
           <details class="try"><summary>직접 확인</summary>
 <pre>alias btc                                <span class="cm"># 별칭의 실제 내용</span>
+<span class="cm"># Ctrl+R 다음 getadded 입력: 이전에 쓴 명령을 찾는다 (~/.bash_history)</span>
 kubectl -n bitcoin-lab get deploy -v=6   <span class="cm"># kubectl이 보내는 HTTP 요청(GET https://…)이 보인다</span></pre>
           </details>
           <p class="rel">연결: <a href="#kubectl">kubectl로 읽기</a><a href="#mountns">컨테이너와 호스트 경로</a><a href="#rpccookie">쿠키 인증</a></p>
@@ -1014,10 +1116,14 @@ ss -tnp state established</pre>
             <li>작은 랜덤 I/O는 IOPS와 지연이 중요하다. 큰 순차 I/O는 처리량이 중요하다.</li>
             <li>처리량 = IOPS × 요청 크기. 그래서 같은 MB/s도 의미가 다를 수 있다.</li>
           </ul>
+          <p><b>cgroup의 <code>io.stat</code>.</b> 컨테이너가 시작된 뒤의 누적 값이다. 장치마다 한 줄이다. <code>rbytes</code>/<code>wbytes</code>는 읽은/쓴 바이트, <code>rios</code>/<code>wios</code>는 읽기/쓰기 횟수다. 초당 값은 두 번 읽고 차이를 초 수로 나누어 얻는다.</p>
+          <div class="mine"><b>내 환경에서</b>2026-10-13, node-1의 IBD 뒤: 줄이 두 개였다(<code>8:16</code>, <code>252:0</code>). 같은 I/O를 실제 디스크와 그 위의 장치(LVM으로 추정)에서 두 번 센 것이다. 값이 같으므로 한 줄만 본다. 쓰기 약 94.6GB는 데이터(약 24GB)의 약 4배다. 블록, undo 파일, flush, LevelDB 정리 때문이므로 정상 범위다. 읽기 약 1.89TB는 약 78배다. 이상한 값이었고, 원인은 <a href="#refault">refault</a>였다. 데이터는 시스템 SATA SSD(<code>/</code>)에 있다.</div>
           <details class="try"><summary>직접 확인</summary>
-<pre>iostat -x 1          <span class="cm"># sysstat 패키지. r/s, w/s, r_await, w_await, %util</span></pre>
+<pre>iostat -x 1          <span class="cm"># sysstat 패키지. r/s, w/s, r_await, w_await, %util</span>
+lsblk                <span class="cm"># MAJ:MIN 열로 8:16, 252:0이 어느 장치인지 본다</span>
+kubectl -n bitcoin-lab exec bitcoin-node-1 -- cat /sys/fs/cgroup/io.stat</pre>
           </details>
-          <p class="rel">연결: <a href="#ssdhdd">SSD와 HDD</a><a href="#use">성능을 보는 순서</a></p>
+          <p class="rel">연결: <a href="#refault">refault</a><a href="#ssdhdd">SSD와 HDD</a><a href="#use">성능을 보는 순서</a></p>
         </article>
       </div>
     </section>
@@ -1043,9 +1149,21 @@ ss -tnp state established</pre>
             <li>처음부터 따라잡는 과정을 <b>IBD</b>(Initial Block Download)라고 한다. 이때 자원을 가장 많이 쓴다.</li>
             <li>IBD와 동기화 후의 평소 동작은 다른 작업 부하다. 측정할 때 구분한다.</li>
           </ul>
+          <div class="tbl"><table>
+            <thead><tr><th><code>getblockchaininfo</code>의 값</th><th>뜻</th></tr></thead>
+            <tbody>
+              <tr><td><code>blocks</code></td><td>검증을 끝낸 블록 수</td></tr>
+              <tr><td><code>headers</code></td><td>알고 있는 블록 헤더 수</td></tr>
+              <tr><td><code>verificationprogress</code></td><td>진행률. 1이면 끝</td></tr>
+              <tr><td><code>initialblockdownload</code></td><td><code>true</code>이면 아직 IBD 중</td></tr>
+            </tbody>
+          </table></div>
+          <div class="mine"><b>내 환경에서</b><code>bitcoin-node-1</code>의 IBD(2026-10-12): <code>debug.log</code>의 <code>Bitcoin Core version</code> 줄 14:03:50 → <code>Leaving InitialBlockDownload</code> 줄 18:56:40 (UTC), 약 4시간 53분. 블록 326,203개, 디스크 약 24.1GB(<code>size_on_disk</code>), 초당 약 18.6블록.</div>
           <details class="try"><summary>직접 확인</summary>
-<pre>kubectl -n bitcoin-lab exec deploy/bitcoin-signet -- bitcoin-cli -signet getblockchaininfo
-<span class="cm"># headers와 blocks의 차이, initialblockdownload, verificationprogress</span></pre>
+<pre>kubectl -n bitcoin-lab exec bitcoin-node-1 -- \
+  bitcoin-cli -signet -datadir=/home/bitcoin/.bitcoin getblockchaininfo
+kubectl -n bitcoin-lab exec bitcoin-node-1 -- \
+  grep -E "Bitcoin Core version|Leaving InitialBlockDownload" /home/bitcoin/.bitcoin/signet/debug.log</pre>
           </details>
           <p class="rel">연결: <a href="#dbcache">UTXO와 dbcache</a><a href="#signet">Signet</a><a href="#use">성능을 보는 순서</a></p>
         </article>
@@ -1148,13 +1266,37 @@ kubectl -n bitcoin-lab logs bitcoin-node-0 | grep Bound   <span class="cm"># 실
             <li>블록을 검증할 때마다 UTXO를 찾고, 지우고, 추가한다. 이것이 작은 랜덤 I/O를 만든다.</li>
             <li><code>-dbcache=N</code>(MiB)은 UTXO를 메모리에 둘 공간이다. 크면 디스크에 덜 간다.</li>
             <li>캐시가 차면 디스크(chainstate)에 한 번에 쓴다. 이것을 <b>flush</b>라고 한다. 이때 I/O가 몰린다.</li>
+            <li>dbcache에 없는 UTXO는 <code>chainstate/</code>의 LevelDB 파일에서 읽는다. 그 파일이 page cache에 있으면 빠르고, 버려졌으면 디스크까지 간다.</li>
           </ul>
           <div class="warn"><b>자주 하는 오해</b>dbcache를 크게 하면 항상 빠른 것은 아니다. 컨테이너 메모리 limits를 넘으면 종료된다. 페이지 캐시와도 메모리를 나눈다. 측정으로 확인한다.</div>
+          <div class="mine"><b>내 환경에서</b>노드는 <code>-dbcache=512</code>다. 2026-10-13 조사에서 IBD 동안 약 1.89TB를 다시 읽었다. 다시 읽은 대상으로 가장 유력한 것은 <code>chainstate/</code>의 LevelDB 파일이다(추정). 실습 F의 <a href="#reindex">-reindex-chainstate</a>가 바로 이 부분을 다시 실행한다.</div>
           <details class="try"><summary>직접 확인</summary>
 <pre>grep -E "Using .*MiB|Flush|UpdateTip" debug.log | tail
 <span class="cm"># 캐시 배분, flush 시점, 블록 처리 속도</span></pre>
           </details>
-          <p class="rel">연결: <a href="#memory">메모리와 페이지 캐시</a><a href="#resources">limits</a><a href="#ssdhdd">SSD와 HDD</a></p>
+          <p class="rel">연결: <a href="#reindex">-reindex-chainstate</a><a href="#memory">메모리와 페이지 캐시</a><a href="#resources">limits</a><a href="#ssdhdd">SSD와 HDD</a></p>
+        </article>
+
+        <article class="c" id="reindex" data-k="reindex-chainstate reindex bitcoin.conf 설정 파일 chainstate 재구축 실험 다시 검증 verificationprogress">
+          <div class="c-head"><h3>-reindex-chainstate와 bitcoin.conf</h3></div>
+          <p class="why"><b>왜 알아야 하나</b>실습 F는 같은 작업을 조건만 바꾸어 두 번 실행한다. IBD를 다시 하면 네트워크(피어 속도)가 결과를 흔든다. <code>-reindex-chainstate</code>는 네트워크 없이 같은 검증 작업을 다시 하게 한다.</p>
+          <figure class="fig"><div class="sc"><svg viewBox="0 0 720 156" role="img" aria-label="IBD는 네트워크에서 블록을 받고, reindex-chainstate는 디스크의 블록으로 같은 검증을 다시 한다" style="min-width:600px;max-width:720px"><text class="tb" x="10" y="58" text-anchor="start">IBD</text><text class="mono" x="10" y="120" text-anchor="start">-reindex-</text><text class="mono" x="10" y="136" text-anchor="start">chainstate</text><rect class="bx" x="150" y="30" width="125" height="46" rx="5"/><text class="tb" x="212" y="50" text-anchor="middle">피어</text><text class="ts" x="212" y="67" text-anchor="middle">네트워크</text><path class="ln" d="M275,53 H293" marker-end="url(#am)"/><rect class="bx" x="295" y="30" width="125" height="46" rx="5"/><text class="tb" x="357" y="50" text-anchor="middle">blocks/ 저장</text><text class="ts" x="357" y="67" text-anchor="middle">blk*.dat</text><path class="ln" d="M420,53 H438" marker-end="url(#am)"/><rect class="bx" x="440" y="30" width="125" height="46" rx="5"/><text class="tb" x="502" y="50" text-anchor="middle">검증</text><text class="ts" x="502" y="67" text-anchor="middle">CPU · UTXO 확인</text><path class="ln" d="M565,53 H583" marker-end="url(#am)"/><rect class="bx" x="585" y="30" width="125" height="46" rx="5"/><text class="tb" x="647" y="50" text-anchor="middle">chainstate/</text><text class="ts" x="647" y="67" text-anchor="middle">UTXO 집합 (LevelDB)</text><rect class="bx" x="150" y="100" width="125" height="46" rx="5" stroke-dasharray="4 3"/><text class="ts" x="212" y="128" text-anchor="middle">네트워크 없음</text><rect class="bx" x="295" y="100" width="125" height="46" rx="5"/><text class="tb" x="357" y="120" text-anchor="middle">blocks/ 읽기</text><text class="ts" x="357" y="137" text-anchor="middle">이미 디스크에 있음</text><path class="ln" d="M420,123 H438" marker-end="url(#am)"/><rect class="bx" x="440" y="100" width="125" height="46" rx="5"/><text class="tb" x="502" y="120" text-anchor="middle">검증</text><text class="ts" x="502" y="137" text-anchor="middle">같은 작업</text><path class="ln" d="M565,123 H583" marker-end="url(#am)"/><rect class="hl" x="585" y="100" width="125" height="46" rx="5"/><text class="tb" x="647" y="120" text-anchor="middle">chainstate/</text><text class="ts" x="647" y="137" text-anchor="middle">지우고 새로 만듦</text></svg></div><figcaption><code>-reindex-chainstate</code>는 IBD에서 네트워크를 뺀 작업이다. 그래서 메모리와 디스크(page cache)의 영향만 비교할 수 있다.</figcaption></figure>
+          <ul>
+            <li><code>-reindex-chainstate</code>: <code>chainstate/</code>(UTXO 집합)를 지우고, 디스크에 이미 있는 블록으로 다시 만든다. 블록을 다운로드하지 않는다.</li>
+            <li><code>-reindex</code>: 블록 인덱스(<code>blocks/index/</code>)까지 다시 만든다. 더 오래 걸린다.</li>
+            <li>설정은 명령줄(<code>args</code>)과 <code>bitcoin.conf</code>에서 온다. 파일에서는 앞의 <code>-</code>를 빼고 쓴다: <code>reindex-chainstate=1</code>.</li>
+            <li><code>bitcoin.conf</code>는 데이터 디렉터리의 맨 위에 둔다. <code>signet/</code> 안이 아니다. <code>signet/</code>에는 데이터만 있다.</li>
+            <li>bitcoind는 시작할 때만 설정을 읽는다. 그래서 파일을 쓴 뒤 재시작해야 한다.</li>
+          </ul>
+          <div class="mine"><b>내 환경에서</b>StatefulSet의 <code>args</code>에 넣으면 node-0과 node-1이 모두 reindex를 한다. 하지만 <code>bitcoin.conf</code>는 PVC 안에 있고, node-1의 PVC는 node-1만 쓴다. 그래서 2026-10-13에 node-1의 <code>/home/bitcoin/.bitcoin/bitcoin.conf</code>에만 한 줄을 썼다. 그다음 <code>kubectl delete pod bitcoin-node-1</code>로 재시작했다. 새 컨테이너는 새 cgroup을 받으므로 <code>cpu.stat</code>, <code>io.stat</code>, <code>memory.stat</code>이 0부터 다시 센다. 끝났을 때의 값이 그대로 이번 실행의 값이 된다.</div>
+          <div class="warn"><b>자주 하는 오해</b>끝난 뒤에 설정 줄을 지워야 한다. 줄이 남아 있으면 Pod가 다시 시작될 때마다 reindex를 다시 한다. 그리고 블록 수로 남은 시간을 예상하지 않는다. Signet 초기 블록은 거의 비어 있어서 빨리 지나간다. <code>verificationprogress</code>가 더 정확하다.</div>
+          <details class="try"><summary>직접 확인</summary>
+<pre>kubectl -n bitcoin-lab exec bitcoin-node-1 -- cat /home/bitcoin/.bitcoin/bitcoin.conf
+kubectl -n bitcoin-lab exec bitcoin-node-1 -- \
+  bitcoin-cli -signet -datadir=/home/bitcoin/.bitcoin getblockchaininfo
+<span class="cm"># 끝나면 blocks = headers, initialblockdownload: false</span></pre>
+          </details>
+          <p class="rel">연결: <a href="#dbcache">UTXO와 dbcache</a><a href="#experiment">실험 설계</a><a href="#statefulset">StatefulSet</a><a href="#kexec">sh -c</a></p>
         </article>
       </div>
     </section>
@@ -1181,7 +1323,14 @@ kubectl -n bitcoin-lab logs bitcoin-node-0 | grep Bound   <span class="cm"># 실
             <li>사용률이 낮아도 포화가 있을 수 있다. 예: CPU 한도 때문에 throttling되는 컨테이너.</li>
             <li>시스템 전체 값과 노드 하나의 값을 구분한다. 서버에는 다른 서비스도 있다.</li>
           </ul>
-          <p class="rel">연결: <a href="#iometrics">IOPS와 지연</a><a href="#cgroup">cgroup</a><a href="#experiment">실험 설계</a></p>
+          <div class="mine"><b>내 환경에서</b>2026-10-13의 조사를 USE로 다시 보면 이렇다.
+            <ul>
+              <li>CPU: 사용률 평균 약 0.45코어(낮음), 포화(throttling) 약 2.6%(낮음). 원인이 아니다.</li>
+              <li>디스크: 읽기 약 1.89TB, 데이터의 약 78배. 이상하다.</li>
+              <li>메모리: kind 상자가 24,428,625번 가득 찼다(포화). 오류(OOM)는 0이다.</li>
+            </ul>
+            결론: 메모리 포화 → 캐시 손실 → 디스크 읽기 → CPU 대기. 오류가 없어서 "느리기만" 했다.</div>
+          <p class="rel">연결: <a href="#cputhrottle">throttling</a><a href="#refault">refault</a><a href="#iometrics">IOPS와 지연</a><a href="#cgroup">cgroup</a><a href="#experiment">실험 설계</a></p>
         </article>
 
         <article class="c" id="experiment" data-k="실험 설계 변수 하나 반복 기록 재현 기준선 baseline 캐시 효과">
@@ -1195,8 +1344,9 @@ kubectl -n bitcoin-lab logs bitcoin-node-0 | grep Bound   <span class="cm"># 실
             <li><b>조건을 기록한다.</b> 버전, 설정, 디스크, 캐시 상태, 피어 수, 다른 서비스의 부하.</li>
             <li><b>결과를 원인으로 설명한다.</b> "빨라졌다"가 아니라 "디스크 대기가 줄어서 빨라졌다".</li>
           </ol>
-          <div class="warn"><b>자주 하는 오해</b>네트워크 피어는 매번 다르다. 블록을 받는 속도가 결과를 흔든다. 검증 속도만 재고 싶으면 피어 조건을 고정하는 방법(예: 내 노드에만 <code>-connect</code>)을 생각한다.</div>
-          <p class="rel">연결: <a href="#use">USE</a><a href="#memory">캐시 효과</a><a href="#signet">Signet의 한계</a></p>
+          <div class="warn"><b>자주 하는 오해</b>네트워크 피어는 매번 다르다. 블록을 받는 속도가 결과를 흔든다. 검증 속도만 재고 싶으면 피어 조건을 고정하거나 없앤다. 예: 내 노드에만 <code>-connect</code>, 또는 블록을 다시 받지 않는 <a href="#reindex">-reindex-chainstate</a>.</div>
+          <div class="mine"><b>내 환경에서</b>실습 F(2026-10-13 시작)의 질문: "kind 상자를 4GiB → 8GiB로 바꾸면 <code>bitcoin-node-1</code>의 <code>-reindex-chainstate</code>가 빨라지는가?" 실행 1은 8GiB, 실행 2는 4GiB다. CPU 3.5코어 같은 나머지 조건은 바꾸지 않는다. 잴 것: 걸린 시간, <code>usage_usec</code>, throttling, <code>rbytes</code>, <code>wbytes</code>, <code>workingset_refault_file</code>, kind 상자의 <code>memory.events</code> <code>max</code>(실행 1 시작 전 24,432,572). 가설이 맞으면 8GiB에서 refault와 읽기가 크게 줄고 시간이 짧아진다. 시간이 거의 같으면 가설이 틀린 것이고, 그것도 결과다.</div>
+          <p class="rel">연결: <a href="#reindex">-reindex-chainstate</a><a href="#use">USE</a><a href="#memory">캐시 효과</a><a href="#signet">Signet의 한계</a></p>
         </article>
       </div>
     </section>
