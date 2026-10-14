@@ -218,7 +218,7 @@ html { scroll-behavior: smooth; }
   <main>
     <header class="intro">
       <h1>nodelab 개념 노트</h1>
-      <p class="stamp" id="stamp">마지막 갱신 <b><time datetime="2026-10-14T14:06+09:00">2026-10-14 14:06</time></b> (한국 시간) · 매일 06:52에 학습 기록을 읽고 자동으로 갱신한다.</p>
+      <p class="stamp" id="stamp">마지막 갱신 <b><time datetime="2026-10-15T07:11+09:00">2026-10-15 07:11</time></b> (한국 시간) · 매일 06:52에 학습 기록을 읽고 자동으로 갱신한다.</p>
       <p>노드를 운영할 때 필요한 기본 개념을 모은 페이지다. 한 번에 하나씩 읽는다. 각 개념은 짧다.</p>
       <p>모든 개념은 같은 순서로 쓴다. 먼저 <b>왜 알아야 하는지</b> 쓴다. 그다음 핵심 내용을 쓴다. 그다음 <b>내 환경</b>(kind 클러스터 <code>bitcoin-lab</code>, namespace <code>bitcoin-lab</code>, deployment <code>bitcoin-signet</code>)과 연결한다. 그림은 "왜"의 바로 아래에 있다. 명령은 접혀 있다. 필요할 때만 연다.</p>
       <div class="legend"><span class="l-why">왜 알아야 하나</span><span class="l-mine">내 환경에서</span><span class="l-warn">자주 하는 오해</span></div>
@@ -230,8 +230,9 @@ html { scroll-behavior: smooth; }
       </div>
       <div class="now" id="now">
         <h2>지금 학습 위치</h2>
-        <p>실습 A–E 완료. 실습 E(2026-10-13)에서 IBD가 느린 원인을 찾았다. CPU가 아니었다. kind 상자(메모리 4GiB)가 가득 차서 page cache를 계속 잃었다(디스크 읽기 1.89TB, 그중 99.96%가 refault). 상자를 8GiB로 늘렸다. 지금은 실습 F의 실행 1이다: 상자 8GiB에서 <code>bitcoin-node-1</code>이 <code>-reindex-chainstate</code>를 하고 있다. 끝나면 측정값을 모으고 <code>bitcoin.conf</code>의 줄을 지운 다음, 4GiB에서 실행 2를 한다. 먼저 읽을 개념: <a href="#reindex">-reindex-chainstate</a>, <a href="#experiment">실험 설계</a>, <a href="#refault">refault</a>, <a href="#cputhrottle">cpu.max와 throttling</a>, <a href="#qos">QoS와 OOM 점수</a>.</p>
+        <p>실습 A–F 완료. 실습 F(2026-10-14)의 결과: kind 상자 메모리만 8GiB → 4GiB로 줄이자 같은 <code>-reindex-chainstate</code>가 1.72배 느려졌다(읽기 2.29배). 컨테이너는 자기 한도에 닿지 않았다. 부모 cgroup(상자)이 page cache를 회수한 것이 원인이다. 상자는 8GiB로 되돌렸다. 지금은 <b>inbound 열기</b>다: 외부 피어가 내 노드에 먼저 연결해 올 수 있게 한다. 대상은 이미 <code>-listen=1</code>인 <code>bitcoin-node-0</code>이다. CGNAT 없음 ✓, NodePort <code>bitcoin-node-0-p2p</code>(30333) ✓. 다음: promet DNAT(I-4) → 공유기 38333(I-5) → <code>-externalip</code>(I-6) → 외부 inbound 피어 확인(I-7). 그 다음은 memory request를 측정값으로 고치기, <code>-debug=bench</code>, 소스 코드 읽기다. 먼저 읽을 개념: <a href="#conntrack">연결의 방향과 conntrack</a>, <a href="#dnat">포트 포워딩 = DNAT</a>, <a href="#nodeport">NodePort</a>, <a href="#rproxy">리버스 프록시와 DNAT</a>, <a href="#listen">-listen과 피어</a>.</p>
         <ul class="upd" id="changelog">
+          <li><b>2026-10-15</b> 10-14 학습(실습 F 결과, inbound 열기 시작) 반영. 새 카드 6개: memory.events와 .local, 연결의 방향과 conntrack, 포트 포워딩 = DNAT, NodePort Service, 리버스 프록시와 DNAT, Tailscale. 실험 설계에 F 결과 그림 추가, cgroup 그림을 실행 2 값으로 다시 그림. 고침: kind 상자의 "가득 참 24,428,625번"은 하위 cgroup을 포함한 값이었다(상자 자신은 약 83%). 고침: 기본 포트 38333을 쓰는 이유는 DNS seed다(예전 설명의 "기본 포트 선호"는 옛 버전의 동작). 보충: refault, cgroup, USE(실무 4단계), dbcache(코드 경로), -reindex-chainstate, NAT(CGNAT), -listen(연결 종류, -externalip), RPC(P2P와 비교, root 오류), IP와 포트, 리슨 주소, desired state, Service, headless, kind, "노드"의 두 뜻.</li>
           <li><b>2026-10-14 (2)</b> 갱신 날짜, 카드마다 추가일과 보충일, NEW와 보충 표시, "새로 바뀐 것"과 "안 읽음" 보기를 추가. 읽은 카드가 나중에 보충되면 다시 "안 읽음"이 된다.</li>
           <li><b>2026-10-14</b> 10-13 학습(실습 E, F 시작) 반영. 새 카드 4개: CPU limit의 실체, 캐시를 잃으면(refault), QoS 등급과 OOM 점수, -reindex-chainstate. cgroup 그림을 측정 값으로 다시 그림. 보충: cgroup namespace, 메모리, requests와 limits, kind 상자, io.stat, 풀 노드(IBD 시간), dbcache, USE, 실험 설계, kubectl exec(sh -c, RPC 오류), StatefulSet.</li>
           <li><b>2026-10-12 (2)</b> 실습 D까지 반영. 새 카드 3개: kubectl exec의 구조, 네트워크 인터페이스, Pod IP와 CNI. 보충: Service, headless, Deployment(strategy), StatefulSet, YAML(---, 오류 경로), namespace, PV와 PVC, -listen, du, IP와 CIDR.</li>
@@ -249,7 +250,9 @@ html { scroll-behavior: smooth; }
             <tr><td>C. StatefulSet ✓</td><td><a href="#yaml">YAML 구조</a>, <a href="#statefulset">StatefulSet</a>, <a href="#headless">headless Service</a></td></tr>
             <tr><td>D. 노드끼리 연결 ✓</td><td><a href="#ipport">IP·포트·TCP</a>, <a href="#netif">네트워크 인터페이스</a>, <a href="#podip">Pod IP와 CNI</a>, <a href="#k8sdns">클러스터 DNS</a>, <a href="#listen">-listen과 피어</a></td></tr>
             <tr><td>E. 자원 관찰 ✓</td><td><a href="#cgroup">cgroup</a>, <a href="#cputhrottle">cpu.max와 throttling</a>, <a href="#memory">메모리와 페이지 캐시</a>, <a href="#refault">refault</a>, <a href="#iometrics">io.stat</a>, <a href="#use">성능을 보는 순서</a></td></tr>
-            <tr><td><b>F. 자원 제한 실험 (지금)</b></td><td><a href="#reindex">-reindex-chainstate</a>, <a href="#experiment">실험 설계</a>, <a href="#dbcache">UTXO와 dbcache</a>, <a href="#resources">requests와 limits</a>, <a href="#qos">QoS와 OOM 점수</a></td></tr>
+            <tr><td>F. 자원 제한 실험 ✓</td><td><a href="#reindex">-reindex-chainstate</a>, <a href="#experiment">실험 설계</a>, <a href="#memevents">memory.events와 .local</a>, <a href="#dbcache">UTXO와 dbcache</a>, <a href="#resources">requests와 limits</a>, <a href="#qos">QoS와 OOM 점수</a></td></tr>
+            <tr><td><b>inbound 열기 (지금)</b></td><td><a href="#conntrack">연결의 방향과 conntrack</a>, <a href="#nat">NAT와 CGNAT</a>, <a href="#dnat">포트 포워딩 = DNAT</a>, <a href="#nodeport">NodePort</a>, <a href="#rproxy">리버스 프록시와 DNAT</a>, <a href="#listen">-listen과 -externalip</a>, <a href="#rpccookie">RPC와 P2P</a>, <a href="#tailscale">Tailscale</a></td></tr>
+            <tr><td>다음: 함수 단위 측정과 소스</td><td><a href="#use">성능을 보는 순서</a>, <a href="#dbcache">UTXO와 dbcache</a>, <a href="#qos">QoS와 OOM 점수</a></td></tr>
           </tbody>
         </table></div>
       </div>
@@ -331,7 +334,7 @@ kubectl get nodes -o wide</pre>
           <p class="rel">연결: <a href="#desired">desired state</a><a href="#hier">세 가지 계층</a><a href="#kind">kind 구조</a></p>
         </article>
 
-        <article class="c" id="twonodes" data-added="2026-10-12" data-updated="2026-10-12" data-k="노드 두 가지 뜻 kubernetes 노드 bitcoin 노드 서버 pod 워커">
+        <article class="c" id="twonodes" data-added="2026-10-12" data-updated="2026-10-15" data-k="노드 두 가지 뜻 kubernetes 노드 bitcoin 노드 서버 pod 워커 nodeport">
           <div class="c-head"><h3>"노드"의 두 가지 뜻</h3></div>
           <p class="why"><b>왜 알아야 하나</b>이 프로젝트에서는 "노드"라는 말이 두 가지 뜻으로 쓰인다. 뜻을 섞으면 "노드 3개를 띄운다"가 서버 3대처럼 들린다.</p>
           <figure class="fig"><div class="sc"><svg viewBox="0 0 720 236" role="img" aria-label="Kubernetes 노드 1대 위에 Bitcoin 노드 3개가 있다" style="min-width:620px;max-width:720px"><rect class="bg" x="20" y="20" width="500" height="200" rx="5"/><text class="tb" x="36" y="44" text-anchor="start">Kubernetes 노드 = 서버 1대</text><text class="mono" x="36" y="64" text-anchor="start">bitcoin-lab-control-plane  (kubectl get nodes)</text><rect class="hl" x="36" y="82" width="148" height="76" rx="5"/><text class="tb" x="110" y="102" text-anchor="middle">Bitcoin 노드</text><text class="mono" x="110" y="122" text-anchor="middle">bitcoin-signet-…</text><text class="ts" x="110" y="142" text-anchor="middle">Pod 1개 · Deployment</text><rect class="hl" x="196" y="82" width="148" height="76" rx="5"/><text class="tb" x="270" y="102" text-anchor="middle">Bitcoin 노드</text><text class="mono" x="270" y="122" text-anchor="middle">bitcoin-node-0</text><text class="ts" x="270" y="142" text-anchor="middle">Pod 1개 · StatefulSet</text><rect class="hl" x="356" y="82" width="148" height="76" rx="5"/><text class="tb" x="430" y="102" text-anchor="middle">Bitcoin 노드</text><text class="mono" x="430" y="122" text-anchor="middle">bitcoin-node-1</text><text class="ts" x="430" y="142" text-anchor="middle">Pod 1개 · StatefulSet</text><path class="la" d="M270,158 V184 H430 V160" marker-end="url(#aa)"/><text class="ts" x="350" y="204" text-anchor="middle">P2P 38333 (addnode)</text><path class="la" d="M520,120 H578" marker-end="url(#aa)"/><text class="ts" x="550" y="112" text-anchor="middle">outbound</text><rect class="bx" x="580" y="82" width="120" height="76" rx="5"/><text class="tb" x="640" y="108" text-anchor="middle">인터넷의</text><text class="tb" x="640" y="126" text-anchor="middle">Signet 피어</text><text class="ts" x="640" y="146" text-anchor="middle">다른 사람의 노드</text></svg></div><figcaption>"노드"는 두 가지 뜻이다. Kubernetes 노드는 Pod를 실행하는 서버다. Bitcoin 노드는 bitcoind 하나, 여기서는 Pod 하나다.</figcaption></figure>
@@ -343,7 +346,7 @@ kubectl get nodes -o wide</pre>
               <tr><td>보는 명령</td><td><code>kubectl get nodes</code></td><td><code>kubectl -n bitcoin-lab get pods</code></td></tr>
             </tbody>
           </table></div>
-          <div class="mine"><b>내 환경에서</b>우리는 서버(worker node)를 직접 다루지 않는다. StatefulSet, Service 같은 객체를 API 서버에 넣는다. 어느 서버에서 실행할지는 scheduler가 정한다.</div>
+          <div class="mine"><b>내 환경에서</b>우리는 서버(worker node)를 직접 다루지 않는다. StatefulSet, Service 같은 객체를 API 서버에 넣는다. 어느 서버에서 실행할지는 scheduler가 정한다. <a href="#nodeport">NodePort</a>의 "Node"도 Kubernetes 노드다. "kind 상자의 이 포트로 오면 Pod로 보낸다"는 뜻이다.</div>
           <p class="rel">연결: <a href="#controlplane">control plane</a><a href="#kind">kind 구조</a><a href="#statefulset">StatefulSet</a></p>
         </article>
       </div>
@@ -461,7 +464,7 @@ vmstat 1 5       <span class="cm"># si, so 열: 스왑 입출력</span></pre>
           <p class="rel">연결: <a href="#refault">refault</a><a href="#cgroup">cgroup</a><a href="#dbcache">UTXO와 dbcache</a><a href="#experiment">실험 설계</a></p>
         </article>
 
-        <article class="c" id="refault" data-added="2026-10-14" data-updated="2026-10-14" data-k="refault thrashing 페이지 캐시 page cache evict workingset memory.stat memory.events memory.peak 다시 읽기 sock_throttled">
+        <article class="c" id="refault" data-added="2026-10-14" data-updated="2026-10-15" data-k="refault thrashing 페이지 캐시 page cache evict workingset memory.stat memory.events memory.peak 다시 읽기 sock_throttled memory.events.local 계층">
           <div class="c-head"><h3>캐시를 잃으면: refault와 thrashing</h3></div>
           <p class="why"><b>왜 알아야 하나</b>메모리가 부족해도 프로세스는 바로 죽지 않는다. 커널은 먼저 page cache를 버린다. 그러면 프로그램은 오류 없이 느려지기만 한다. 그래서 이 문제는 숫자로만 찾을 수 있다.</p>
           <figure class="fig"><div class="sc"><svg viewBox="0 0 720 152" role="img" aria-label="디스크에서 읽은 데이터가 page cache에 들어가고, 상자가 가득 차서 버려지고, 다시 디스크에서 읽히는 반복" style="min-width:600px;max-width:720px"><rect class="bx" x="10" y="30" width="160" height="56" rx="5"/><text class="tb" x="90" y="54" text-anchor="middle">디스크 읽기</text><text class="ts" x="90" y="73" text-anchor="middle">chainstate/ (LevelDB)</text><rect class="hl" x="190" y="30" width="160" height="56" rx="5"/><text class="tb" x="270" y="54" text-anchor="middle">page cache</text><text class="ts" x="270" y="73" text-anchor="middle">다음 읽기는 빠르다</text><rect class="wr" x="370" y="30" width="160" height="56" rx="5"/><text class="tb" x="450" y="54" text-anchor="middle">kind 상자 가득 참</text><text class="ts" x="450" y="73" text-anchor="middle">커널이 캐시를 버림</text><rect class="bx" x="550" y="30" width="160" height="56" rx="5"/><text class="tb" x="630" y="54" text-anchor="middle">다시 필요</text><text class="ts" x="630" y="73" text-anchor="middle">refault로 센다</text><path class="ln" d="M170,58 H188" marker-end="url(#am)"/><path class="ln" d="M350,58 H368" marker-end="url(#am)"/><path class="ln" d="M530,58 H548" marker-end="url(#am)"/><path class="lw" d="M630,86 V120 H90 V88" marker-end="url(#aw)"/><text class="ts tw" x="360" y="140" text-anchor="middle">IBD 동안 반복: 약 1.89TB = 데이터(약 27GB)의 약 70배</text></svg></div><figcaption>이 반복을 thrashing이라고 한다. node-1에서는 디스크 읽기의 99.96%가 refault였다. 오류는 하나도 없었다. 느려지기만 했다.</figcaption></figure>
@@ -475,21 +478,22 @@ vmstat 1 5       <span class="cm"># si, so 열: 스왑 입출력</span></pre>
             <tbody>
               <tr><td><code>memory.stat</code> <code>workingset_refault_file</code></td><td>버렸다가 다시 읽은 파일 페이지 수. × 4KiB(보통의 페이지 크기) = 바이트</td></tr>
               <tr><td><code>memory.peak</code></td><td>시작 뒤 가장 많이 쓴 메모리(바이트)</td></tr>
-              <tr><td><code>memory.events</code> <code>max</code></td><td>한도에 닿은 횟수</td></tr>
+              <tr><td><code>memory.events</code> <code>max</code></td><td>한도에 닿은 횟수. 하위 cgroup의 횟수도 더한다</td></tr>
+              <tr><td><code>memory.events.local</code> <code>max</code></td><td>이 cgroup <b>자신</b>이 한도에 닿은 횟수</td></tr>
               <tr><td><code>memory.events</code> <code>oom</code>, <code>oom_kill</code></td><td>OOM이 일어난 횟수, 종료된 프로세스 수</td></tr>
               <tr><td><code>memory.events</code> <code>sock_throttled</code></td><td>메모리 압박 때문에 네트워크 소켓이 제한된 횟수</td></tr>
             </tbody>
           </table></div>
-          <div class="mine"><b>내 환경에서</b>2026-10-13, <code>bitcoin-node-1</code>의 IBD 기록: 디스크 읽기 약 1.89TB. refault 461,171,478 × 4KiB = 약 1.889TB. 즉 읽기의 99.96%가 refault였다. 데이터는 약 27GB이므로 같은 데이터를 약 70번 읽었다. 컨테이너는 <code>memory.peak</code> 약 1.55GB, <code>max 0</code>이었다. 자기 한도(2Gi)에 닿지 않았다. 부모인 kind 상자는 <code>max 24,428,625</code>였다. 이것이 원인이다.</div>
-          <div class="warn"><b>자주 하는 오해</b>"자기 한도에 닿지 않았으니 메모리 문제가 아니다"는 틀릴 수 있다. 위쪽 cgroup(Pod, kind 상자, 호스트)이 가득 차도 캐시를 잃는다. 그래서 각 층의 <code>memory.events</code>를 본다.</div>
+          <div class="mine"><b>내 환경에서</b>2026-10-13, <code>bitcoin-node-1</code>의 IBD 기록: 디스크 읽기 약 1.89TB. refault 461,171,478 × 4KiB = 약 1.889TB. 즉 읽기의 99.96%가 refault였다. 데이터는 약 27GB이므로 같은 데이터를 약 70번 읽었다. 컨테이너는 <code>memory.peak</code> 약 1.55GB, <code>max 0</code>이었다. 자기 한도(2Gi)에 닿지 않았다. 부모인 kind 상자의 <code>memory.events</code>는 <code>max 24,428,625</code>였다. <b>고침(10-14):</b> 이 값은 하위 cgroup의 이벤트도 더한 계층 값이다. 상자 자신만 센 <code>memory.events.local</code>은 10-14에 전체의 약 83%였다(<a href="#memevents">memory.events와 .local</a>). 그래서 "상자가 가득 차서 캐시를 잃었다"는 결론은 유지된다. 실습 F 실행 2(상자 4GiB)가 이것을 다시 보였다: 컨테이너는 <code>max 0</code>, peak 1.44GiB인데 refault는 969GB(읽기의 97.9%)였다.</div>
+          <div class="warn"><b>자주 하는 오해</b>"자기 한도에 닿지 않았으니 메모리 문제가 아니다"는 틀릴 수 있다. 위쪽 cgroup(Pod, kind 상자, 호스트)이 가득 차도 캐시를 잃는다. 그래서 각 층의 <code>memory.events.local</code>을 본다. <code>memory.events</code>는 하위 층의 횟수도 더하므로, 어느 층이 가득 찼는지 구분하지 못한다.</div>
           <details class="try"><summary>직접 확인</summary>
 <pre>kubectl -n bitcoin-lab exec bitcoin-node-1 -- grep workingset_refault_file /sys/fs/cgroup/memory.stat
 kubectl -n bitcoin-lab exec bitcoin-node-1 -- cat /sys/fs/cgroup/memory.peak /sys/fs/cgroup/memory.events
 <span class="cm"># 호스트에서: kind 상자</span>
 id=$(docker inspect -f '{{.Id}}' bitcoin-lab-control-plane)
-cat /sys/fs/cgroup/system.slice/docker-$id.scope/memory.events</pre>
+cat /sys/fs/cgroup/system.slice/docker-$id.scope/memory.events.local</pre>
           </details>
-          <p class="rel">연결: <a href="#memory">메모리와 페이지 캐시</a><a href="#cgroup">cgroup 나무</a><a href="#dbcache">UTXO와 dbcache</a><a href="#iometrics">io.stat</a></p>
+          <p class="rel">연결: <a href="#memory">메모리와 페이지 캐시</a><a href="#cgroup">cgroup 나무</a><a href="#memevents">memory.events와 .local</a><a href="#dbcache">UTXO와 dbcache</a><a href="#iometrics">io.stat</a></p>
         </article>
       </div>
     </section>
@@ -569,16 +573,17 @@ kubectl -n bitcoin-lab exec deploy/bitcoin-signet -- cat /proc/self/mountinfo</p
           <p class="rel">연결: <a href="#mount">마운트</a><a href="#pvpvc">PV와 PVC</a><a href="#kind">kind 구조</a></p>
         </article>
 
-        <article class="c" id="cgroup" data-added="2026-10-12" data-updated="2026-10-14" data-k="cgroup 자원 제한 cpu memory 메모리 한도 cpu.max memory.max memory-swap docker update">
+        <article class="c" id="cgroup" data-added="2026-10-12" data-updated="2026-10-15" data-k="cgroup 자원 제한 cpu memory 메모리 한도 cpu.max memory.max memory-swap docker update memory.events.local 부모 회수">
           <div class="c-head"><h3>cgroup: 자원을 세고 제한하기</h3></div>
           <p class="why"><b>왜 알아야 하나</b>자원 실험(실습 E, F)은 전부 cgroup으로 한다. <code>kubectl top</code>, Docker 한도, Kubernetes <code>limits</code>는 모두 cgroup 값을 쓰거나 읽는다.</p>
-          <figure class="fig"><div class="sc"><svg viewBox="0 0 720 302" role="img" aria-label="cgroup 나무: 호스트, kind 노드 컨테이너, kubepods, Pod, 컨테이너와 2026-10-13 측정 값" style="min-width:600px;max-width:720px"><rect class="bx" x="20" y="16" width="250" height="34" rx="5"/><text x="34" y="38" text-anchor="start">promet 호스트 (뿌리)</text><path class="ln" d="M272,33 H392" stroke-dasharray="2 4"/><text class="ts mono" x="400" y="37" text-anchor="start">/sys/fs/cgroup · 메모리 14Gi</text><path class="ln" d="M34,50 V87 H46"/><rect class="wr" x="46" y="70" width="250" height="34" rx="5"/><text class="tb" x="60" y="92" text-anchor="start">kind 노드 컨테이너</text><path class="ln" d="M298,87 H392" stroke-dasharray="2 4"/><text class="ts mono" x="400" y="83" text-anchor="start">system.slice/docker-&lt;id&gt;.scope</text><text class="ts tw" x="400" y="100" text-anchor="start">memory.max 4GiB · 가득 참 24,428,625번</text><path class="ln" d="M60,104 V141 H72"/><rect class="bx" x="72" y="124" width="250" height="34" rx="5"/><text x="86" y="146" text-anchor="start">kubepods (kubelet)</text><path class="ln" d="M324,141 H392" stroke-dasharray="2 4"/><text class="ts" x="400" y="145" text-anchor="start">노드 위 모든 Pod</text><path class="ln" d="M86,158 V195 H98"/><rect class="bx" x="98" y="178" width="250" height="34" rx="5"/><text x="112" y="200" text-anchor="start">Pod bitcoin-node-1</text><path class="ln" d="M350,195 H392" stroke-dasharray="2 4"/><text class="ts" x="400" y="199" text-anchor="start">Pod 안 컨테이너의 합</text><path class="ln" d="M112,212 V249 H124"/><rect class="hl" x="124" y="232" width="250" height="34" rx="5"/><text class="tb" x="138" y="254" text-anchor="start">bitcoind 컨테이너</text><path class="ln" d="M376,249 H392" stroke-dasharray="2 4"/><text class="ts mono" x="400" y="245" text-anchor="start">memory.max 2Gi · peak 1.55GB</text><text class="ts" x="400" y="262" text-anchor="start">자기 한도에 닿은 횟수 0</text><text class="ts ta" x="116" y="254" text-anchor="end">Pod 안의 뿌리 →</text><text class="ts" x="20" y="292" text-anchor="start">위 네 층은 호스트에서만 보인다. Pod 안에서는 맨 아래 칸이 뿌리처럼 보인다 (cgroup namespace).</text></svg></div><figcaption>2026-10-13 측정 값이다. 컨테이너는 자기 한도(2Gi)에 닿지 않았다. 그러나 부모인 kind 상자(4GiB)가 가득 차서 캐시를 잃었다. 자식은 부모의 한도를 넘을 수 없다. 같은 날 상자를 8GiB로 늘렸다.</figcaption></figure>
+          <figure class="fig"><div class="sc"><svg viewBox="0 0 720 302" role="img" aria-label="cgroup 나무: 호스트, kind 노드 컨테이너, kubepods, Pod, 컨테이너와 2026-10-14 실습 F 실행 2의 측정 값" style="min-width:600px;max-width:720px"><rect class="bx" x="20" y="16" width="250" height="34" rx="5"/><text x="34" y="38" text-anchor="start">promet 호스트 (뿌리)</text><path class="ln" d="M272,33 H392" stroke-dasharray="2 4"/><text class="ts mono" x="400" y="37" text-anchor="start">/sys/fs/cgroup · 메모리 14Gi</text><path class="ln" d="M34,50 V87 H46"/><rect class="wr" x="46" y="70" width="250" height="34" rx="5"/><text class="tb" x="60" y="92" text-anchor="start">kind 노드 컨테이너</text><path class="ln" d="M298,87 H392" stroke-dasharray="2 4"/><text class="ts mono" x="400" y="83" text-anchor="start">system.slice/docker-&lt;id&gt;.scope</text><text class="ts tw" x="400" y="100" text-anchor="start">memory.max 4GiB · 자신이 가득 참 2,607,549번</text><path class="ln" d="M60,104 V141 H72"/><rect class="bx" x="72" y="124" width="250" height="34" rx="5"/><text x="86" y="146" text-anchor="start">kubepods (kubelet)</text><path class="ln" d="M324,141 H392" stroke-dasharray="2 4"/><text class="ts" x="400" y="145" text-anchor="start">노드 위 모든 Pod</text><path class="ln" d="M86,158 V195 H98"/><rect class="bx" x="98" y="178" width="250" height="34" rx="5"/><text x="112" y="200" text-anchor="start">Pod bitcoin-node-1</text><path class="ln" d="M350,195 H392" stroke-dasharray="2 4"/><text class="ts" x="400" y="199" text-anchor="start">Pod 안 컨테이너의 합</text><path class="ln" d="M112,212 V249 H124"/><rect class="hl" x="124" y="232" width="250" height="34" rx="5"/><text class="tb" x="138" y="254" text-anchor="start">bitcoind 컨테이너</text><path class="ln" d="M376,249 H392" stroke-dasharray="2 4"/><text class="ts mono" x="400" y="245" text-anchor="start">memory.max 2Gi · peak 1.44GiB</text><text class="ts" x="400" y="262" text-anchor="start">자기 한도에 닿은 횟수 0 · refault 969GB</text><text class="ts ta" x="116" y="254" text-anchor="end">Pod 안의 뿌리 →</text><text class="ts" x="20" y="292" text-anchor="start">위 네 층은 호스트에서만 보인다. Pod 안에서는 맨 아래 칸이 뿌리처럼 보인다 (cgroup namespace).</text></svg></div><figcaption>2026-10-14 실습 F 실행 2(상자 4GiB)의 값이다. 컨테이너는 자기 한도(2Gi)에 한 번도 닿지 않았다. 그래도 읽기의 97.9%가 refault였다. 부모인 kind 상자가 가득 차서 커널이 자식의 캐시까지 회수했기 때문이다. 상자의 횟수는 상자 자신만 센 값(<code>memory.events.local</code>)이 실행 동안 늘어난 수다. 실험 뒤 상자는 8GiB로 되돌렸다.</figcaption></figure>
           <ul>
             <li>cgroup은 프로세스 묶음이다. 커널은 묶음마다 CPU, 메모리, I/O 사용량을 센다.</li>
             <li>묶음에 한도를 걸 수 있다. 예: <code>memory.max</code>, <code>cpu.max</code>.</li>
             <li>cgroup은 트리다. 자식은 부모의 한도를 넘을 수 없다.</li>
             <li>내 서버는 cgroup v2를 쓴다. 파일은 <code>/sys/fs/cgroup</code> 아래에 있다.</li>
             <li><b>cgroup namespace</b>: 컨테이너 안의 <code>/sys/fs/cgroup</code>은 나무의 뿌리가 아니라 자기 가지다. 그래서 Pod 안에서 읽은 <code>memory.max</code>, <code>cpu.stat</code>은 그 컨테이너 자신의 값이다. 위쪽 층은 호스트에서 본다.</li>
+            <li><code>memory.events</code>는 하위 cgroup의 이벤트까지 더한 값이다. 그 cgroup 자신만 보려면 <code>memory.events.local</code>을 본다(<a href="#memevents">memory.events와 .local</a>).</li>
           </ul>
           <div class="tbl"><table>
             <thead><tr><th></th><th>namespace</th><th>cgroup</th></tr></thead>
@@ -587,7 +592,7 @@ kubectl -n bitcoin-lab exec deploy/bitcoin-signet -- cat /proc/self/mountinfo</p
               <tr><td>예</td><td>다른 프로세스가 안 보인다</td><td>메모리 한도에 닿으면 캐시를 버리고, 그래도 넘으면 종료된다</td></tr>
             </tbody>
           </table></div>
-          <div class="mine"><b>내 환경에서</b>트리는 대략 이렇다. 호스트 → Docker의 kind 노드 cgroup → kubelet의 Pod cgroup → 컨테이너 cgroup. kind 노드에 Docker 한도를 걸면 그 아래의 모든 Pod가 함께 제한된다. Docker의 <code>--memory-swap</code>은 "메모리 + 스왑"의 합계다. 그래서 <code>--memory</code>보다 작을 수 없다. 이 서버의 Docker는 systemd 방식으로 cgroup을 만든다. 그래서 kind 상자는 호스트의 <code>/sys/fs/cgroup/system.slice/docker-&lt;id&gt;.scope/</code>에 있다. 2026-10-13 확인: 메모리 4GiB(같은 날 8GiB로 늘림), CPU 3.5코어.</div>
+          <div class="mine"><b>내 환경에서</b>트리는 대략 이렇다. 호스트 → Docker의 kind 노드 cgroup → kubelet의 Pod cgroup → 컨테이너 cgroup. kind 노드에 Docker 한도를 걸면 그 아래의 모든 Pod가 함께 제한된다. Docker의 <code>--memory-swap</code>은 "메모리 + 스왑"의 합계다. 그래서 <code>--memory</code>보다 작을 수 없다. 이 서버의 Docker는 systemd 방식으로 cgroup을 만든다. 그래서 kind 상자는 호스트의 <code>/sys/fs/cgroup/system.slice/docker-&lt;id&gt;.scope/</code>에 있다. 2026-10-13 확인: 메모리 4GiB(같은 날 8GiB로 늘림), CPU 3.5코어. 실습 F 실행 2(2026-10-14) 동안 다시 4GiB로 줄였고, 끝난 뒤 8GiB로 되돌렸다.</div>
           <div class="warn"><b>자주 하는 오해</b>"Pod 안에 <code>system.slice</code>가 없다"는 정상이다. cgroup namespace 때문에 Pod 안에서는 위쪽 층이 보이지 않는다. 컨테이너 파일시스템과 호스트 파일시스템이 다른 것(<a href="#mountns">mount namespace</a>)과 같은 원리다.</div>
           <details class="try"><summary>직접 확인</summary>
 <pre>cat /proc/self/cgroup                                <span class="cm"># 내 셸의 cgroup 경로</span>
@@ -596,7 +601,7 @@ kubectl -n bitcoin-lab exec deploy/bitcoin-signet -- \
   cat /sys/fs/cgroup/memory.max /sys/fs/cgroup/memory.current
 cat /proc/$(pgrep -n bitcoind)/cgroup                <span class="cm"># 호스트에서: bitcoind의 전체 cgroup 경로</span></pre>
           </details>
-          <p class="rel">연결: <a href="#cputhrottle">cpu.max와 throttling</a><a href="#refault">refault</a><a href="#resources">requests와 limits</a><a href="#memory">메모리</a><a href="#map">전체 지도</a></p>
+          <p class="rel">연결: <a href="#cputhrottle">cpu.max와 throttling</a><a href="#memevents">memory.events와 .local</a><a href="#refault">refault</a><a href="#resources">requests와 limits</a><a href="#memory">메모리</a><a href="#map">전체 지도</a></p>
         </article>
 
         <article class="c" id="cputhrottle" data-added="2026-10-14" data-updated="2026-10-14" data-k="cpu.max throttling 스로틀링 cpu.stat usage_usec nr_throttled nr_periods quota period 밀리 1000m 코어 par 평균">
@@ -626,6 +631,30 @@ kubectl -n bitcoin-lab exec bitcoin-node-1 -- cat /sys/fs/cgroup/cpu.stat</pre>
           <p class="rel">연결: <a href="#cgroup">cgroup</a><a href="#resources">requests와 limits</a><a href="#use">성능을 보는 순서</a></p>
         </article>
 
+        <article class="c" id="memevents" data-added="2026-10-15" data-updated="2026-10-15" data-k="memory.events memory.events.local 계층 hierarchical local 하위 cgroup max 이벤트 회수 reclaim 측정 도구 무엇을 세는가">
+          <div class="c-head"><h3>memory.events와 .local: 무엇을 세는가</h3></div>
+          <p class="why"><b>왜 알아야 하나</b>숫자를 비교하기 전에, 그 숫자가 무엇을 세는지 먼저 확인해야 한다. <code>memory.events</code>는 하위 cgroup의 이벤트까지 더한다. 그래서 부모의 값만 보고 "부모가 가득 찼다"고 말하면 틀릴 수 있다.</p>
+          <figure class="fig"><div class="sc"><svg viewBox="0 0 720 168" role="img" aria-label="kind 상자의 계층 값 25,459,765 중 상자 자신의 값은 21,206,152로 약 83%다" style="min-width:600px;max-width:720px"><text class="ts" x="20" y="22" text-anchor="start">kind 상자의 memory.events max = 25,459,765 (하위 포함, 2026-10-14 실행 1 뒤)</text><rect class="wr" x="20" y="34" width="566" height="44" rx="5"/><text class="tb" x="303" y="61" text-anchor="middle">상자 자신 (memory.events.local) 21,206,152 · 약 83%</text><rect class="bx" x="586" y="34" width="114" height="44" rx="5"/><text class="ts" x="643" y="53" text-anchor="middle">하위 cgroup</text><text class="ts" x="643" y="70" text-anchor="middle">약 17%</text><text class="mono" x="20" y="108" text-anchor="start">memory.events</text><text class="ts" x="200" y="108" text-anchor="start">이 cgroup과 모든 하위 cgroup의 이벤트를 더한 값</text><text class="mono" x="20" y="130" text-anchor="start">memory.events.local</text><text class="ts" x="200" y="130" text-anchor="start">이 cgroup 자신의 이벤트만</text><text class="ts" x="20" y="156" text-anchor="start">부모의 계층 값 = 부모 자신(local) + 모든 하위 cgroup의 local 합</text></svg></div><figcaption>실습 F 실행 1 뒤의 값이다. 나머지 약 17%는 상자 안의 하위 cgroup(Pod, 컨테이너)이 각자 자기 한도에 닿은 횟수다. 둘 다 상자가 시작된 뒤의 누적이다.</figcaption></figure>
+          <ul>
+            <li><code>memory.events</code>: 이 cgroup과 모든 하위 cgroup의 이벤트를 더한 값이다(계층 값).</li>
+            <li><code>memory.events.local</code>: 이 cgroup <b>자신</b>의 이벤트만 센다.</li>
+            <li><code>max</code>: 사용량이 이 cgroup의 <code>memory.max</code>를 넘으려 한 횟수다. 이때마다 커널은 메모리를 회수한다. 먼저 page cache를 버린다.</li>
+            <li>부모가 가득 차면 커널은 자식의 page cache도 회수한다. 자식의 한도에 여유가 있어도 그렇다. 이때 늘어나는 것은 부모의 <code>max</code>다. 자식의 <code>max</code>는 늘지 않는다.</li>
+          </ul>
+          <div class="mine"><b>내 환경에서</b>실습 F 실행 2(상자 4GiB, 2026-10-14): 상자의 <code>memory.events.local</code> <code>max</code>는 21,206,152 → 23,813,701(+2,607,549)이 되었다. 같은 기간 node-1 컨테이너의 <code>max</code>는 0, peak는 1.44GiB였다. 그래도 refault는 969GB였다. 그래서 회수 압력은 상자 층에서 왔다. 주의: 이 증가분에는 상자를 4GiB로 줄인 순간의 회수(그때 <code>memory.current</code> 약 4.97GiB)와, 작업이 끝난 뒤의 대기 시간도 들어 있다.</div>
+          <p><b>아직 모르는 것.</b> 실행 1(상자 8GiB)에서 컨테이너의 <code>max</code>는 113번뿐인데 refault는 412GB였다. Pod 층의 cgroup(한도 2Gi, pause 컨테이너 포함)이 먼저 가득 찼을 수 있다. 확인하지 않았다.</p>
+          <div class="warn"><b>자주 하는 오해</b>"부모의 <code>max</code>가 크다 = 부모가 가득 찼다"는 틀릴 수 있다. 하위 cgroup이 각자 자기 한도에 닿은 횟수도 부모의 값에 더해진다. 2026-10-13의 "상자가 2,400만 번 넘게 가득 찼다"도 이 계층 값이었다. 10-14에 <code>.local</code>로 다시 보니 약 83%가 상자 자신이었다. 결론은 유지되었지만, 이제 비교는 <code>.local</code>로 한다.</div>
+          <details class="try"><summary>직접 확인</summary>
+<pre><span class="cm"># 호스트에서 (taehwi): kind 상자의 두 값</span>
+id=$(docker inspect -f '{{.Id}}' bitcoin-lab-control-plane)
+cd /sys/fs/cgroup/system.slice/docker-$id.scope
+grep max memory.events memory.events.local
+<span class="cm"># Pod 안: 컨테이너 자신</span>
+kubectl -n bitcoin-lab exec bitcoin-node-1 -- cat /sys/fs/cgroup/memory.events</pre>
+          </details>
+          <p class="rel">연결: <a href="#cgroup">cgroup 나무</a><a href="#refault">refault</a><a href="#experiment">실험 설계</a></p>
+        </article>
+
         <article class="c" id="volume" data-added="2026-10-12" data-updated="2026-10-12" data-k="볼륨 volume 바인드 마운트 bind mount 데이터 보존">
           <div class="c-head"><h3>볼륨: 컨테이너 밖에 데이터 두기</h3></div>
           <p class="why"><b>왜 알아야 하나</b>노드 데이터는 수 GB다. 컨테이너를 다시 만들 때마다 처음부터 동기화하면 안 된다.</p>
@@ -645,7 +674,7 @@ kubectl -n bitcoin-lab exec bitcoin-node-1 -- cat /sys/fs/cgroup/cpu.stat</pre>
       <p class="lead">Kubernetes는 "명령을 실행하는 도구"가 아니다. "원하는 상태를 적어 두면 계속 맞추는 시스템"이다.</p>
       <div class="cards">
 
-        <article class="c" id="desired" data-added="2026-10-12" data-updated="2026-10-12" data-k="api 서버 desired state 원하는 상태 컨트롤러 reconcile 선언형 apply etcd control loop">
+        <article class="c" id="desired" data-added="2026-10-12" data-updated="2026-10-15" data-k="api 서버 desired state 원하는 상태 컨트롤러 reconcile 선언형 apply etcd control loop get -o yaml 적용된 설정 파일과 다름">
           <div class="c-head"><h3>API 서버와 desired state</h3></div>
           <p class="why"><b>왜 알아야 하나</b>Pod를 지워도 다시 생긴다. 이것은 오류가 아니다. Kubernetes의 기본 동작이다. 이 원리를 알면 대부분의 "이상한 동작"이 설명된다.</p>
           <div class="dia"><div class="flow">
@@ -660,11 +689,16 @@ kubectl -n bitcoin-lab exec bitcoin-node-1 -- cat /sys/fs/cgroup/cpu.stat</pre>
             <li><b>current state</b>(현재 상태): 실제로 있는 것. <code>status</code>에 기록된다.</li>
             <li>컨트롤러는 둘을 계속 비교한다. 다르면 고친다. 이 반복을 <b>reconcile loop</b>라고 한다.</li>
             <li>모든 구성 요소는 API 서버를 통해서만 대화한다. <code>kubectl</code>도 API 서버의 클라이언트일 뿐이다.</li>
+            <li><code>kubectl apply</code>를 하면 API 서버가 내용을 etcd에 저장한다. 그 뒤로 내 파일을 고쳐도, 다시 apply하기 전에는 클러스터가 바뀌지 않는다. 그래서 지금 실제로 도는 설정의 정답은 클러스터 쪽(<code>get -o yaml</code>)이다.</li>
           </ul>
           <div class="warn"><b>자주 하는 오해</b>Pod를 직접 고치거나 지우는 것은 임시 조치다. 바꾸고 싶으면 원하는 상태(Deployment의 YAML)를 바꾼다.</div>
+          <div class="warn"><b>자주 하는 오해</b>클러스터에서 읽은 YAML은 내 파일과 같지 않다. 내가 쓰지 않은 항목(기본값, <code>status</code>, <code>metadata.uid</code>)이 많다. API 서버가 채운 것이다. 비교할 때는 <code>grep</code>으로 필요한 줄만 본다.</div>
+          <div class="mine"><b>내 환경에서</b>2026-10-14: <code>bitcoin-signet</code>(Deployment)은 <code>-listen=0</code>, <code>bitcoin-node</code>(StatefulSet)은 <code>-listen=1</code>이었다. 두 객체를 섞어서 계획을 세우면 틀린다. 그래서 클러스터에 저장된 값을 직접 읽어 확인했다.</div>
           <details class="try"><summary>직접 확인</summary>
 <pre>kubectl -n bitcoin-lab get deploy bitcoin-signet -o yaml | less   <span class="cm"># spec과 status 비교</span>
-kubectl -n bitcoin-lab get events --sort-by=.lastTimestamp       <span class="cm"># 컨트롤러가 한 일</span></pre>
+kubectl -n bitcoin-lab get events --sort-by=.lastTimestamp       <span class="cm"># 컨트롤러가 한 일</span>
+kubectl -n bitcoin-lab get statefulset bitcoin-node -o yaml | grep -n listen   <span class="cm"># 클러스터에 적용된 값</span>
+grep -n listen ~/k8s-lab/*.yaml   <span class="cm"># 내 파일. 다르면 아직 apply하지 않은 것</span></pre>
           </details>
           <p class="rel">연결: <a href="#controlplane">control plane</a><a href="#deployment">Deployment</a><a href="#yaml">YAML 구조</a><a href="#kubectl">kubectl로 읽기</a></p>
         </article>
@@ -818,7 +852,7 @@ kubectl get storageclass</pre>
           <p class="rel">연결: <a href="#headless">headless Service</a><a href="#pvpvc">PV와 PVC</a><a href="#deployment">Deployment</a></p>
         </article>
 
-        <article class="c" id="service" data-added="2026-10-12" data-updated="2026-10-12" data-k="service clusterip 서비스 로드밸런싱 selector label 라벨 endpoint 가상 ip">
+        <article class="c" id="service" data-added="2026-10-12" data-updated="2026-10-15" data-k="service clusterip 서비스 로드밸런싱 selector label 라벨 endpoint 가상 ip nodeport 종류 type">
           <div class="c-head"><h3>Service</h3></div>
           <p class="why"><b>왜 알아야 하나</b>Pod IP는 바뀐다. 다른 Pod가 바뀌는 IP를 따라갈 수 없다. Service는 바뀌지 않는 이름과 주소를 준다.</p>
           <figure class="fig"><div class="sc"><svg viewBox="0 0 720 144" role="img" aria-label="일반 Service의 가상 IP로 보낸 패킷은 커널 규칙이 받는 주소를 Pod IP로 바꿔 쓴다" style="min-width:560px;max-width:720px"><rect class="bx" x="10" y="50" width="140" height="50" rx="5"/><text class="tb" x="80" y="72" text-anchor="middle">클라이언트 Pod</text><text class="ts" x="80" y="90" text-anchor="middle">받는 주소: 가상 IP</text><path class="la" d="M150,75 H248" marker-end="url(#aa)"/><text class="mono" x="199" y="67" text-anchor="middle">10.96.0.20</text><rect class="hl" x="250" y="40" width="220" height="70" rx="5"/><text class="tb" x="360" y="64" text-anchor="middle">커널 규칙 (kube-proxy가 만듦)</text><text class="ts" x="360" y="84" text-anchor="middle">받는 주소를 Pod IP로</text><text class="ts" x="360" y="100" text-anchor="middle">바꿔 쓴다 (DNAT)</text><path class="la" d="M470,75 H568" marker-end="url(#aa)"/><text class="mono" x="519" y="67" text-anchor="middle">10.244.0.11</text><rect class="bx" x="570" y="50" width="140" height="50" rx="5"/><text class="tb" x="640" y="72" text-anchor="middle">대상 Pod</text><text class="ts" x="640" y="90" text-anchor="middle">실제 인터페이스 있음</text><text class="ts tw" x="360" y="134" text-anchor="middle">10.96.0.20을 가진 인터페이스는 어디에도 없다</text></svg></div><figcaption>가상 IP는 커널 규칙 속에만 있다. 그래서 <code>ping</code>은 응답이 없을 수 있지만, 정해진 포트의 연결은 동작한다. IP 값은 예시다.</figcaption></figure>
@@ -828,12 +862,20 @@ kubectl get storageclass</pre>
             <li>이 가상 IP를 가진 인터페이스는 없다. kube-proxy가 만든 커널 규칙(iptables 또는 nftables)이 받는 주소를 Pod IP로 바꿔 쓴다.</li>
             <li>이름으로도 접속한다: <code>서비스이름.namespace.svc.cluster.local</code>.</li>
           </ul>
+          <div class="tbl"><table>
+            <thead><tr><th>종류</th><th>주는 것</th><th>내 환경</th></tr></thead>
+            <tbody>
+              <tr><td>ClusterIP (기본값)</td><td>클러스터 안에서만 쓰는 가상 IP</td><td>—</td></tr>
+              <tr><td>headless (<code>clusterIP: None</code>)</td><td>Pod마다 DNS 이름. 가상 IP와 포트 규칙은 없다</td><td><code>bitcoin-node</code> (설계)</td></tr>
+              <tr><td>NodePort</td><td>ClusterIP + 모든 Kubernetes 노드의 포트(30000–32767)</td><td><code>bitcoin-node-0-p2p</code>, 30333</td></tr>
+            </tbody>
+          </table></div>
           <div class="warn"><b>자주 하는 오해</b>Service는 실행되는 프로그램(데몬)이 아니다. etcd에 저장된 기록(객체)이다. 내용은 "이 이름 = 이 라벨의 Pod들"이라는 규칙 하나다. 그리고 Pod가 다시 생기면 바뀌는 것은 포트가 아니라 IP다.</div>
           <div class="warn"><b>자주 하는 오해</b>Service가 대상을 못 찾으면 보통 라벨이 틀린 것이다. <code>kubectl get endpointslices</code>로 대상 Pod 목록을 확인한다.</div>
-          <p class="rel">연결: <a href="#headless">headless Service</a><a href="#k8sdns">클러스터 DNS</a><a href="#pod">Pod</a></p>
+          <p class="rel">연결: <a href="#headless">headless Service</a><a href="#nodeport">NodePort</a><a href="#k8sdns">클러스터 DNS</a><a href="#pod">Pod</a></p>
         </article>
 
-        <article class="c" id="headless" data-added="2026-10-12" data-updated="2026-10-12" data-k="headless service clusterip none dns pod 이름 statefulset bitcoin-0.bitcoin">
+        <article class="c" id="headless" data-added="2026-10-12" data-updated="2026-10-15" data-k="headless service clusterip none dns pod 이름 statefulset bitcoin-0.bitcoin">
           <div class="c-head"><h3>headless Service</h3></div>
           <p class="why"><b>왜 알아야 하나</b>노드끼리 연결할 때(실습 D), 각 노드는 "아무 노드"가 아니라 "특정 노드"에 연결해야 한다. headless Service가 Pod마다 고정 DNS 이름을 준다.</p>
           <figure class="fig"><div class="sc"><svg viewBox="0 0 720 244" role="img" aria-label="일반 Service는 가상 IP가 아무 Pod로 나눠 보내고, headless Service는 DNS가 특정 Pod의 IP를 직접 준다" style="min-width:620px;max-width:720px"><path class="ln" d="M355,10 V240" stroke-dasharray="4 4"/><text class="tb" x="170" y="22" text-anchor="middle">일반 Service (ClusterIP)</text><rect class="bx" x="100" y="40" width="140" height="36" rx="5"/><text class="mono" x="170" y="63" text-anchor="middle">bitcoin-node-0</text><path class="ln" d="M170,76 V114" marker-end="url(#am)"/><text class="ts" x="178" y="99" text-anchor="start">연결</text><rect class="hl" x="90" y="116" width="160" height="40" rx="5"/><text class="tb" x="170" y="134" text-anchor="middle">가상 IP 1개</text><text class="mono" x="170" y="150" text-anchor="middle">10.96.x.x</text><path class="ln" d="M150,156 L95,194" marker-end="url(#am)"/><path class="ln" d="M190,156 L245,194" marker-end="url(#am)"/><text class="ts" x="170" y="186" text-anchor="middle">무작위</text><rect class="bx" x="30" y="196" width="120" height="36" rx="5"/><text class="mono" x="90" y="219" text-anchor="middle">Pod A</text><rect class="bx" x="190" y="196" width="120" height="36" rx="5"/><text class="mono" x="250" y="219" text-anchor="middle">Pod B</text><text class="tb" x="540" y="22" text-anchor="middle">headless Service (clusterIP: None)</text><rect class="bx" x="380" y="50" width="140" height="36" rx="5"/><text class="mono" x="450" y="73" text-anchor="middle">bitcoin-node-0</text><rect class="hl" x="580" y="50" width="120" height="36" rx="5"/><text class="tb" x="640" y="73" text-anchor="middle">CoreDNS</text><path class="ln" d="M520,60 H578" marker-end="url(#am)"/><text class="ts" x="550" y="46" text-anchor="middle">① 이름</text><path class="ln" d="M580,78 H522" marker-end="url(#am)"/><text class="ts" x="550" y="102" text-anchor="middle">② Pod IP</text><text class="ts" x="640" y="112" text-anchor="middle">가상 IP 없음</text><path class="la" d="M450,86 V194" marker-end="url(#aa)"/><text class="ts ta" x="458" y="146" text-anchor="start">③ 직접 연결</text><rect class="hl" x="380" y="196" width="140" height="36" rx="5"/><text class="mono" x="450" y="219" text-anchor="middle">bitcoin-node-1</text></svg></div><figcaption>P2P에서는 "노드 0"처럼 특정 상대를 골라야 한다. 그래서 가상 IP로 나눠 보내는 일반 Service 대신 headless Service를 쓴다.</figcaption></figure>
@@ -842,14 +884,44 @@ kubectl get storageclass</pre>
             <li>대신 DNS가 <b>Pod IP를 직접</b> 돌려준다.</li>
             <li>StatefulSet과 같이 쓰면 Pod마다 이름이 생긴다: <code>bitcoin-node-0.bitcoin-node.bitcoin-lab.svc.cluster.local</code>. 형식은 <code>&lt;Pod 이름&gt;.&lt;Service 이름&gt;</code>이다.</li>
             <li>Pod가 다시 생겨서 IP가 바뀌어도 이 이름은 같다.</li>
+            <li>가상 IP가 없으므로 kube-proxy는 이 Service에 포트 규칙을 만들지 않는다. 그래서 밖에서 들어오는 문으로는 쓸 수 없다. 밖으로 열려면 <a href="#nodeport">NodePort Service</a>를 따로 만든다.</li>
           </ul>
           <div class="warn"><b>자주 하는 오해</b>headless에도 DNS가 있다. 없는 것은 가상 IP다. 그리고 <code>clusterIP</code>에 <code>127.0.0.1</code>을 쓰면 거부된다. 127.0.0.1은 각 Pod 자신을 가리키고, Service IP는 <code>10.96.0.0/16</code>에서 자동으로 받거나(일반) <code>None</code>(headless)이어야 하기 때문이다.</div>
-          <div class="mine"><b>내 환경에서</b>bitcoind에 <code>-addnode=bitcoin-node-0.bitcoin-node:38333</code>처럼 쓴다. 같은 namespace 안에서는 뒷부분을 줄여도 된다. 2026-10-12 관찰: 연결된 주소가 <code>10.244.0.11</code>(Pod 범위)였다. Service 범위(10.96)가 아니다. 가상 IP 없이 Pod에 직접 연결한다는 증거다.</div>
+          <div class="mine"><b>내 환경에서</b>bitcoind에 <code>-addnode=bitcoin-node-0.bitcoin-node:38333</code>처럼 쓴다. 같은 namespace 안에서는 뒷부분을 줄여도 된다. 2026-10-12 관찰: 연결된 주소가 <code>10.244.0.11</code>(Pod 범위)였다. Service 범위(10.96)가 아니다. 가상 IP 없이 Pod에 직접 연결한다는 증거다. <b>열린 질문:</b> 2026-10-14 <code>kubectl get svc</code>에서 <code>bitcoin-node</code>가 <code>ClusterIP 10.96.23.209</code>로 보였다. 설계는 headless였다. 원인은 아직 확인하지 않았다. 확인: <code>kubectl -n bitcoin-lab get svc bitcoin-node -o yaml | grep clusterIP</code>.</div>
           <details class="try"><summary>직접 확인</summary>
 <pre>kubectl -n bitcoin-lab exec bitcoin-node-1 -- getent hosts bitcoin-node-0.bitcoin-node</pre>
           <p>이미지에 <code>getent</code>가 없으면 임시 디버그 Pod를 쓴다.</p>
           </details>
           <p class="rel">연결: <a href="#statefulset">StatefulSet</a><a href="#k8sdns">클러스터 DNS</a><a href="#listen">-listen과 피어</a></p>
+        </article>
+
+        <article class="c" id="nodeport" data-added="2026-10-15" data-updated="2026-10-15" data-k="nodeport service 30000 32767 30333 externaltrafficpolicy local cluster kube-proxy dnat snat selector pod-name statefulset.kubernetes.io/pod-name 외부 노출 bitcoin-node-0-p2p">
+          <div class="c-head"><h3>NodePort Service와 externalTrafficPolicy</h3></div>
+          <p class="why"><b>왜 알아야 하나</b>Pod IP는 Pod가 다시 생길 때마다 바뀐다. 그래서 바깥 규칙에 Pod IP를 쓸 수 없다. NodePort는 Kubernetes 노드(kind 상자)에 바뀌지 않는 문을 만든다. 그 뒤의 Pod IP는 Kubernetes가 따라간다.</p>
+          <figure class="fig"><div class="sc"><svg viewBox="0 0 720 204" role="img" aria-label="promet에서 kind 상자의 NodePort 30333으로 오면 kube-proxy 규칙이 라벨이 맞는 bitcoin-node-0 Pod의 38333으로만 보낸다" style="min-width:600px;max-width:720px"><rect class="bg" x="150" y="14" width="560" height="182" rx="5"/><text class="tb" x="166" y="36" text-anchor="start">kind 상자 = Kubernetes 노드 · 172.18.0.2</text><rect class="bx" x="10" y="84" width="120" height="50" rx="5"/><text class="tb" x="70" y="105" text-anchor="middle">promet</text><text class="ts mono" x="70" y="123" text-anchor="middle">172.18.0.1</text><path class="la" d="M130,109 H196" marker-end="url(#aa)"/><text class="ts mono ta" x="174" y="101" text-anchor="middle">:30333</text><rect class="hl" x="198" y="84" width="150" height="50" rx="5"/><text class="tb" x="273" y="105" text-anchor="middle">NodePort 30333</text><text class="ts" x="273" y="123" text-anchor="middle">kube-proxy 규칙 (DNAT)</text><rect class="hl" x="430" y="52" width="262" height="50" rx="5"/><text class="tb" x="561" y="73" text-anchor="middle">Pod bitcoin-node-0</text><text class="ts mono" x="561" y="91" text-anchor="middle">10.244.x:38333 · 라벨이 맞음</text><rect class="bx" x="430" y="122" width="262" height="50" rx="5" stroke-dasharray="4 3"/><text x="561" y="143" text-anchor="middle">Pod bitcoin-node-1</text><text class="ts" x="561" y="161" text-anchor="middle">라벨이 다름 → 보내지 않음</text><path class="la" d="M348,100 H388 V77 H428" marker-end="url(#aa)"/><text class="ts mono" x="166" y="188" text-anchor="start">selector: statefulset.kubernetes.io/pod-name: bitcoin-node-0</text></svg></div><figcaption>promet은 Docker 브리지로 kind 상자에 바로 닿는다. 그래서 I-3은 promet 안에서 시험했다. 집 밖의 피어는 172.18.0.2를 모른다. 그래서 promet의 DNAT(I-4)가 필요하다.</figcaption></figure>
+          <ul>
+            <li>NodePort는 Service 종류의 하나다. 모든 Kubernetes 노드의 같은 포트에서 받는다. 포트는 30000–32767 중 하나다.</li>
+            <li>실제 규칙은 kube-proxy가 노드의 iptables에 DNAT로 만든다. 받는 주소를 대상 Pod IP:targetPort로 바꾼다.</li>
+            <li><code>kubectl get svc</code>의 <code>38333:30333/TCP</code>는 "노드 포트 30333으로 받아서 Service 포트 38333으로"라는 뜻이다.</li>
+            <li>selector로 대상 Pod를 고른다. StatefulSet은 Pod마다 <code>statefulset.kubernetes.io/pod-name</code> 라벨을 자동으로 붙인다. 이 라벨로 Pod 하나만 고를 수 있다.</li>
+            <li><a href="#headless">headless Service</a>는 포트 규칙을 만들지 않는다. 그래서 밖으로 여는 문은 NodePort를 따로 만든다.</li>
+          </ul>
+          <div class="tbl"><table>
+            <thead><tr><th><code>externalTrafficPolicy</code></th><th>Cluster (기본값)</th><th>Local</th></tr></thead>
+            <tbody>
+              <tr><td>보낸 주소</td><td>노드 주소로 바꾼다 (SNAT)</td><td>바꾸지 않는다</td></tr>
+              <tr><td>보내는 곳</td><td>모든 노드의 대상 Pod</td><td>받은 노드에 있는 대상 Pod만</td></tr>
+              <tr><td>bitcoind가 보는 피어 주소</td><td>모두 같은 주소</td><td>진짜 피어 주소</td></tr>
+            </tbody>
+          </table></div>
+          <div class="mine"><b>내 환경에서</b>2026-10-14 I-3: <code>~/k8s-lab/node0-nodeport.yaml</code>로 Service <code>bitcoin-node-0-p2p</code>를 만들었다. <code>type: NodePort</code>, <code>externalTrafficPolicy: Local</code>, selector <code>statefulset.kubernetes.io/pod-name: bitcoin-node-0</code>, <code>nodePort: 30333</code>. promet에서 <code>172.18.0.2:30333</code>을 시험했다: OPEN. Kubernetes 노드가 kind 상자 하나뿐이므로 <code>Local</code>로 잃는 것이 없다.</div>
+          <div class="warn"><b>자주 하는 오해</b>selector에 <code>app: bitcoin-node</code>를 쓰면 node-0과 node-1에 나뉘어 간다. 외부 피어가 어느 노드에 닿을지 정해지지 않는다. 그리고 NodePort의 "Node"는 Bitcoin 노드가 아니라 Kubernetes 노드다(<a href="#twonodes">"노드"의 두 뜻</a>).</div>
+          <details class="try"><summary>직접 확인</summary>
+<pre>kubectl -n bitcoin-lab get svc
+kubectl -n bitcoin-lab get endpointslices -l kubernetes.io/service-name=bitcoin-node-0-p2p
+timeout 3 bash -c '&lt;/dev/tcp/172.18.0.2/30333' &amp;&amp; echo OPEN || echo CLOSED   <span class="cm"># promet에서</span></pre>
+          </details>
+          <p class="rel">연결: <a href="#service">Service</a><a href="#headless">headless Service</a><a href="#dnat">포트 포워딩 = DNAT</a><a href="#kind">kind 구조</a></p>
         </article>
 
         <article class="c" id="resources" data-added="2026-10-12" data-updated="2026-10-14" data-k="requests limits 자원 요청 한도 cpu memory oomkilled throttling 스로틀링 qos">
@@ -907,7 +979,7 @@ cat /proc/$(pgrep -n bitcoind)/oom_score_adj</pre>
           <p class="rel">연결: <a href="#resources">requests와 limits</a><a href="#memory">메모리</a><a href="#refault">refault</a></p>
         </article>
 
-        <article class="c" id="kind" data-added="2026-10-12" data-updated="2026-10-14" data-k="kind kubernetes in docker 노드 컨테이너 control-plane 로컬 클러스터 포트 매핑">
+        <article class="c" id="kind" data-added="2026-10-12" data-updated="2026-10-15" data-k="kind kubernetes in docker 노드 컨테이너 control-plane 로컬 클러스터 포트 매핑 extraportmappings 172.18.0.2 브리지">
           <div class="c-head"><h3>kind 클러스터의 구조</h3></div>
           <p class="why"><b>왜 알아야 하나</b>kind는 실제 서버 클러스터와 다르게 동작하는 부분이 있다. 측정 결과에 kind 때문인 부분이 섞일 수 있다.</p>
           <ul>
@@ -915,14 +987,15 @@ cat /proc/$(pgrep -n bitcoind)/oom_score_adj</pre>
             <li>그 컨테이너 안에서 kubelet, containerd, API 서버가 실행된다. Pod 컨테이너는 그 안의 containerd가 만든다.</li>
             <li>그래서 호스트의 <code>docker ps</code>에는 Pod가 안 보인다. kind 노드만 보인다.</li>
             <li>클러스터 네트워크는 Docker 네트워크 안에 있다. 외부에서 Pod로 들어오려면 별도 포트 매핑이 필요하다.</li>
+            <li>kind의 포트 매핑(<code>extraPortMappings</code>)은 클러스터를 만들 때만 넣을 수 있다. 이미 만든 클러스터에서는 호스트의 DNAT 규칙으로 kind 상자의 NodePort에 보낸다(<a href="#dnat">포트 포워딩 = DNAT</a>).</li>
           </ul>
-          <div class="mine"><b>내 환경에서</b>노드는 <code>bitcoin-lab-control-plane</code> 하나다. 모든 Pod가 이 컨테이너 안에서 같은 SSD, 같은 CPU를 나눠 쓴다. "노드 여러 개"는 Kubernetes 노드가 아니라 bitcoind Pod 여러 개다. <a href="#twonodes">"노드"의 두 뜻</a>을 본다. kind 노드 컨테이너에는 Docker 한도가 있다. 2026-10-13 확인: 메모리 4GiB(같은 날 8GiB로 늘림), CPU 3.5코어. 바꾸는 명령: <code>docker update --memory 8g --memory-swap 8g bitcoin-lab-control-plane</code>. 컨테이너는 재시작하지 않는다.</div>
+          <div class="mine"><b>내 환경에서</b>노드는 <code>bitcoin-lab-control-plane</code> 하나다. 모든 Pod가 이 컨테이너 안에서 같은 SSD, 같은 CPU를 나눠 쓴다. "노드 여러 개"는 Kubernetes 노드가 아니라 bitcoind Pod 여러 개다. <a href="#twonodes">"노드"의 두 뜻</a>을 본다. kind 노드 컨테이너에는 Docker 한도가 있다. 2026-10-13 확인: 메모리 4GiB(같은 날 8GiB로 늘림), CPU 3.5코어. 바꾸는 명령: <code>docker update --memory 8g --memory-swap 8g bitcoin-lab-control-plane</code>. 컨테이너는 재시작하지 않는다. 2026-10-14 확인: kind 상자는 Docker 네트워크에서 <code>172.18.0.2</code>다. promet은 이 Docker 네트워크의 브리지에 붙어 있어서 이 주소에 바로 닿는다. 실습 F 뒤 메모리는 다시 8GiB다.</div>
           <div class="warn"><b>자주 하는 오해</b>kind 안의 kubelet은 이 Docker 한도를 모른다. 그래서 <code>kubectl describe node</code>의 메모리는 상자 크기가 아니라 호스트 메모리다. 2026-10-13의 IBD가 느렸던 원인이 이 차이였다(<a href="#refault">refault</a>).</div>
           <details class="try"><summary>직접 확인</summary>
 <pre>kind get clusters
 docker exec bitcoin-lab-control-plane crictl ps    <span class="cm"># kind 노드 안의 컨테이너 목록</span></pre>
           </details>
-          <p class="rel">연결: <a href="#map">전체 지도</a><a href="#nat">NAT와 포트</a><a href="#dockergroup">docker 그룹</a></p>
+          <p class="rel">연결: <a href="#map">전체 지도</a><a href="#nat">NAT와 포트</a><a href="#nodeport">NodePort</a><a href="#dockergroup">docker 그룹</a></p>
         </article>
 
         <article class="c" id="kubectl" data-added="2026-10-12" data-updated="2026-10-12" data-k="kubectl get describe logs exec events 상태 읽기 디버깅 crashloopbackoff pending">
@@ -985,7 +1058,7 @@ kubectl -n bitcoin-lab get deploy -v=6   <span class="cm"># kubectl이 보내는
       <p class="lead">노드는 네트워크 프로그램이다. 피어 연결 수와 전송량은 성능 측정의 기본 값이다.</p>
       <div class="cards">
 
-        <article class="c" id="ipport" data-added="2026-10-12" data-updated="2026-10-12" data-k="ip 주소 포트 tcp 연결 소켓 38333 38332 handshake ss">
+        <article class="c" id="ipport" data-added="2026-10-12" data-updated="2026-10-15" data-k="ip 주소 포트 tcp 연결 소켓 38333 38332 handshake ss address already in use 포트 ip마다 30333 172.18 192.168">
           <div class="c-head"><h3>IP 주소, 포트, TCP 연결</h3></div>
           <p class="why"><b>왜 알아야 하나</b>"연결이 안 된다"의 원인은 넷 중 하나다. 주소가 틀리다. 포트가 틀리다. 듣는 프로그램이 없다. 중간에서 막는다.</p>
           <ul>
@@ -993,6 +1066,8 @@ kubectl -n bitcoin-lab get deploy -v=6   <span class="cm"># kubectl이 보내는
             <li><b>포트</b>는 그 장치 안의 프로그램을 찾는다. 0–65535 번호다.</li>
             <li>TCP 연결은 네 값으로 구분한다: 내 IP, 내 포트, 상대 IP, 상대 포트.</li>
             <li>서버는 한 포트에서 <b>listen</b>(대기)한다. 클라이언트가 <b>connect</b>(접속)한다.</li>
+            <li><b>포트는 IP마다 따로 있다.</b> 같은 IP에서는 한 포트를 한 프로그램만 기다릴 수 있다. 두 번째 프로그램은 <code>Address already in use</code> 오류를 받는다. IP가 다르면 같은 번호를 써도 된다. 그래서 StatefulSet의 Pod 2개가 모두 38333에서 기다린다.</li>
+            <li>바깥 포트와 안쪽 포트의 번호는 달라도 된다. 예: kind 상자의 30333 → Pod의 38333(<a href="#nodeport">NodePort</a>).</li>
           </ul>
           <p><b>IP의 본질.</b> IP 주소는 "패킷을 어디로 보낼지"를 정하는 번호다. 패킷마다 보내는 주소와 받는 주소가 있다. 라우터와 커널은 받는 주소만 보고 다음 방향을 정한다. IP는 기계가 아니라 <a href="#netif">네트워크 인터페이스</a>에 붙는다. IP는 기계까지, 포트는 그 안의 프로그램까지 데려간다.</p>
           <div class="tbl"><table>
@@ -1001,6 +1076,9 @@ kubectl -n bitcoin-lab get deploy -v=6   <span class="cm"># kubectl이 보내는
               <tr><td><code>127.0.0.0/8</code></td><td>loopback. 자기 자신. Pod 안에서는 그 Pod 자신이다</td></tr>
               <tr><td><code>10.244.0.0/16</code></td><td>Pod IP 범위 (kind 기본값). 예: node-1 = <code>10.244.0.11</code></td></tr>
               <tr><td><code>10.96.0.0/16</code></td><td>Service 가상 IP 범위. API 서버가 자동으로 준다</td></tr>
+              <tr><td><code>172.18.0.0/16</code></td><td>Docker 네트워크 <code>kind</code>. kind 상자 = <code>172.18.0.2</code> (2026-10-14 확인)</td></tr>
+              <tr><td><code>192.168.0.0/16</code></td><td>집 LAN. 공유기가 promet에 준 사설 주소</td></tr>
+              <tr><td><code>100.64.0.0/10</code></td><td>Tailscale 주소. CGNAT도 같은 대역을 쓴다</td></tr>
             </tbody>
           </table></div>
           <p><code>/16</code>은 "32비트 중 앞 16비트가 네트워크 번호"라는 뜻이다. 우편 주소의 도시와 같다. 뒤 16비트는 번지다. 라우터는 보통 앞부분만 보고 방향을 정한다.</p>
@@ -1009,6 +1087,7 @@ kubectl -n bitcoin-lab get deploy -v=6   <span class="cm"># kubectl이 보내는
             <tbody>
               <tr><td><code>38333</code></td><td>P2P</td><td>다른 비트코인 노드</td></tr>
               <tr><td><code>38332</code></td><td>RPC</td><td>나 (<code>bitcoin-cli</code>)</td></tr>
+              <tr><td><code>30333</code></td><td>NodePort (kind 상자)</td><td>외부 피어 (promet의 DNAT를 거쳐) → node-0의 38333</td></tr>
             </tbody>
           </table></div>
           <details class="try"><summary>직접 확인</summary>
@@ -1064,7 +1143,7 @@ ss -tnp state established</pre>
           <p class="rel">연결: <a href="#netif">네트워크 인터페이스</a><a href="#k8sdns">클러스터 DNS</a><a href="#headless">headless Service</a></p>
         </article>
 
-        <article class="c" id="bindaddr" data-added="2026-10-12" data-updated="2026-10-12" data-k="리슨 주소 bind 127.0.0.1 0.0.0.0 localhost 접근 범위 rpcbind rpcallowip">
+        <article class="c" id="bindaddr" data-added="2026-10-12" data-updated="2026-10-15" data-k="리슨 주소 bind 127.0.0.1 0.0.0.0 localhost 접근 범위 rpcbind rpcallowip port-forward network namespace 127.0.0.1 따로">
           <div class="c-head"><h3>리슨 주소: 127.0.0.1과 0.0.0.0</h3></div>
           <p class="why"><b>왜 알아야 하나</b>프로그램이 "실행 중"이어도 다른 Pod에서 접속이 안 될 수 있다. 어느 주소에서 듣는지가 접근 범위를 정한다.</p>
           <figure class="fig"><div class="sc"><svg viewBox="0 0 720 190" role="img" aria-label="127.0.0.1에서 듣는 RPC는 같은 Pod 안에서만, 0.0.0.0에서 듣는 P2P는 밖에서도 연결된다" style="min-width:560px;max-width:720px"><rect class="bg" x="20" y="20" width="390" height="156" rx="5"/><text class="tb" x="34" y="42" text-anchor="start">Pod (net namespace 1개)</text><rect class="bx" x="40" y="56" width="180" height="108" rx="5"/><text class="tb" x="130" y="78" text-anchor="middle">bitcoind</text><rect class="hl" x="52" y="90" width="156" height="28" rx="5"/><text class="mono" x="130" y="109" text-anchor="middle">127.0.0.1:38332 RPC</text><rect class="hl" x="52" y="126" width="156" height="28" rx="5"/><text class="mono" x="130" y="145" text-anchor="middle">0.0.0.0:38333 P2P</text><rect class="bx" x="282" y="90" width="112" height="28" rx="5"/><text class="mono" x="338" y="109" text-anchor="middle">bitcoin-cli</text><path class="la" d="M280,104 H210" marker-end="url(#aa)"/><text class="ts ta" x="245" y="86" text-anchor="middle">localhost</text><rect class="bx" x="530" y="96" width="170" height="64" rx="5"/><text class="tb" x="615" y="120" text-anchor="middle">다른 Pod</text><text class="mono" x="615" y="142" text-anchor="middle">bitcoin-node-1</text><path class="lw" d="M528,112 H414" marker-end="url(#aw)" stroke-dasharray="5 4"/><text class="ts tw" x="470" y="104" text-anchor="middle">RPC ✗</text><path class="la" d="M528,140 H210" marker-end="url(#aa)"/><text class="ts ta" x="470" y="156" text-anchor="middle">P2P ✓</text></svg></div><figcaption>리슨 주소가 접근 범위를 정한다. RPC는 기본으로 localhost에서만 듣는다.</figcaption></figure>
@@ -1072,22 +1151,134 @@ ss -tnp state established</pre>
             <li><code>127.0.0.1</code>(localhost)에서 들으면 <b>같은 net namespace 안</b>에서만 접속할 수 있다. Pod에서는 같은 Pod 안이다.</li>
             <li><code>0.0.0.0</code>에서 들으면 모든 인터페이스에서 접속할 수 있다.</li>
             <li>bitcoind의 RPC는 기본으로 localhost에서만 듣는다. 이것은 안전을 위한 기본값이다.</li>
+            <li><code>127.0.0.1</code>은 network namespace마다 따로 있다. promet의 127.0.0.1과 Pod의 127.0.0.1은 다른 곳이다. 그래서 promet에서 <code>bitcoin-cli</code>를 실행해도 Pod 안의 RPC에 닿지 않는다.</li>
           </ul>
-          <div class="mine"><b>내 환경에서</b><code>kubectl exec</code>로 Pod 안에서 <code>bitcoin-cli</code>를 실행하면 localhost이므로 바로 된다. 다른 Pod에서 RPC로 접속하려면 <code>-rpcbind</code>와 <code>-rpcallowip</code>를 같이 바꿔야 한다. 필요할 때만 바꾼다.</div>
+          <div class="mine"><b>내 환경에서</b><code>kubectl exec</code>로 Pod 안에서 <code>bitcoin-cli</code>를 실행하면 localhost이므로 바로 된다. 다른 Pod에서 RPC로 접속하려면 <code>-rpcbind</code>와 <code>-rpcallowip</code>를 같이 바꿔야 한다. 필요할 때만 바꾼다. 다른 방법은 <code>kubectl port-forward</code>다. API 서버를 거쳐 promet의 포트를 Pod 안의 포트에 잇는다. Kubernetes 권한이 있어야 쓸 수 있으므로, RPC를 Pod 밖에 열지 않아도 된다.</div>
           <p class="rel">연결: <a href="#ipport">IP와 포트</a><a href="#rpccookie">RPC와 쿠키</a><a href="#pod">Pod</a></p>
         </article>
 
-        <article class="c" id="nat" data-added="2026-10-12" data-updated="2026-10-12" data-k="nat 포트 포워딩 공유기 사설 ip 공인 ip inbound docker 포트 매핑 nodeport">
+        <article class="c" id="nat" data-added="2026-10-12" data-updated="2026-10-15" data-k="nat 포트 포워딩 공유기 사설 ip 공인 ip inbound docker 포트 매핑 nodeport cgnat 이중 nat wan ifconfig.me kindnet">
           <div class="c-head"><h3>NAT와 포트 포워딩</h3></div>
           <p class="why"><b>왜 알아야 하나</b>내 노드는 밖으로 연결(outbound)할 수 있다. 하지만 밖에서 내 노드로 연결(inbound)은 보통 안 된다. NAT가 몇 겹 있기 때문이다.</p>
           <figure class="fig"><div class="sc"><svg viewBox="0 0 720 140" role="img" aria-label="인터넷에서 Pod까지 NAT가 세 번 있다" style="min-width:620px;max-width:720px"><rect class="bx" x="10" y="50" width="120" height="50" rx="5"/><text class="tb" x="70" y="72" text-anchor="middle">인터넷 피어</text><text class="mono" x="70" y="90" text-anchor="middle">Signet 노드</text><rect class="bx" x="155" y="50" width="120" height="50" rx="5"/><text class="tb" x="215" y="72" text-anchor="middle">공유기</text><text class="mono" x="215" y="90" text-anchor="middle">공인 IP 1개</text><rect class="bx" x="300" y="50" width="120" height="50" rx="5"/><text class="tb" x="360" y="72" text-anchor="middle">호스트</text><text class="mono" x="360" y="90" text-anchor="middle">192.168.x.x</text><rect class="bx" x="445" y="50" width="120" height="50" rx="5"/><text class="tb" x="505" y="72" text-anchor="middle">kind 노드</text><text class="mono" x="505" y="90" text-anchor="middle">172.18.x.x</text><rect class="hl" x="590" y="50" width="120" height="50" rx="5"/><text class="tb" x="650" y="72" text-anchor="middle">Pod</text><text class="mono" x="650" y="90" text-anchor="middle">10.244.x.x</text><text class="ts tw" x="287" y="80" text-anchor="middle">NAT</text><text class="ts tw" x="432" y="80" text-anchor="middle">NAT</text><text class="ts tw" x="577" y="80" text-anchor="middle">NAT</text><path class="la" d="M650,48 V28 H70 V48" marker-end="url(#aa)"/><text class="ts ta" x="360" y="20" text-anchor="middle">outbound: 안에서 먼저 연결 → 응답이 돌아온다</text><path class="lw" d="M70,102 V124 H210 V104" marker-end="url(#aw)" stroke-dasharray="5 4"/><text class="ts tw" x="226" y="128" text-anchor="start">inbound: 공유기에서 막힌다 (포워딩 규칙 없음)</text></svg></div><figcaption>IP 대역은 kind의 일반적인 기본값이다. 실제 값은 ip addr과 kubectl get pods -o wide로 확인한다.</figcaption></figure>
           <ul>
             <li>집 공유기는 사설 IP(예: 192.168.x.x)를 공인 IP 하나로 바꾼다. 이것이 NAT다.</li>
             <li>안에서 나간 연결의 응답은 돌아온다. 밖에서 먼저 온 연결은 어디로 보낼지 모른다. 그래서 막힌다.</li>
-            <li>포트 포워딩은 "이 포트로 오면 이 내부 주소로 보낸다"는 규칙이다.</li>
+            <li>포트 포워딩은 "이 포트로 오면 이 내부 주소로 보낸다"는 규칙이다(<a href="#dnat">DNAT</a>).</li>
+            <li>NAT 층은 직접 만든 것이 아니다. 각 층을 설치할 때 하나씩 따라온다: 공유기(집 인터넷), Docker(컨테이너에 172.18.x를 준다), Pod 네트워크(10.244.x, kind의 kindnet).</li>
+            <li><b>CGNAT</b>: 통신사가 여러 집을 공인 IP 하나 뒤에 묶는 방식이다. 이 경우 공유기에 포트 포워딩을 해도 통신사 장비에서 막힌다. 판별: 공유기 관리 페이지의 WAN IP와 <code>curl -4 ifconfig.me</code> 값을 비교한다. 같으면 공인 IP를 직접 받는다. WAN IP가 100.64.x, 10.x, 172.16–31.x, 192.168.x이면 CGNAT 또는 이중 NAT다.</li>
           </ul>
-          <div class="mine"><b>내 환경에서</b>밖에서 Pod까지 가려면 NAT가 여러 번 있다. 공유기 → 호스트 → Docker 네트워크(kind 노드) → Pod 네트워크. 실습 목적이라면 inbound 없이 outbound 피어만으로 동기화할 수 있다. 내 노드끼리는 클러스터 안에서 연결한다.</div>
-          <p class="rel">연결: <a href="#listen">-listen과 피어</a><a href="#kind">kind 구조</a></p>
+          <div class="mine"><b>내 환경에서</b>밖에서 Pod까지 가려면 NAT가 여러 번 있다. 공유기 → 호스트 → Docker 네트워크(kind 노드) → Pod 네트워크. 2026-10-14 확인: 집 인터넷은 SK 유선이고, 공유기 WAN IP와 <code>curl -4 ifconfig.me</code> 값이 같았다. 그래서 CGNAT도 이중 NAT도 없다. 공유기에는 이미 443 → promet:443(Caddy) 규칙이 있다. 같은 방법으로 38333을 연다(<a href="#dnat">포트 포워딩 = DNAT</a>).</div>
+          <div class="warn"><b>자주 하는 오해</b>"NAT를 너무 많이 만들었다"가 아니다. 공유기 NAT는 어느 집에나 있다. Docker 층은 kind 같은 실습 환경에만 있다. 실제 서버에 Kubernetes를 설치하면 이 층이 없다. 외부 연결을 받는 Pod는 <code>hostNetwork</code>나 <code>hostPort</code>로 Pod 층도 건너뛸 수 있다.</div>
+          <details class="try"><summary>직접 확인</summary>
+<pre>curl -4 -s ifconfig.me; echo      <span class="cm"># 밖에서 본 내 공인 IP</span>
+ip route | grep default           <span class="cm"># via 뒤 = 공유기 관리 페이지 주소. 그곳의 WAN IP와 비교</span></pre>
+          </details>
+          <p class="rel">연결: <a href="#conntrack">연결의 방향</a><a href="#dnat">포트 포워딩 = DNAT</a><a href="#tailscale">Tailscale</a><a href="#listen">-listen과 피어</a><a href="#kind">kind 구조</a></p>
+        </article>
+
+        <article class="c" id="conntrack" data-added="2026-10-15" data-updated="2026-10-15" data-k="conntrack 연결 방향 outbound inbound syn 장부 snat masquerade 응답 상태 추적 nat 경비원">
+          <div class="c-head"><h3>연결의 방향과 conntrack</h3></div>
+          <p class="why"><b>왜 알아야 하나</b>내 노드는 밖으로 연결할 수 있다. 하지만 밖에서는 내 노드로 연결할 수 없다. 두 방향의 차이는 커널의 conntrack 표에서 온다. 이것을 알면 "왜 나가는 것만 되는가"를 설명할 수 있다.</p>
+          <figure class="fig"><div class="sc"><svg viewBox="0 0 720 216" role="img" aria-label="outbound는 경계가 장부에 적어서 응답이 돌아오고, inbound는 장부에 기록이 없어서 규칙이 있어야 들어온다" style="min-width:600px;max-width:720px"><text class="tb" x="10" y="18" text-anchor="start">outbound: 내가 먼저 SYN을 보낸다</text><rect class="bx" x="10" y="30" width="170" height="50" rx="5"/><text class="tb" x="95" y="51" text-anchor="middle">Pod bitcoin-node-0</text><text class="ts mono" x="95" y="69" text-anchor="middle">10.244.x : 임시 포트</text><rect class="hl" x="275" y="30" width="170" height="50" rx="5"/><text class="tb" x="360" y="51" text-anchor="middle">NAT 경계</text><text class="ts" x="360" y="69" text-anchor="middle">장부(conntrack)에 적는다</text><rect class="bx" x="540" y="30" width="170" height="50" rx="5"/><text class="tb" x="625" y="51" text-anchor="middle">외부 피어</text><text class="ts mono" x="625" y="69" text-anchor="middle">공인 IP : 38333</text><path class="la" d="M182,44 H271" marker-end="url(#aa)"/><text class="ts ta" x="227" y="38" text-anchor="middle">① SYN</text><path class="la" d="M447,44 H536" marker-end="url(#aa)"/><text class="ts ta" x="492" y="38" text-anchor="middle">② 주소 바꿈</text><path class="la" d="M538,66 H449" marker-end="url(#aa)"/><path class="la" d="M273,66 H184" marker-end="url(#aa)"/><text class="ts ta" x="360" y="100" text-anchor="middle">③ 응답은 장부를 보고 주소를 되돌려 같은 길로 돌아온다</text><text class="tb" x="10" y="126" text-anchor="start">inbound: 밖에서 먼저 SYN이 온다</text><rect class="bx" x="10" y="136" width="170" height="50" rx="5"/><text class="tb" x="95" y="157" text-anchor="middle">Pod bitcoin-node-0</text><text class="ts mono" x="95" y="175" text-anchor="middle">10.244.x : 38333</text><rect class="wr" x="275" y="136" width="170" height="50" rx="5"/><text class="tb" x="360" y="157" text-anchor="middle">NAT 경계</text><text class="ts tw" x="360" y="175" text-anchor="middle">장부에 기록이 없다</text><rect class="bx" x="540" y="136" width="170" height="50" rx="5"/><text class="tb" x="625" y="157" text-anchor="middle">외부 피어</text><text class="ts mono" x="625" y="175" text-anchor="middle">공인 IP : 임시 포트</text><path class="lw" d="M538,161 H449" marker-end="url(#aw)"/><text class="ts tw" x="492" y="154" text-anchor="middle">① SYN</text><path class="lw" d="M273,161 H184" marker-end="url(#aw)" stroke-dasharray="5 4"/><text class="ts tw" x="228" y="154" text-anchor="middle">규칙이 있으면</text><text class="ts tw" x="360" y="208" text-anchor="middle">② 규칙(DNAT)이 없으면 버린다. 있으면 규칙에 적힌 안쪽 주소로 보낸다.</text></svg></div><figcaption>NAT 경계는 실제로 3겹이다(Pod 네트워크, Docker, 공유기). 겹마다 같은 일이 일어난다. 연결이 만들어진 뒤에는 양쪽 모두 데이터를 보낸다.</figcaption></figure>
+          <ul>
+            <li>연결의 방향은 <b>누가 먼저 SYN을 보냈는가</b>로 정한다. SYN은 TCP 연결을 시작하는 첫 패킷이다.</li>
+            <li>연결이 만들어진 뒤에는 양쪽 모두 데이터를 보낸다. 그래서 outbound 피어와도 블록을 주고받는다.</li>
+            <li>안에서 나가는 패킷은 경계에서 보낸 주소가 바뀐다(SNAT, MASQUERADE). 이때 커널은 이 연결을 <b>conntrack 표</b>에 적는다: "이 주소와 포트로 오는 응답은 안쪽의 누구에게".</li>
+            <li>응답이 오면 커널은 표를 보고 주소를 되돌린다. 그래서 outbound는 규칙 없이 된다.</li>
+            <li>밖에서 먼저 온 SYN은 표에 기록이 없다. 커널은 이 패킷을 누구에게 줄지 모른다. 그래서 규칙(<a href="#dnat">DNAT, 포트 포워딩</a>)을 미리 만들어야 한다.</li>
+          </ul>
+          <div class="tbl"><table>
+            <thead><tr><th>집의 비유</th><th>네트워크</th></tr></thead>
+            <tbody>
+              <tr><td>현관이 하나다</td><td>공인 IP 하나 (NAT)</td></tr>
+              <tr><td>경비원의 장부: "이 편지의 답장은 내 방으로"</td><td>conntrack 표</td></tr>
+              <tr><td>경비원에게 미리 적은 상시 지시: "38333으로 오는 손님은 내 방으로"</td><td>포트 포워딩 (DNAT 규칙)</td></tr>
+              <tr><td>단지 정문을 통신사가 관리한다</td><td>CGNAT (<a href="#nat">NAT</a>)</td></tr>
+            </tbody>
+          </table></div>
+          <div class="mine"><b>내 환경에서</b>2026-10-14 N-1: <code>bitcoin-node-0</code>의 <code>getpeerinfo</code>에서 외부 피어 10개는 모두 <code>"inbound": false</code>였다. 노드는 kind 안에 갇혀 있지 않다. 밖에서 들어온 연결은 0개였다. 유일한 inbound는 <code>10.244.0.15:50246</code>이다. node-1이 클러스터 안에서 먼저 연결해 왔다. 50246은 node-1 쪽의 임시 포트다.</div>
+          <div class="warn"><b>자주 하는 오해</b>"inbound가 없으면 제대로 된 풀 노드가 아니다"는 틀리다. 노드는 모든 블록을 직접 검증한다. 빠진 것은 다른 노드가 먼저 연결해 올 자리다. 그래서 새 노드의 IBD를 돕지 못한다.</div>
+          <details class="try"><summary>직접 확인</summary>
+<pre>kubectl -n bitcoin-lab exec bitcoin-node-0 -- bitcoin-cli -signet -datadir=/home/bitcoin/.bitcoin \
+  getpeerinfo | grep -E '"addr"|"inbound"|"connection_type"'
+<span class="cm"># 호스트에서 (conntrack-tools 패키지 필요): 호스트를 지나는 38333 연결의 장부 기록</span>
+sudo conntrack -L -p tcp --dport 38333</pre>
+          </details>
+          <p class="rel">연결: <a href="#nat">NAT</a><a href="#dnat">포트 포워딩 = DNAT</a><a href="#listen">-listen과 피어</a><a href="#tailscale">Tailscale</a></p>
+        </article>
+
+        <article class="c" id="dnat" data-added="2026-10-15" data-updated="2026-10-15" data-k="dnat 포트 포워딩 port forwarding iptables prerouting output docker-user 목적지 주소 경계 externalip 공유기 38333 30333 bad port dns seed 기본 포트">
+          <div class="c-head"><h3>포트 포워딩 = DNAT: 경계마다 규칙 하나</h3></div>
+          <p class="why"><b>왜 알아야 하나</b>inbound를 열려면 경계마다 "이 포트로 오면 안쪽의 이 주소로"라는 규칙이 하나씩 필요하다. 하나라도 빠지면 연결은 그 경계에서 끝난다.</p>
+          <figure class="fig"><div class="sc"><svg viewBox="0 0 720 176" role="img" aria-label="외부 피어의 연결이 공유기, promet, kind 상자, Pod의 네 경계를 지나며 받는 주소가 바뀐다. kind 상자와 Pod는 열렸고 promet과 공유기는 다음 단계다" style="min-width:600px;max-width:720px"><text class="ts" x="360" y="20" text-anchor="middle">받는 주소(목적지)는 경계마다 바뀐다. 보낸 주소(피어 IP)는 끝까지 같다.</text><rect class="wr" x="10" y="34" width="160" height="84" rx="5"/><text class="tb" x="90" y="55" text-anchor="middle">공유기</text><text class="ts mono" x="90" y="74" text-anchor="middle">공인 IP:38333</text><text class="ts" x="90" y="92" text-anchor="middle">포트 포워딩 규칙</text><text class="ts tw" x="90" y="110" text-anchor="middle">I-5 다음</text><rect class="wr" x="190" y="34" width="160" height="84" rx="5"/><text class="tb" x="270" y="55" text-anchor="middle">promet 호스트</text><text class="ts mono" x="270" y="74" text-anchor="middle">192.168.x:38333</text><text class="ts" x="270" y="92" text-anchor="middle">iptables DNAT</text><text class="ts tw" x="270" y="110" text-anchor="middle">I-4 다음</text><rect class="hl" x="370" y="34" width="160" height="84" rx="5"/><text class="tb" x="450" y="55" text-anchor="middle">kind 상자</text><text class="ts mono" x="450" y="74" text-anchor="middle">172.18.0.2:30333</text><text class="ts" x="450" y="92" text-anchor="middle">NodePort Service</text><text class="ts ta" x="450" y="110" text-anchor="middle">I-3 열림 ✓</text><rect class="hl" x="550" y="34" width="160" height="84" rx="5"/><text class="tb" x="630" y="55" text-anchor="middle">Pod bitcoin-node-0</text><text class="ts mono" x="630" y="74" text-anchor="middle">10.244.x:38333</text><text class="ts" x="630" y="92" text-anchor="middle">bitcoind -listen=1</text><text class="ts ta" x="630" y="110" text-anchor="middle">이미 열림 ✓</text><path class="ln" d="M170,76 H188" marker-end="url(#am)"/><path class="ln" d="M350,76 H368" marker-end="url(#am)"/><path class="ln" d="M530,76 H548" marker-end="url(#am)"/><text class="ts" x="10" y="146" text-anchor="start">규칙이 하나라도 없으면 연결은 그 경계에서 끝난다.</text><text class="ts" x="10" y="166" text-anchor="start">시험 위치: I-3은 promet 안, I-4는 집 안의 다른 기기, I-5는 집 밖(휴대폰 데이터).</text></svg></div><figcaption>2026-10-14 기준 상태다. 안쪽 문부터 열었다. 이유: 문 하나를 열 때마다 한 층 바깥에서 바로 시험할 수 있다. 그러면 실패해도 어느 문에서 막혔는지 바로 안다.</figcaption></figure>
+          <ul>
+            <li>DNAT(Destination NAT)는 <b>받는 주소</b>(목적지)만 바꾼다. <b>보낸 주소</b>는 바꾸지 않는다. 그래서 bitcoind는 피어의 진짜 주소를 본다.</li>
+            <li>포트 포워딩은 DNAT 규칙의 다른 이름이다. 공유기 관리 페이지의 표도 DNAT 규칙이다.</li>
+            <li>포트는 IP마다 따로 있다. 그래서 공인 IP의 38333은 한 곳으로만 보낼 수 있다. 다른 노드도 밖에 열려면 다른 바깥 포트를 쓴다.</li>
+            <li>바깥 포트와 안쪽 포트의 번호는 달라도 된다. 예: kind 상자의 30333 → Pod의 38333. 공인 IP의 바깥 포트를 바꾸면 <code>-externalip=주소:포트</code>로 그 포트를 광고한다.</li>
+            <li>promet의 규칙은 2개다. (1) <code>nat</code> 표의 PREROUTING: promet LAN IP:38333으로 온 패킷의 받는 주소를 172.18.0.2:30333으로 바꾼다. (2) <code>DOCKER-USER</code>: 172.18.0.2:30333으로 가는 패킷을 허용한다. Docker는 자기가 publish하지 않은 포트로 가는 패킷을 막을 수 있기 때문이다.</li>
+            <li>iptables 규칙은 재부팅하면 사라진다. 계속 쓰려면 따로 저장한다(I-4b).</li>
+          </ul>
+          <div class="mine"><b>내 환경에서</b>2026-10-14 상태: Pod(node-0은 이미 <code>-listen=1</code>) ✓, kind 상자(NodePort 30333) ✓. 남은 일: I-4 promet DNAT과 DOCKER-USER 허용 → I-4b 재부팅 뒤에도 유지 → I-5 공유기 38333 → promet:38333 → I-6 <code>-externalip</code> → I-7 외부 inbound 피어 확인. promet → kind 상자 구간은 kind의 <code>extraPortMappings</code> 대신 호스트 DNAT로 연다. extraPortMappings는 클러스터를 만들 때만 넣을 수 있어서, 클러스터를 다시 만들어야 하기 때문이다.</div>
+          <div class="warn"><b>자주 하는 오해</b>promet의 DNAT 규칙에서 받는 주소(<code>-d</code> promet LAN IP)를 빼면 안 된다. 빼면 규칙이 우리 노드의 outbound(외부 피어의 38333으로 가는 패킷)까지 잡아서 kind 상자로 되돌린다. 그리고 PREROUTING은 밖에서 들어오는 패킷만 본다. promet 자신이 보낸 패킷은 OUTPUT 체인을 지나므로, 시험은 집 안의 다른 기기에서 한다.</div>
+          <div class="warn"><b>자주 하는 오해</b>"기본 포트가 아니면 다른 노드가 연결하지 않는다"는 예전 버전의 동작이다. 지금의 Bitcoin Core는 다른 포트에도 연결한다. 피하는 것은 22(ssh)처럼 보통 인증이 필요한 서비스의 포트(bad port)뿐이다. 그래도 38333을 쓰는 이유는 DNS seed다. DNS 응답에는 포트가 없어서, bitcoind는 seed에서 받은 주소에 기본 포트를 붙인다(<code>src/net.cpp</code>). 다른 포트로 열면 seed로는 내 노드를 알릴 수 없다.</div>
+          <details class="try"><summary>직접 확인</summary>
+<pre>sudo iptables -t nat -S PREROUTING          <span class="cm"># DNAT 규칙 보기</span>
+sudo iptables -S DOCKER-USER                <span class="cm"># Docker보다 먼저 보는 허용 규칙</span>
+sudo iptables -t nat -L PREROUTING -n -v    <span class="cm"># 규칙마다 맞은 패킷 수</span></pre>
+          </details>
+          <p class="rel">연결: <a href="#conntrack">연결의 방향</a><a href="#nodeport">NodePort</a><a href="#rproxy">리버스 프록시와 DNAT</a><a href="#nat">NAT</a><a href="#listen">-externalip</a></p>
+        </article>
+
+        <article class="c" id="rproxy" data-added="2026-10-15" data-updated="2026-10-15" data-k="리버스 프록시 reverse proxy caddy nginx dnat x-forwarded-for 443 tls 보낸 주소 연결 두 개 eviction ban 차단 netgroup">
+          <div class="c-head"><h3>리버스 프록시와 DNAT</h3></div>
+          <p class="why"><b>왜 알아야 하나</b>두 방법 모두 "입구 하나로 받아서 안쪽의 맞는 곳으로 보낸다". 그러나 받는 쪽이 보는 보낸 주소가 다르다. 비트코인 P2P에서는 이 차이가 중요하다.</p>
+          <figure class="fig"><div class="sc"><svg viewBox="0 0 720 216" role="img" aria-label="DNAT는 연결 하나의 받는 주소만 바꾸고, 리버스 프록시는 연결을 끝내고 새 연결을 맺는다. 그래서 받는 쪽이 보는 주소가 다르다" style="min-width:600px;max-width:720px"><text class="tb" x="10" y="18" text-anchor="start">DNAT (커널, iptables)</text><rect class="bx" x="10" y="28" width="150" height="48" rx="5"/><text class="tb" x="85" y="48" text-anchor="middle">외부 피어</text><text class="ts mono" x="85" y="66" text-anchor="middle">피어 IP</text><rect class="hl" x="285" y="28" width="150" height="48" rx="5"/><text class="tb" x="360" y="48" text-anchor="middle">promet 커널</text><text class="ts" x="360" y="66" text-anchor="middle">받는 주소만 바꾼다</text><rect class="bx" x="560" y="28" width="150" height="48" rx="5"/><text class="tb" x="635" y="48" text-anchor="middle">bitcoind</text><text class="ts ta" x="635" y="66" text-anchor="middle">보이는 주소: 피어 IP</text><path class="la" d="M160,52 H283" marker-end="url(#aa)"/><path class="la" d="M435,52 H558" marker-end="url(#aa)"/><text class="ts ta" x="360" y="98" text-anchor="middle">연결 1개가 주소만 바뀌어 그대로 지나간다</text><text class="tb" x="10" y="126" text-anchor="start">리버스 프록시 (Caddy, 사용자 프로그램)</text><rect class="bx" x="10" y="136" width="150" height="48" rx="5"/><text class="tb" x="85" y="156" text-anchor="middle">웹 손님</text><text class="ts mono" x="85" y="174" text-anchor="middle">손님 IP</text><rect class="wr" x="285" y="136" width="150" height="48" rx="5"/><text class="tb" x="360" y="156" text-anchor="middle">Caddy :443</text><text class="ts" x="360" y="174" text-anchor="middle">열어 읽고 새로 연결</text><rect class="bx" x="560" y="136" width="150" height="48" rx="5"/><text class="tb" x="635" y="156" text-anchor="middle">웹 서비스</text><text class="ts tw" x="635" y="174" text-anchor="middle">보이는 주소: Caddy</text><path class="lw" d="M160,160 H283" marker-end="url(#aw)"/><text class="ts tw" x="222" y="152" text-anchor="middle">연결 ①</text><path class="lw" d="M435,160 H558" marker-end="url(#aw)"/><text class="ts tw" x="497" y="152" text-anchor="middle">연결 ②</text><text class="ts tw" x="360" y="206" text-anchor="middle">진짜 손님 주소는 X-Forwarded-For 헤더에 적어서 따로 넘긴다</text></svg></div><figcaption>promet의 Caddy는 443에서 기다리는 리버스 프록시다. 비트코인 P2P의 38333은 프록시가 아니라 DNAT로 연다.</figcaption></figure>
+          <div class="tbl"><table>
+            <thead><tr><th></th><th>DNAT</th><th>리버스 프록시 (Caddy)</th></tr></thead>
+            <tbody>
+              <tr><td>누가 하나</td><td>커널 (iptables)</td><td>사용자 프로그램</td></tr>
+              <tr><td>무엇을 보나</td><td>IP와 포트만</td><td>내용까지 (도메인, 경로, HTTP 헤더)</td></tr>
+              <tr><td>연결 수</td><td>1개 (주소만 바꿔서 통과)</td><td>2개 (손님↔Caddy, Caddy↔서비스)</td></tr>
+              <tr><td>받는 쪽이 보는 보낸 주소</td><td>손님의 주소</td><td>Caddy의 주소</td></tr>
+              <tr><td>할 수 있는 일</td><td>포트로 나눈다</td><td>도메인별로 나눈다, TLS 처리, 인증서 자동 발급</td></tr>
+            </tbody>
+          </table></div>
+          <ul>
+            <li>비유: NAT는 우편실 직원이 봉투의 받는 사람 칸만 고쳐서 넘기는 것이다. 리버스 프록시는 비서가 편지를 열어 읽고, 맞는 부서에 새 편지를 쓰는 것이다.</li>
+            <li>"리버스"인 이유: 보통의 프록시(회사 인터넷 프록시)는 손님 쪽을 대신해서 밖으로 나간다. 리버스 프록시는 반대로 서버 쪽을 대신해서 손님을 받는다.</li>
+            <li>HTTP는 진짜 손님 주소를 <code>X-Forwarded-For</code> 헤더에 적어서 넘긴다. 비트코인 P2P에는 이런 헤더가 없다.</li>
+            <li>프록시를 쓰면 bitcoind는 모든 inbound 피어를 같은 주소로 본다. 그러면 두 가지가 망가진다. (1) inbound 자리가 차면 bitcoind는 피어 하나를 내보낸다. 이때 네트워크 그룹(IPv4는 /16)을 보고 다양성을 지킨다. 주소가 모두 같으면 이 보호가 없어진다. (2) 나쁜 피어 하나를 차단하면 모든 inbound가 같이 막힌다.</li>
+          </ul>
+          <div class="mine"><b>내 환경에서</b>promet 호스트의 Caddy는 443에서 기다린다. 공유기에는 443 → promet:443 규칙이 있다. 그래서 443은 38333 대신 쓸 수 없다. 포트 하나는 한 곳으로만 보낼 수 있기 때문이다. 38333은 DNAT로 연다(<a href="#dnat">포트 포워딩 = DNAT</a>).</div>
+          <p class="rel">연결: <a href="#dnat">포트 포워딩 = DNAT</a><a href="#conntrack">연결의 방향</a><a href="#bindaddr">리슨 주소</a></p>
+        </article>
+
+        <article class="c" id="tailscale" data-added="2026-10-15" data-updated="2026-10-15" data-k="tailscale ssh 원격 접속 vpn hole punching derp 중계 100.64 포트 포워딩 없이 22 집 밖">
+          <div class="c-head"><h3>Tailscale: 문을 열지 않고 집에 들어가기</h3></div>
+          <p class="why"><b>왜 알아야 하나</b>SSH(22)와 RPC(38332)는 주인만 쓰는 문이다. 이 문을 포트 포워딩으로 열면 전 세계의 누구나 두드릴 수 있다. Tailscale은 공유기에 문을 열지 않고 집 밖에서 promet에 들어가게 한다.</p>
+          <ul>
+            <li>Tailscale의 두 기기는 모두 <b>outbound</b>로 연결을 시작한다. outbound는 NAT를 저절로 지난다(<a href="#conntrack">conntrack</a>).</li>
+            <li>두 기기가 동시에 서로에게 패킷을 보낸다. 그러면 양쪽 공유기의 장부에 기록이 생기고, 상대의 패킷이 "응답"처럼 들어온다. 이 기법을 NAT hole punching이라고 한다.</li>
+            <li>그래도 안 되면 Tailscale의 중계 서버(DERP)를 거친다. 느리지만 연결은 된다.</li>
+            <li>내 tailnet(계정)에 등록된 기기만 들어온다. 그래서 공유기에 22번을 여는 것보다 안전하다.</li>
+          </ul>
+          <div class="tbl"><table>
+            <thead><tr><th>문</th><th>누구에게</th><th>방법</th></tr></thead>
+            <tbody>
+              <tr><td>P2P <code>38333</code></td><td>전 세계 누구나</td><td>포트 포워딩 (<a href="#dnat">DNAT</a>)</td></tr>
+              <tr><td>HTTPS <code>443</code></td><td>웹 손님</td><td>포트 포워딩 → Caddy</td></tr>
+              <tr><td>SSH <code>22</code>, RPC <code>38332</code></td><td>나만</td><td>Tailscale. 공유기에 열지 않는다</td></tr>
+            </tbody>
+          </table></div>
+          <div class="mine"><b>내 환경에서</b>집 밖에서 promet에 SSH로 들어갈 때 Tailscale을 쓴다. 2026-10-14에 본 공유기 규칙은 443 → promet:443(Caddy) 하나였다. inbound 작업(I-5)에서 38333을 넣는다. 22와 38332는 넣지 않는다.</div>
+          <div class="warn"><b>자주 하는 오해</b>Tailscale 주소(100.64.0.0/10)는 CGNAT와 같은 대역이다. <code>tailscale0</code> 인터페이스의 주소를 공유기 WAN 주소와 헷갈리지 않는다. CGNAT 판별에는 공유기 관리 페이지의 WAN IP를 쓴다(<a href="#nat">NAT</a>).</div>
+          <details class="try"><summary>직접 확인</summary>
+<pre>tailscale status     <span class="cm"># 내 tailnet의 기기와 연결 방식 (direct 또는 relay)</span>
+tailscale ip -4      <span class="cm"># 이 기기의 100.x 주소</span></pre>
+          </details>
+          <p class="rel">연결: <a href="#conntrack">연결의 방향</a><a href="#rpccookie">RPC</a><a href="#nat">NAT</a></p>
         </article>
 
         <article class="c" id="k8sdns" data-added="2026-10-12" data-updated="2026-10-12" data-k="dns 이름 해석 coredns 클러스터 dns svc.cluster.local resolv.conf">
@@ -1240,21 +1431,31 @@ kubectl -n bitcoin-lab exec bitcoin-node-1 -- \
           <p class="rel">연결: <a href="#deployment">Deployment</a><a href="#statefulset">StatefulSet</a><a href="#rpccookie">쿠키 인증</a><a href="#prune">pruned 노드</a></p>
         </article>
 
-        <article class="c" id="listen" data-added="2026-10-12" data-updated="2026-10-12" data-k="-listen inbound outbound 피어 연결 addnode connect maxconnections getpeerinfo">
+        <article class="c" id="listen" data-added="2026-10-12" data-updated="2026-10-15" data-k="-listen inbound outbound 피어 연결 addnode connect maxconnections getpeerinfo externalip connection_type outbound-full-relay block-relay-only manual eclipse discover localaddresses">
           <div class="c-head"><h3>-listen과 피어 연결</h3></div>
           <p class="why"><b>왜 알아야 하나</b>노드끼리 연결하려면(실습 D) 한쪽은 들어오는 연결을 받아야 한다. <code>-listen</code>이 이것을 정한다.</p>
-          <figure class="fig"><div class="sc"><svg viewBox="0 0 720 182" role="img" aria-label="bitcoin-node-0이 bitcoin-node-1에 먼저 연결한다. node-1에게는 inbound, node-0에게는 outbound다" style="min-width:620px;max-width:720px"><rect class="hl" x="40" y="60" width="190" height="70" rx="5"/><text class="mono" x="135" y="84" text-anchor="middle">bitcoin-node-1</text><text class="mono" x="135" y="104" text-anchor="middle">-listen=1</text><text class="ts" x="135" y="121" text-anchor="middle">38333에서 기다린다</text><rect class="bx" x="300" y="60" width="190" height="70" rx="5"/><text class="mono" x="395" y="84" text-anchor="middle">bitcoin-node-0</text><text class="mono" x="395" y="104" text-anchor="middle">-addnode=…node-1</text><text class="ts" x="395" y="121" text-anchor="middle">먼저 연결한다</text><rect class="bx" x="570" y="60" width="130" height="70" rx="5"/><text class="tb" x="635" y="90" text-anchor="middle">인터넷 피어</text><text class="ts" x="635" y="110" text-anchor="middle">Signet 노드들</text><path class="la" d="M298,80 H232" marker-end="url(#aa)"/><text class="ts ta" x="265" y="72" text-anchor="middle">connect</text><path class="la" d="M492,80 H568" marker-end="url(#aa)"/><text class="ts ta" x="530" y="72" text-anchor="middle">outbound</text><path class="lw" d="M568,112 H494" marker-end="url(#aw)" stroke-dasharray="5 4"/><text class="ts tw" x="531" y="128" text-anchor="middle">NAT에서 막힘</text><text class="ts" x="135" y="154" text-anchor="middle">node-1의 getpeerinfo</text><text class="mono" x="135" y="172" text-anchor="middle">node-0: "inbound": true</text><text class="ts" x="395" y="154" text-anchor="middle">node-0의 getpeerinfo</text><text class="mono" x="395" y="172" text-anchor="middle">node-1: "inbound": false</text></svg></div><figcaption>2026-10-12에 node-0의 getaddednodeinfo로 outbound를 확인했다. node-1 쪽 값은 같은 원리로 예상한 값이다. 같은 연결이 양쪽에서 다르게 보인다. 먼저 연결한 쪽은 outbound, 받은 쪽은 inbound다. 받으려면 listen해야 한다.</figcaption></figure>
+          <figure class="fig"><div class="sc"><svg viewBox="0 0 720 182" role="img" aria-label="bitcoin-node-0이 bitcoin-node-1에 먼저 연결한다. node-1에게는 inbound, node-0에게는 outbound다" style="min-width:620px;max-width:720px"><rect class="hl" x="40" y="60" width="190" height="70" rx="5"/><text class="mono" x="135" y="84" text-anchor="middle">bitcoin-node-1</text><text class="mono" x="135" y="104" text-anchor="middle">-listen=1</text><text class="ts" x="135" y="121" text-anchor="middle">38333에서 기다린다</text><rect class="bx" x="300" y="60" width="190" height="70" rx="5"/><text class="mono" x="395" y="84" text-anchor="middle">bitcoin-node-0</text><text class="mono" x="395" y="104" text-anchor="middle">-addnode=…node-1</text><text class="ts" x="395" y="121" text-anchor="middle">먼저 연결한다</text><rect class="bx" x="570" y="60" width="130" height="70" rx="5"/><text class="tb" x="635" y="90" text-anchor="middle">인터넷 피어</text><text class="ts" x="635" y="110" text-anchor="middle">Signet 노드들</text><path class="la" d="M298,80 H232" marker-end="url(#aa)"/><text class="ts ta" x="265" y="72" text-anchor="middle">connect</text><path class="la" d="M492,80 H568" marker-end="url(#aa)"/><text class="ts ta" x="530" y="72" text-anchor="middle">outbound</text><path class="lw" d="M568,112 H494" marker-end="url(#aw)" stroke-dasharray="5 4"/><text class="ts tw" x="531" y="128" text-anchor="middle">NAT에서 막힘</text><text class="ts" x="135" y="154" text-anchor="middle">node-1의 getpeerinfo</text><text class="mono" x="135" y="172" text-anchor="middle">node-0: "inbound": true</text><text class="ts" x="395" y="154" text-anchor="middle">node-0의 getpeerinfo</text><text class="mono" x="395" y="172" text-anchor="middle">node-1: "inbound": false</text></svg></div><figcaption>2026-10-12에 node-0의 getaddednodeinfo로 outbound를 확인했다. 같은 연결이 양쪽에서 다르게 보인다. 먼저 연결한 쪽은 outbound, 받은 쪽은 inbound다. 받으려면 listen해야 한다. 2026-10-14 N-1에서는 node-0의 목록에 node-1이 두 번 나왔다: <code>manual</code>(node-0이 먼저 연결)과 <code>inbound</code>(node-1이 먼저 연결, 10.244.0.15:50246). 두 노드 모두 <code>-addnode</code>를 가지므로 연결도 두 개다.</figcaption></figure>
           <ul>
             <li><b>outbound</b>: 내 노드가 먼저 연결한다. 기본으로 여러 개를 자동으로 만든다.</li>
             <li><b>inbound</b>: 다른 노드가 내 노드에 연결한다. 내 노드가 P2P 포트에서 listen해야 받는다.</li>
             <li><code>-listen=1</code>: P2P 포트(Signet 38333)에서 들어오는 연결을 받는다. 기본값은 켜짐이다. 단 <code>-connect</code>나 <code>-proxy</code>를 쓰면 기본값이 꺼짐으로 바뀐다.</li>
             <li><code>-addnode=주소</code>: 이 피어에 계속 연결을 시도한다. 다른 피어도 쓴다.</li>
             <li><code>-connect=주소</code>: <b>이 피어에만</b> 연결한다. 자동 연결을 끈다.</li>
+            <li><code>-externalip=주소</code>: NAT 뒤의 노드는 자기 공인 주소를 모른다. 이 값을 주면 그 주소를 다른 노드에게 광고한다(<code>addr</code> 메시지). 광고해야 다른 노드가 나를 찾는다. 이 값을 주면 자동 탐지(<code>-discover</code>)는 꺼진다. 바깥 포트가 다르면 <code>주소:포트</code>로 쓴다. 확인: <code>getnetworkinfo</code>의 <code>localaddresses</code>.</li>
             <li><code>-listen</code>은 개수가 아니라 켜기/끄기(1/0)다. 연결 수는 <code>-maxconnections</code>가 정한다.</li>
             <li>bitcoind는 피어를 보통 DNS seed(공개 주소 목록)에서 찾는다. 그래서 옆의 내 노드는 모른다. <code>-addnode</code>로 알려 준다.</li>
             <li>자기 자신에게 연결하면 bitcoind가 nonce(무작위 번호)를 비교해서 알아채고 끊는다.</li>
           </ul>
-          <div class="mine"><b>내 환경에서</b>두 새 노드는 모두 <code>-listen=1</code>이다. 같은 틀을 쓰므로 둘 다 <code>-addnode=bitcoin-node-0.bitcoin-node:38333</code>과 <code>-addnode=bitcoin-node-1.bitcoin-node:38333</code>을 가진다. 2026-10-12 관찰: node-0의 <code>getaddednodeinfo</code>에서 node-1이 <code>connected: true</code>, <code>outbound</code>, <code>10.244.0.11:38333</code>이었다. 자기 자신(node-0)은 <code>false</code>다. 기존 <code>bitcoin-signet</code>은 <code>-listen=0</code>이다.</div>
+          <div class="tbl"><table>
+            <thead><tr><th><code>connection_type</code></th><th>기본 수</th><th>하는 일</th></tr></thead>
+            <tbody>
+              <tr><td><code>outbound-full-relay</code></td><td>8</td><td>블록, 트랜잭션, 주소를 모두 주고받는다</td></tr>
+              <tr><td><code>block-relay-only</code></td><td>2</td><td>블록만 주고받는다. 트랜잭션과 주소를 주고받지 않으므로, 공격자가 내 연결 상대를 추측하기 어렵다. 그래서 내 연결을 모두 차지하는 공격(eclipse attack)을 막는 데 돕는다</td></tr>
+              <tr><td><code>manual</code></td><td><code>-addnode</code> 수</td><td>내가 지정한 피어. 자동 outbound 자리를 쓰지 않는다</td></tr>
+              <tr><td><code>inbound</code></td><td>—</td><td>상대가 먼저 연결해 온 피어. 수는 <code>-maxconnections</code>(기본 125) 안에서 정해진다</td></tr>
+            </tbody>
+          </table></div>
+          <div class="mine"><b>내 환경에서</b>두 새 노드는 모두 <code>-listen=1</code>이다. 같은 틀을 쓰므로 둘 다 <code>-addnode=bitcoin-node-0.bitcoin-node:38333</code>과 <code>-addnode=bitcoin-node-1.bitcoin-node:38333</code>을 가진다. 2026-10-12 관찰: node-0의 <code>getaddednodeinfo</code>에서 node-1이 <code>connected: true</code>, <code>outbound</code>, <code>10.244.0.11:38333</code>이었다. 자기 자신(node-0)은 <code>false</code>다. 기존 <code>bitcoin-signet</code>은 <code>-listen=0</code>이다. 2026-10-14 N-1: node-0의 <code>getpeerinfo</code>에 외부 outbound 10개(full-relay 8, block-relay-only 2)가 있었다. 기본 자리가 모두 찼다. 외부에서 들어온 inbound는 0개였다. 그래서 외부에 여는 노드는 이미 <code>-listen=1</code>인 node-0으로 정했다. 재시작이 필요 없기 때문이다.</div>
           <div class="warn"><b>자주 하는 오해</b><code>connected: false</code>이면 먼저 포트를 본다. 실제로 <code>-addnode</code>에 39833을 써서 연결되지 않았다. Signet P2P 포트는 38333이다. bitcoind가 듣는 포트는 로그의 <code>Bound to</code> 줄에 있다.</div>
           <details class="try"><summary>직접 확인</summary>
 <pre>kubectl -n bitcoin-lab exec bitcoin-node-0 -- \
@@ -1262,22 +1463,35 @@ kubectl -n bitcoin-lab exec bitcoin-node-1 -- \
 kubectl -n bitcoin-lab logs bitcoin-node-0 | grep Bound   <span class="cm"># 실제로 듣는 포트</span>
 <span class="cm"># getpeerinfo의 "inbound", getnetworkinfo의 connections_in/out도 본다</span></pre>
           </details>
-          <p class="rel">연결: <a href="#headless">headless Service</a><a href="#ipport">IP와 포트</a><a href="#nat">NAT</a></p>
+          <p class="rel">연결: <a href="#headless">headless Service</a><a href="#ipport">IP와 포트</a><a href="#nat">NAT</a><a href="#conntrack">연결의 방향</a><a href="#dnat">포트 포워딩 = DNAT</a></p>
         </article>
 
-        <article class="c" id="rpccookie" data-added="2026-10-12" data-updated="2026-10-12" data-k="rpc 쿠키 cookie 인증 bitcoin-cli rpcuser rpcpassword rpcauth json-rpc http">
+        <article class="c" id="rpccookie" data-added="2026-10-12" data-updated="2026-10-15" data-k="rpc 쿠키 cookie 인증 bitcoin-cli rpcuser rpcpassword rpcauth json-rpc http p2p 38332 38333 post root /root/.bitcoin could not locate rpc credentials">
           <div class="c-head"><h3>RPC와 쿠키 인증</h3></div>
           <p class="why"><b>왜 알아야 하나</b><code>bitcoin-cli</code>가 "Could not locate RPC credentials" 오류를 낼 때가 있다. 원인은 비밀번호가 아니라 쿠키 파일의 위치와 권한이다.</p>
           <figure class="fig"><div class="sc"><svg viewBox="0 0 720 168" role="img" aria-label="bitcoind가 쿠키 파일을 쓰고, bitcoin-cli가 그 파일을 읽어 인증한다" style="min-width:560px;max-width:720px"><rect class="hl" x="20" y="50" width="150" height="60" rx="5"/><text class="tb" x="95" y="76" text-anchor="middle">bitcoind</text><text class="mono" x="95" y="96" text-anchor="middle">RPC 38332</text><rect class="wr" x="260" y="50" width="180" height="60" rx="5"/><text class="mono" x="350" y="74" text-anchor="middle">signet/.cookie</text><text class="mono" x="350" y="94" text-anchor="middle">__cookie__:무작위값</text><rect class="bx" x="530" y="50" width="170" height="60" rx="5"/><text class="tb" x="615" y="76" text-anchor="middle">bitcoin-cli</text><text class="ts" x="615" y="96" text-anchor="middle">같은 datadir</text><path class="ln" d="M170,80 H258" marker-end="url(#am)"/><text class="ts" x="214" y="72" text-anchor="middle">① 시작 시 쓴다</text><path class="ln" d="M440,80 H528" marker-end="url(#am)"/><text class="ts" x="484" y="72" text-anchor="middle">② 읽는다</text><path class="la" d="M615,110 V140 H95 V112" marker-end="url(#aa)"/><text class="ts ta" x="355" y="158" text-anchor="middle">③ HTTP 요청 + 쿠키 값으로 인증</text><text class="ts tw" x="350" y="36" text-anchor="middle">이 파일을 읽을 수 있으면 RPC를 쓸 수 있다</text></svg></div><figcaption>쿠키는 재시작할 때마다 바뀐다. 그래서 비밀번호를 설정 파일에 두지 않아도 된다.</figcaption></figure>
           <ul>
             <li><code>bitcoin-cli</code>는 bitcoind에 HTTP로 JSON-RPC 요청을 보낸다. 모든 요청에는 인증이 필요하다.</li>
+            <li>요청의 실제 모양: <code>POST http://127.0.0.1:38332/</code>, 본문 <code>{"method": "getpeerinfo", "params": []}</code>. bitcoind가 함수를 실행하고 결과를 JSON으로 돌려준다.</li>
+            <li>인증이 필요한 이유: RPC로 노드를 끄고(<code>stop</code>), 지갑의 돈을 보내고, 피어를 차단할 수 있다.</li>
             <li>설정에 비밀번호가 없으면 bitcoind는 시작할 때 <code>.cookie</code> 파일을 만든다. 내용은 <code>__cookie__:무작위값</code>이다.</li>
             <li>bitcoin-cli는 같은 데이터 디렉터리에서 이 파일을 읽어 인증한다.</li>
             <li>쿠키는 재시작할 때마다 바뀐다. bitcoind가 정상 종료하면 지워진다.</li>
             <li>결과: <b>파일을 읽을 수 있는 사용자 = RPC를 쓸 수 있는 사용자</b>. 인증이 파일 권한으로 바뀐다.</li>
           </ul>
-          <div class="mine"><b>내 환경에서</b>Pod 안에서 <code>bitcoin-cli -signet</code>을 실행하면 같은 데이터 디렉터리를 보므로 쿠키를 찾는다. 다른 사용자로 실행하거나 <code>-datadir</code>이 다르면 찾지 못한다. 그래서 <code>btc</code> 별칭에는 <code>-datadir=/home/bitcoin/.bitcoin</code>이 들어 있다. 고정된 계정이 필요하면 <code>-rpcauth</code>를 쓴다.</div>
-          <p class="rel">연결: <a href="#bindaddr">리슨 주소</a><a href="#process">권한</a><a href="#datadir">데이터 디렉터리</a></p>
+          <div class="tbl"><table>
+            <thead><tr><th></th><th>P2P <code>38333</code></th><th>RPC <code>38332</code></th></tr></thead>
+            <tbody>
+              <tr><td>누가 오나</td><td>전 세계의 다른 노드</td><td>주인과 주인의 프로그램 (<code>bitcoin-cli</code>, 지갑, 블록 탐색기)</td></tr>
+              <tr><td>무엇을 하나</td><td>블록, 트랜잭션, 주소를 주고받는다</td><td>조회, 설정, <code>stop</code>, 송금</td></tr>
+              <tr><td>인증</td><td>없음</td><td>쿠키 또는 비밀번호</td></tr>
+              <tr><td>기본 리슨 주소</td><td>모든 주소</td><td><code>127.0.0.1</code>만</td></tr>
+              <tr><td>밖에 열기</td><td>연다 (inbound)</td><td>열지 않는다</td></tr>
+            </tbody>
+          </table></div>
+          <div class="mine"><b>내 환경에서</b>Pod 안에서 <code>bitcoin-cli -signet</code>을 실행하면 같은 데이터 디렉터리를 보므로 쿠키를 찾는다. 다른 사용자로 실행하거나 <code>-datadir</code>이 다르면 찾지 못한다. 그래서 <code>btc</code> 별칭에는 <code>-datadir=/home/bitcoin/.bitcoin</code>이 들어 있다. 고정된 계정이 필요하면 <code>-rpcauth</code>를 쓴다. 2026-10-14 오류: <code>kubectl exec bitcoin-node-0 -- bitcoin-cli -signet getpeerinfo</code> → <code>Could not locate RPC credentials … (/root/.bitcoin/bitcoin.conf)</code>. 원인: 이 이미지에서 <code>kubectl exec</code>는 root로 실행된다. 그래서 bitcoin-cli가 root의 홈(<code>/root/.bitcoin</code>)에서 쿠키를 찾았다. 쿠키는 <code>/home/bitcoin/.bitcoin/signet/.cookie</code>에 있다. <code>-datadir=/home/bitcoin/.bitcoin</code>을 붙이면 된다.</div>
+          <div class="warn"><b>자주 하는 오해</b>"쿠키가 있으니 38332를 밖에 열어도 된다"는 틀리다. RPC는 주인의 문이다. 공유기에 넣지 않는다. 집 밖에서 노드를 다루려면 <a href="#tailscale">Tailscale</a>로 promet에 들어간 다음 <code>kubectl exec</code>를 쓴다.</div>
+          <p class="rel">연결: <a href="#bindaddr">리슨 주소</a><a href="#process">권한</a><a href="#datadir">데이터 디렉터리</a><a href="#listen">-listen과 피어</a><a href="#tailscale">Tailscale</a></p>
         </article>
 
         <article class="c" id="prune" data-added="2026-10-12" data-updated="2026-10-12" data-k="prune pruned 노드 가지치기 디스크 절약 550 txindex network_limited">
@@ -1294,7 +1508,7 @@ kubectl -n bitcoin-lab logs bitcoin-node-0 | grep Bound   <span class="cm"># 실
           <p class="rel">연결: <a href="#datadir">데이터 디렉터리</a><a href="#dudf">du와 df</a></p>
         </article>
 
-        <article class="c" id="dbcache" data-added="2026-10-12" data-updated="2026-10-14" data-k="utxo dbcache chainstate 캐시 flush leveldb 메모리 동기화 속도">
+        <article class="c" id="dbcache" data-added="2026-10-12" data-updated="2026-10-15" data-k="utxo dbcache chainstate 캐시 flush leveldb 메모리 동기화 속도 connectblock ccoinsviewcache fetchcoin ccoinsviewdb txdb 코드 경로">
           <div class="c-head"><h3>UTXO 집합과 dbcache</h3></div>
           <p class="why"><b>왜 알아야 하나</b>IBD 속도에 가장 큰 영향을 주는 설정이다. 실습 F의 첫 번째 실험 변수가 될 수 있다.</p>
           <figure class="fig"><div class="sc"><svg viewBox="0 0 720 146" role="img" aria-label="블록 검증은 UTXO 캐시를 사용하고, 캐시가 차면 디스크로 flush한다" style="min-width:560px;max-width:720px"><rect class="bx" x="20" y="50" width="110" height="50" rx="5"/><text class="tb" x="75" y="80" text-anchor="middle">새 블록</text><path class="ln" d="M130,75 H158" marker-end="url(#am)"/><rect class="bx" x="160" y="50" width="120" height="50" rx="5"/><text class="tb" x="220" y="72" text-anchor="middle">검증</text><text class="ts" x="220" y="90" text-anchor="middle">CPU</text><path class="la" d="M282,75 H328" marker-end="url(#aa)" marker-start="url(#aa)"/><text class="ts" x="220" y="120" text-anchor="middle">UTXO 찾기·추가·삭제</text><rect class="none" x="318" y="28" width="204" height="92" rx="5" fill="none" stroke-dasharray="5 4" style="stroke:var(--warn)"/><rect class="hl" x="330" y="50" width="180" height="50" rx="5"/><text class="tb" x="420" y="72" text-anchor="middle">UTXO 캐시</text><text class="ts" x="420" y="90" text-anchor="middle">메모리 · -dbcache</text><text class="ts tw" x="420" y="114" text-anchor="middle">컨테이너 메모리 limits 안</text><path class="la" d="M510,64 H568" marker-end="url(#aa)"/><text class="ts ta" x="540" y="56" text-anchor="middle">flush</text><path class="lw" d="M568,88 H512" marker-end="url(#aw)" stroke-dasharray="5 4"/><text class="ts tw" x="540" y="136" text-anchor="middle">없으면 디스크 읽기</text><rect class="bx" x="570" y="50" width="130" height="50" rx="5"/><text class="mono" x="635" y="72" text-anchor="middle">chainstate/</text><text class="ts" x="635" y="90" text-anchor="middle">LevelDB · 디스크</text></svg></div><figcaption>dbcache가 크면 디스크 읽기와 flush가 줄어든다. 하지만 캐시는 컨테이너 메모리 limits 안에 있어야 한다.</figcaption></figure>
@@ -1304,9 +1518,10 @@ kubectl -n bitcoin-lab logs bitcoin-node-0 | grep Bound   <span class="cm"># 실
             <li><code>-dbcache=N</code>(MiB)은 UTXO를 메모리에 둘 공간이다. 크면 디스크에 덜 간다.</li>
             <li>캐시가 차면 디스크(chainstate)에 한 번에 쓴다. 이것을 <b>flush</b>라고 한다. 이때 I/O가 몰린다.</li>
             <li>dbcache에 없는 UTXO는 <code>chainstate/</code>의 LevelDB 파일에서 읽는다. 그 파일이 page cache에 있으면 빠르고, 버려졌으면 디스크까지 간다.</li>
+            <li>코드 경로: <code>ConnectBlock</code>(<code>src/validation.cpp</code>)이 입력 코인을 찾는다 → <code>CCoinsViewCache::FetchCoin</code>(<code>src/coins.cpp</code>, 크기 = dbcache) → 없으면 <code>CCoinsViewDB</code>(<code>src/txdb.cpp</code>) → LevelDB 읽기 → page cache → 디스크.</li>
           </ul>
           <div class="warn"><b>자주 하는 오해</b>dbcache를 크게 하면 항상 빠른 것은 아니다. 컨테이너 메모리 limits를 넘으면 종료된다. 페이지 캐시와도 메모리를 나눈다. 측정으로 확인한다.</div>
-          <div class="mine"><b>내 환경에서</b>노드는 <code>-dbcache=512</code>다. 2026-10-13 조사에서 IBD 동안 약 1.89TB를 다시 읽었다. 다시 읽은 대상으로 가장 유력한 것은 <code>chainstate/</code>의 LevelDB 파일이다(추정). 실습 F의 <a href="#reindex">-reindex-chainstate</a>가 바로 이 부분을 다시 실행한다.</div>
+          <div class="mine"><b>내 환경에서</b>노드는 <code>-dbcache=512</code>다. 2026-10-13 조사에서 IBD 동안 약 1.89TB를 다시 읽었다. 다시 읽은 대상으로 가장 유력한 것은 <code>chainstate/</code>의 LevelDB 파일이다(추정). 실습 F의 <a href="#reindex">-reindex-chainstate</a>가 바로 이 부분을 다시 실행했다. 읽기 중 refault는 95%(상자 8GiB), 97.9%(4GiB)였다. 다음 질문: dbcache를 키우면 LevelDB 읽기가 줄어드는가? 그런데 dbcache도 같은 2Gi limit 안에 있다. 메모리를 dbcache와 page cache 중 어디에 주는 것이 좋은가? 이것은 코드를 읽고 측정해야 답할 수 있다.</div>
           <details class="try"><summary>직접 확인</summary>
 <pre>grep -E "Using .*MiB|Flush|UpdateTip" debug.log | tail
 <span class="cm"># 캐시 배분, flush 시점, 블록 처리 속도</span></pre>
@@ -1314,7 +1529,7 @@ kubectl -n bitcoin-lab logs bitcoin-node-0 | grep Bound   <span class="cm"># 실
           <p class="rel">연결: <a href="#reindex">-reindex-chainstate</a><a href="#memory">메모리와 페이지 캐시</a><a href="#resources">limits</a><a href="#ssdhdd">SSD와 HDD</a></p>
         </article>
 
-        <article class="c" id="reindex" data-added="2026-10-14" data-updated="2026-10-14" data-k="reindex-chainstate reindex bitcoin.conf 설정 파일 chainstate 재구축 실험 다시 검증 verificationprogress">
+        <article class="c" id="reindex" data-added="2026-10-14" data-updated="2026-10-15" data-k="reindex-chainstate reindex bitcoin.conf 설정 파일 chainstate 재구축 실험 다시 검증 verificationprogress">
           <div class="c-head"><h3>-reindex-chainstate와 bitcoin.conf</h3></div>
           <p class="why"><b>왜 알아야 하나</b>실습 F는 같은 작업을 조건만 바꾸어 두 번 실행한다. IBD를 다시 하면 네트워크(피어 속도)가 결과를 흔든다. <code>-reindex-chainstate</code>는 네트워크 없이 같은 검증 작업을 다시 하게 한다.</p>
           <figure class="fig"><div class="sc"><svg viewBox="0 0 720 156" role="img" aria-label="IBD는 네트워크에서 블록을 받고, reindex-chainstate는 디스크의 블록으로 같은 검증을 다시 한다" style="min-width:600px;max-width:720px"><text class="tb" x="10" y="58" text-anchor="start">IBD</text><text class="mono" x="10" y="120" text-anchor="start">-reindex-</text><text class="mono" x="10" y="136" text-anchor="start">chainstate</text><rect class="bx" x="150" y="30" width="125" height="46" rx="5"/><text class="tb" x="212" y="50" text-anchor="middle">피어</text><text class="ts" x="212" y="67" text-anchor="middle">네트워크</text><path class="ln" d="M275,53 H293" marker-end="url(#am)"/><rect class="bx" x="295" y="30" width="125" height="46" rx="5"/><text class="tb" x="357" y="50" text-anchor="middle">blocks/ 저장</text><text class="ts" x="357" y="67" text-anchor="middle">blk*.dat</text><path class="ln" d="M420,53 H438" marker-end="url(#am)"/><rect class="bx" x="440" y="30" width="125" height="46" rx="5"/><text class="tb" x="502" y="50" text-anchor="middle">검증</text><text class="ts" x="502" y="67" text-anchor="middle">CPU · UTXO 확인</text><path class="ln" d="M565,53 H583" marker-end="url(#am)"/><rect class="bx" x="585" y="30" width="125" height="46" rx="5"/><text class="tb" x="647" y="50" text-anchor="middle">chainstate/</text><text class="ts" x="647" y="67" text-anchor="middle">UTXO 집합 (LevelDB)</text><rect class="bx" x="150" y="100" width="125" height="46" rx="5" stroke-dasharray="4 3"/><text class="ts" x="212" y="128" text-anchor="middle">네트워크 없음</text><rect class="bx" x="295" y="100" width="125" height="46" rx="5"/><text class="tb" x="357" y="120" text-anchor="middle">blocks/ 읽기</text><text class="ts" x="357" y="137" text-anchor="middle">이미 디스크에 있음</text><path class="ln" d="M420,123 H438" marker-end="url(#am)"/><rect class="bx" x="440" y="100" width="125" height="46" rx="5"/><text class="tb" x="502" y="120" text-anchor="middle">검증</text><text class="ts" x="502" y="137" text-anchor="middle">같은 작업</text><path class="ln" d="M565,123 H583" marker-end="url(#am)"/><rect class="hl" x="585" y="100" width="125" height="46" rx="5"/><text class="tb" x="647" y="120" text-anchor="middle">chainstate/</text><text class="ts" x="647" y="137" text-anchor="middle">지우고 새로 만듦</text></svg></div><figcaption><code>-reindex-chainstate</code>는 IBD에서 네트워크를 뺀 작업이다. 그래서 메모리와 디스크(page cache)의 영향만 비교할 수 있다.</figcaption></figure>
@@ -1325,7 +1540,7 @@ kubectl -n bitcoin-lab logs bitcoin-node-0 | grep Bound   <span class="cm"># 실
             <li><code>bitcoin.conf</code>는 데이터 디렉터리의 맨 위에 둔다. <code>signet/</code> 안이 아니다. <code>signet/</code>에는 데이터만 있다.</li>
             <li>bitcoind는 시작할 때만 설정을 읽는다. 그래서 파일을 쓴 뒤 재시작해야 한다.</li>
           </ul>
-          <div class="mine"><b>내 환경에서</b>StatefulSet의 <code>args</code>에 넣으면 node-0과 node-1이 모두 reindex를 한다. 하지만 <code>bitcoin.conf</code>는 PVC 안에 있고, node-1의 PVC는 node-1만 쓴다. 그래서 2026-10-13에 node-1의 <code>/home/bitcoin/.bitcoin/bitcoin.conf</code>에만 한 줄을 썼다. 그다음 <code>kubectl delete pod bitcoin-node-1</code>로 재시작했다. 새 컨테이너는 새 cgroup을 받으므로 <code>cpu.stat</code>, <code>io.stat</code>, <code>memory.stat</code>이 0부터 다시 센다. 끝났을 때의 값이 그대로 이번 실행의 값이 된다.</div>
+          <div class="mine"><b>내 환경에서</b>StatefulSet의 <code>args</code>에 넣으면 node-0과 node-1이 모두 reindex를 한다. 하지만 <code>bitcoin.conf</code>는 PVC 안에 있고, node-1의 PVC는 node-1만 쓴다. 그래서 2026-10-13에 node-1의 <code>/home/bitcoin/.bitcoin/bitcoin.conf</code>에만 한 줄을 썼다. 그다음 <code>kubectl delete pod bitcoin-node-1</code>로 재시작했다. 새 컨테이너는 새 cgroup을 받으므로 <code>cpu.stat</code>, <code>io.stat</code>, <code>memory.stat</code>이 0부터 다시 센다. 끝났을 때의 값이 그대로 이번 실행의 값이 된다. 2026-10-14 F-6: 실험이 끝난 뒤 <code>bitcoin.conf</code>(이 한 줄만 있었다)를 지우고 Pod를 다시 만들었다. 재시작 직후 <code>blocks</code> = <code>headers</code> = 326339, <code>initialblockdownload: false</code>였다. 재구축 없이 시작했다.</div>
           <div class="warn"><b>자주 하는 오해</b>끝난 뒤에 설정 줄을 지워야 한다. 줄이 남아 있으면 Pod가 다시 시작될 때마다 reindex를 다시 한다. 그리고 블록 수로 남은 시간을 예상하지 않는다. Signet 초기 블록은 거의 비어 있어서 빨리 지나간다. <code>verificationprogress</code>가 더 정확하다.</div>
           <details class="try"><summary>직접 확인</summary>
 <pre>kubectl -n bitcoin-lab exec bitcoin-node-1 -- cat /home/bitcoin/.bitcoin/bitcoin.conf
@@ -1344,7 +1559,7 @@ kubectl -n bitcoin-lab exec bitcoin-node-1 -- \
       <p class="lead">프로젝트의 최종 목표다. "빨라졌다"가 아니라 "왜, 얼마나 빨라졌다"를 말할 수 있어야 한다.</p>
       <div class="cards">
 
-        <article class="c" id="use" data-added="2026-10-12" data-updated="2026-10-14" data-k="use method utilization saturation errors 병목 사용률 포화 오류 top vmstat">
+        <article class="c" id="use" data-added="2026-10-12" data-updated="2026-10-15" data-k="use method utilization saturation errors 병목 사용률 포화 오류 top vmstat 프로파일링 perf flame graph debug=bench 소스 코드 순서">
           <div class="c-head"><h3>성능을 보는 순서 (USE)</h3></div>
           <p class="why"><b>왜 알아야 하나</b>느릴 때 아무 도구나 켜면 시간만 쓴다. 정해진 순서로 자원을 하나씩 확인하면 병목을 빠뜨리지 않는다.</p>
           <p>자원(CPU, 메모리, 디스크, 네트워크)마다 세 가지를 본다:</p>
@@ -1364,15 +1579,25 @@ kubectl -n bitcoin-lab exec bitcoin-node-1 -- \
             <ul>
               <li>CPU: 사용률 평균 약 0.45코어(낮음), 포화(throttling) 약 2.6%(낮음). 원인이 아니다.</li>
               <li>디스크: 읽기 약 1.89TB, 데이터의 약 78배. 이상하다.</li>
-              <li>메모리: kind 상자가 24,428,625번 가득 찼다(포화). 오류(OOM)는 0이다.</li>
+              <li>메모리: kind 상자의 <code>memory.events</code> <code>max</code>가 24,428,625였다(포화). 이 값은 하위 cgroup을 포함한다. 상자 자신의 값은 10-14 확인에서 약 83%였다. 오류(OOM)는 0이다.</li>
             </ul>
             결론: 메모리 포화 → 캐시 손실 → 디스크 읽기 → CPU 대기. 오류가 없어서 "느리기만" 했다.</div>
+          <p><b>USE 다음의 순서.</b> USE는 어느 <b>자원</b>이 부족한지 찾는다. 실무에서는 보통 4단계로 내려간다.</p>
+          <ol>
+            <li><b>시스템 관찰</b> (cgroup, <code>iostat</code>, USE): 어느 자원이 부족한가?</li>
+            <li><b>프로파일링</b> (<code>perf</code>, flame graph, bitcoind의 <code>-debug=bench</code>): 어느 <b>함수</b>에서 시간을 쓰는가?</li>
+            <li><b>소스 코드</b>: 그 함수는 <b>왜</b> 그렇게 동작하는가?</li>
+            <li><b>수정과 재측정</b>: 1단계의 숫자가 실제로 좋아졌는가?</li>
+          </ol>
+          <div class="warn"><b>자주 하는 오해</b>성능 문제를 소스 코드부터 보지 않는다. 시간이 어디에서 쓰이는지 모르고 고치면 틀린 곳을 고친다. 이 프로젝트의 첫 원인도 코드가 아니라 환경(kind 상자 메모리)이었다. 설정 하나로 읽기가 990GB → 433GB로 달라졌다(<a href="#experiment">실습 F</a>).</div>
+          <div class="mine"><b>내 환경에서</b>2026-10-14에 1단계를 끝냈다. 2단계는 <code>-debug=bench</code>로 시작할 계획이다. 이 옵션은 블록마다 검증 단계별 시간을 <code>debug.log</code>에 남긴다. <code>perf</code>는 보통 root 권한이 필요하지만, 이 옵션은 필요 없다.</div>
           <p class="rel">연결: <a href="#cputhrottle">throttling</a><a href="#refault">refault</a><a href="#iometrics">IOPS와 지연</a><a href="#cgroup">cgroup</a><a href="#experiment">실험 설계</a></p>
         </article>
 
-        <article class="c" id="experiment" data-added="2026-10-12" data-updated="2026-10-14" data-k="실험 설계 변수 하나 반복 기록 재현 기준선 baseline 캐시 효과">
+        <article class="c" id="experiment" data-added="2026-10-12" data-updated="2026-10-15" data-k="실험 설계 변수 하나 반복 기록 재현 기준선 baseline 캐시 효과 실습 F 결과 1.72배 오차">
           <div class="c-head"><h3>실험 설계의 기본</h3></div>
           <p class="why"><b>왜 알아야 하나</b>측정 한 번은 증거가 아니다. 개선 효과를 남에게 보여 주려면 같은 결과가 다시 나와야 한다.</p>
+          <figure class="fig"><div class="sc"><svg viewBox="0 0 720 224" role="img" aria-label="실습 F 결과: 상자 4GiB에서 시간 1.72배, 읽기 2.29배, 평균 CPU 0.77배" style="min-width:600px;max-width:720px"><rect class="hl" x="130" y="10" width="14" height="14" rx="5"/><text class="ts" x="150" y="22" text-anchor="start">실행 1: 상자 8GiB</text><rect class="wr" x="300" y="10" width="14" height="14" rx="5"/><text class="ts" x="320" y="22" text-anchor="start">실행 2: 상자 4GiB</text><text class="tb" x="10" y="66" text-anchor="start">걸린 시간</text><rect class="hl" x="130" y="42" width="256" height="16" rx="5"/><text class="ts" x="394" y="55" text-anchor="start">1시간 39분</text><rect class="wr" x="130" y="62" width="440" height="16" rx="5"/><text class="ts tw" x="578" y="75" text-anchor="start">2시간 51분 · 1.72배</text><text class="tb" x="10" y="124" text-anchor="start">디스크 읽기</text><rect class="hl" x="130" y="100" width="193" height="16" rx="5"/><text class="ts" x="331" y="113" text-anchor="start">433GB</text><rect class="wr" x="130" y="120" width="440" height="16" rx="5"/><text class="ts tw" x="578" y="133" text-anchor="start">990GB · 2.29배</text><text class="tb" x="10" y="182" text-anchor="start">평균 CPU</text><rect class="hl" x="130" y="158" width="440" height="16" rx="5"/><text class="ts" x="578" y="171" text-anchor="start">0.78코어</text><rect class="wr" x="130" y="178" width="338" height="16" rx="5"/><text class="ts tw" x="476" y="191" text-anchor="start">0.60코어 · 0.77배</text><text class="ts" x="10" y="214" text-anchor="start">바꾼 변수는 kind 상자 메모리 하나다. 각 조건을 한 번씩 실행했다.</text></svg></div><figcaption>상자를 줄이자 시간과 읽기가 늘었다. 평균 CPU는 줄었다. CPU가 일을 하지 못하고 디스크를 기다린 시간이 늘었다는 뜻이다.</figcaption></figure>
           <ol>
             <li><b>질문을 먼저 쓴다.</b> 예: "dbcache 450 → 2000 MiB이면 Signet IBD 시간이 줄어드는가?"</li>
             <li><b>기준선(baseline)을 잰다.</b> 바꾸기 전의 값이다.</li>
@@ -1382,7 +1607,25 @@ kubectl -n bitcoin-lab exec bitcoin-node-1 -- \
             <li><b>결과를 원인으로 설명한다.</b> "빨라졌다"가 아니라 "디스크 대기가 줄어서 빨라졌다".</li>
           </ol>
           <div class="warn"><b>자주 하는 오해</b>네트워크 피어는 매번 다르다. 블록을 받는 속도가 결과를 흔든다. 검증 속도만 재고 싶으면 피어 조건을 고정하거나 없앤다. 예: 내 노드에만 <code>-connect</code>, 또는 블록을 다시 받지 않는 <a href="#reindex">-reindex-chainstate</a>.</div>
-          <div class="mine"><b>내 환경에서</b>실습 F(2026-10-13 시작)의 질문: "kind 상자를 4GiB → 8GiB로 바꾸면 <code>bitcoin-node-1</code>의 <code>-reindex-chainstate</code>가 빨라지는가?" 실행 1은 8GiB, 실행 2는 4GiB다. CPU 3.5코어 같은 나머지 조건은 바꾸지 않는다. 잴 것: 걸린 시간, <code>usage_usec</code>, throttling, <code>rbytes</code>, <code>wbytes</code>, <code>workingset_refault_file</code>, kind 상자의 <code>memory.events</code> <code>max</code>(실행 1 시작 전 24,432,572). 가설이 맞으면 8GiB에서 refault와 읽기가 크게 줄고 시간이 짧아진다. 시간이 거의 같으면 가설이 틀린 것이고, 그것도 결과다.</div>
+          <div class="mine"><b>내 환경에서</b>실습 F(2026-10-13~14)의 질문: "kind 상자의 메모리만 8GiB → 4GiB로 바꾸면 <code>bitcoin-node-1</code>의 <code>-reindex-chainstate</code>가 느려지는가?" CPU 3.5코어 같은 나머지 조건은 바꾸지 않았다. 결과: 1.72배 느려졌고, 읽기는 2.29배였다. 실행 2에서 컨테이너는 자기 한도에 한 번도 닿지 않았다(<code>max 0</code>). 그래서 이 차이는 부모(상자)의 메모리 때문이라고 말할 수 있다.</div>
+          <div class="tbl"><table>
+            <thead><tr><th>항목</th><th>실행 1 (상자 8GiB)</th><th>실행 2 (상자 4GiB)</th></tr></thead>
+            <tbody>
+              <tr><td>걸린 시간</td><td>5,950초 (1시간 39분)</td><td>10,239초 (2시간 51분), 1.72배</td></tr>
+              <tr><td>평균 CPU</td><td>0.78코어</td><td>0.60코어</td></tr>
+              <tr><td>throttling (멈춘 창)</td><td>7.6%</td><td>7.9%</td></tr>
+              <tr><td>디스크 읽기</td><td>433GB</td><td>990GB, 2.29배</td></tr>
+              <tr><td>refault (읽기 중 비율)</td><td>412GB (95%)</td><td>969GB (97.9%)</td></tr>
+              <tr><td>컨테이너 <code>memory.peak</code></td><td>2.00GiB (한도에 닿음)</td><td>1.44GiB (닿지 않음)</td></tr>
+              <tr><td>컨테이너 <code>max</code> 이벤트</td><td>113</td><td>0</td></tr>
+            </tbody>
+          </table></div>
+          <ul>
+            <li>각 조건을 한 번씩만 실행했다. 그래서 오차 범위는 모른다.</li>
+            <li>실행 2는 page cache가 비워진 상태로 시작했다. 실행 1은 일부 캐시가 남았을 수 있다. 읽기 총량(수백 GB)에 비하면 영향은 작다고 본다.</li>
+            <li>카운터에는 작업이 끝난 뒤의 대기 시간도 섞여 있다(실행 1 약 10시간, 실행 2 약 6.5시간). 대기 중 사용량은 작다.</li>
+            <li>실행 1에서는 컨테이너 자신의 한도(2Gi)에 닿았다. 상자를 키우자 부족한 곳이 한 층 아래로 옮겨 갔다.</li>
+          </ul>
           <p class="rel">연결: <a href="#reindex">-reindex-chainstate</a><a href="#use">USE</a><a href="#memory">캐시 효과</a><a href="#signet">Signet의 한계</a></p>
         </article>
       </div>
