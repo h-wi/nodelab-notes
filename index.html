@@ -71,6 +71,28 @@ pre code { background: none; padding: 0; }
 main { padding-block: 28px 80px; min-width: 0; display: flex; flex-direction: column; gap: 48px; }
 .intro h1 { font-size: 30px; line-height: 1.25; margin: 0 0 10px; letter-spacing: -.01em; text-wrap: balance; }
 .intro p { max-width: 66ch; margin: 0 0 10px; color: var(--muted); }
+.stamp { font-size: 13.5px; color: var(--muted); margin: -2px 0 12px; font-variant-numeric: tabular-nums; }
+.stamp b { color: var(--ink); font-weight: 500; }
+.fresh { margin-top: 18px; border: 1px solid var(--accent); border-radius: 6px; padding: 14px 16px; max-width: 760px; background: var(--panel); }
+.fresh h2 { font-size: 15px; margin: 0 0 8px; }
+.fresh h2 .dates { margin-left: 6px; }
+.intro .fresh p { color: var(--ink); margin: 6px 0 0; font-size: 14px; line-height: 1.7; }
+.fresh p .badge { margin-right: 6px; }
+.c-meta { display: inline-flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.badge { display: inline-block; font-size: 11.5px; font-weight: 600; line-height: 1.5; letter-spacing: .02em; padding: 0 7px; border-radius: 999px; border: 1px solid currentColor; white-space: nowrap; }
+.badge.new { color: var(--accent); background: var(--accent-soft); }
+.badge.upd, .badge.stale { color: var(--warn); background: var(--warn-soft); }
+.dates { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.c.is-new { border-left: 3px solid var(--accent); }
+.c.is-upd { border-left: 3px solid var(--warn); }
+.toc .tag { margin-left: auto; padding-left: 6px; font-size: 10.5px; font-weight: 600; color: var(--accent); }
+.toc .tag.upd { color: var(--warn); }
+.seg { flex: none; align-self: flex-start; display: inline-flex; border: 1px solid var(--accent); border-radius: 4px; overflow: hidden; }
+.seg button { border: 0; background: transparent; color: var(--accent); font: inherit; font-size: 13px; padding: 5px 10px; cursor: pointer; }
+.seg button + button { border-left: 1px solid var(--accent); }
+.seg button[aria-pressed="true"] { background: var(--accent); color: var(--bg); }
+.empty { color: var(--muted); }
+[hidden] { display: none !important; }
 .legend { display: flex; flex-wrap: wrap; gap: 8px 18px; font-size: 13px; color: var(--muted); margin-top: 12px; }
 .legend span::before { content: ""; display: inline-block; width: 10px; height: 10px; margin-right: 6px; border-radius: 2px; vertical-align: -1px; }
 .legend .l-why::before { background: var(--ink); }
@@ -178,8 +200,13 @@ html { scroll-behavior: smooth; }
     <div class="brand"><b>nodelab</b> · 개념 노트</div>
     <input class="search" id="q" type="search" placeholder="개념 찾기 (예: PVC, cgroup, 쿠키)" aria-label="개념 찾기">
     <div class="tools">
-      <button class="btn" id="rand" type="button">안 읽은 개념 하나</button>
+      <button class="btn" id="rand" type="button" title="새로 바뀐 카드 중 안 읽은 것을 먼저 고른다">안 읽은 개념 하나</button>
       <button class="btn navtoggle" id="navtoggle" type="button">목차 펼치기</button>
+    </div>
+    <div class="seg" id="view" role="group" aria-label="보기">
+      <button type="button" data-v="all" aria-pressed="true">전체</button>
+      <button type="button" data-v="fresh" aria-pressed="false">새로 바뀐 것</button>
+      <button type="button" data-v="unread" aria-pressed="false">안 읽음</button>
     </div>
     <div>
       <div class="progress" id="prog">읽음 0 / 0</div>
@@ -191,13 +218,21 @@ html { scroll-behavior: smooth; }
   <main>
     <header class="intro">
       <h1>nodelab 개념 노트</h1>
+      <p class="stamp" id="stamp">마지막 갱신 <b><time datetime="2026-10-14T14:06+09:00">2026-10-14 14:06</time></b> (한국 시간) · 매일 06:52에 학습 기록을 읽고 자동으로 갱신한다.</p>
       <p>노드를 운영할 때 필요한 기본 개념을 모은 페이지다. 한 번에 하나씩 읽는다. 각 개념은 짧다.</p>
       <p>모든 개념은 같은 순서로 쓴다. 먼저 <b>왜 알아야 하는지</b> 쓴다. 그다음 핵심 내용을 쓴다. 그다음 <b>내 환경</b>(kind 클러스터 <code>bitcoin-lab</code>, namespace <code>bitcoin-lab</code>, deployment <code>bitcoin-signet</code>)과 연결한다. 그림은 "왜"의 바로 아래에 있다. 명령은 접혀 있다. 필요할 때만 연다.</p>
       <div class="legend"><span class="l-why">왜 알아야 하나</span><span class="l-mine">내 환경에서</span><span class="l-warn">자주 하는 오해</span></div>
+      <div class="fresh" id="fresh" hidden>
+        <h2>최근 갱신에서 바뀐 카드<span class="dates" id="fresh-date"></span></h2>
+        <p id="fresh-new"><span class="badge new">NEW</span></p>
+        <p id="fresh-upd"><span class="badge upd">보충</span></p>
+        <p id="fresh-stale" hidden><span class="badge stale">읽은 뒤 보충됨</span></p>
+      </div>
       <div class="now" id="now">
         <h2>지금 학습 위치</h2>
         <p>실습 A–E 완료. 실습 E(2026-10-13)에서 IBD가 느린 원인을 찾았다. CPU가 아니었다. kind 상자(메모리 4GiB)가 가득 차서 page cache를 계속 잃었다(디스크 읽기 1.89TB, 그중 99.96%가 refault). 상자를 8GiB로 늘렸다. 지금은 실습 F의 실행 1이다: 상자 8GiB에서 <code>bitcoin-node-1</code>이 <code>-reindex-chainstate</code>를 하고 있다. 끝나면 측정값을 모으고 <code>bitcoin.conf</code>의 줄을 지운 다음, 4GiB에서 실행 2를 한다. 먼저 읽을 개념: <a href="#reindex">-reindex-chainstate</a>, <a href="#experiment">실험 설계</a>, <a href="#refault">refault</a>, <a href="#cputhrottle">cpu.max와 throttling</a>, <a href="#qos">QoS와 OOM 점수</a>.</p>
         <ul class="upd" id="changelog">
+          <li><b>2026-10-14 (2)</b> 갱신 날짜, 카드마다 추가일과 보충일, NEW와 보충 표시, "새로 바뀐 것"과 "안 읽음" 보기를 추가. 읽은 카드가 나중에 보충되면 다시 "안 읽음"이 된다.</li>
           <li><b>2026-10-14</b> 10-13 학습(실습 E, F 시작) 반영. 새 카드 4개: CPU limit의 실체, 캐시를 잃으면(refault), QoS 등급과 OOM 점수, -reindex-chainstate. cgroup 그림을 측정 값으로 다시 그림. 보충: cgroup namespace, 메모리, requests와 limits, kind 상자, io.stat, 풀 노드(IBD 시간), dbcache, USE, 실험 설계, kubectl exec(sh -c, RPC 오류), StatefulSet.</li>
           <li><b>2026-10-12 (2)</b> 실습 D까지 반영. 새 카드 3개: kubectl exec의 구조, 네트워크 인터페이스, Pod IP와 CNI. 보충: Service, headless, Deployment(strategy), StatefulSet, YAML(---, 오류 경로), namespace, PV와 PVC, -listen, du, IP와 CIDR.</li>
           <li><b>2026-10-12</b> 처음 만듦. 개념 41개, 그림 21개.</li>
@@ -221,11 +256,13 @@ html { scroll-behavior: smooth; }
     </header>
 
     <!-- ===================== 0. 큰 그림 ===================== -->
+    <p class="empty" id="empty" hidden>이 보기에 맞는 카드가 없다. 왼쪽 위의 "전체"를 누른다.</p>
+
     <section class="group" id="g-map" data-name="큰 그림">
       <h2>큰 그림 <small>OVERVIEW</small></h2>
       <p class="lead">다른 모든 개념은 이 지도의 한 층이다. 헷갈리면 여기로 돌아온다.</p>
       <div class="cards">
-        <article class="c" id="map" data-k="계층 layer stack 전체 구조 kind docker kubelet containerd">
+        <article class="c" id="map" data-added="2026-10-12" data-updated="2026-10-12" data-k="계층 layer stack 전체 구조 kind docker kubelet containerd">
           <div class="c-head"><h3>전체 지도: bitcoind는 어디에서 실행되는가</h3></div>
           <p class="why"><b>왜 알아야 하나</b>내 노드는 상자 안의 상자 안에서 실행된다. 문제가 생기면 먼저 "어느 상자의 문제인가?"를 정해야 한다. 상자를 틀리면 원인도 틀린다.</p>
           <div class="dia"><div class="stack">
@@ -259,7 +296,7 @@ docker ps --filter name=bitcoin-lab-control-plane</pre>
           <p class="rel">연결: <a href="#hier">세 가지 계층</a><a href="#namespace">namespace</a><a href="#cgroup">cgroup</a><a href="#kind">kind 구조</a><a href="#resources">requests와 limits</a></p>
         </article>
 
-        <article class="c" id="hier" data-k="계층 hierarchy 역할 실행 위치 객체 control plane 부모 상위">
+        <article class="c" id="hier" data-added="2026-10-12" data-updated="2026-10-12" data-k="계층 hierarchy 역할 실행 위치 객체 control plane 부모 상위">
           <div class="c-head"><h3>세 가지 계층: 역할, 실행 위치, 객체</h3></div>
           <p class="why"><b>왜 알아야 하나</b>"control plane이 가장 상위인가?" 같은 질문은 계층이 하나라고 가정한다. 실제로는 계층이 세 개다. 각 계층은 다른 질문에 답한다.</p>
           <figure class="fig"><div class="sc"><svg viewBox="0 0 720 330" role="img" aria-label="세 가지 계층: 역할, 실행 위치, 객체" style="min-width:620px;max-width:720px"><text class="tb" x="120" y="22" text-anchor="middle">① 역할</text><text class="ts" x="120" y="40" text-anchor="middle">누가 결정하고, 누가 실행하나</text><text class="tb" x="360" y="22" text-anchor="middle">② 실행 위치</text><text class="ts" x="360" y="40" text-anchor="middle">바깥에서 안으로</text><text class="tb" x="600" y="22" text-anchor="middle">③ 객체</text><text class="ts" x="600" y="40" text-anchor="middle">무엇이 무엇을 만드나</text><rect class="hl" x="20" y="56" width="200" height="88" rx="5"/><text class="tb" x="120" y="78" text-anchor="middle">control plane (두뇌)</text><text class="ts" x="120" y="98" text-anchor="middle">API 서버 · etcd</text><text class="ts" x="120" y="114" text-anchor="middle">scheduler</text><text class="ts" x="120" y="130" text-anchor="middle">controller-manager</text><path class="ln" d="M120,144 V180" marker-end="url(#am)"/><text class="ts" x="128" y="167" text-anchor="start">결정을 전달</text><rect class="bx" x="20" y="182" width="200" height="50" rx="5"/><text class="tb" x="120" y="204" text-anchor="middle">kubelet (손발)</text><text class="ts" x="120" y="222" text-anchor="middle">Kubernetes 노드마다 1개</text><path class="ln" d="M120,232 V268" marker-end="url(#am)"/><text class="ts" x="128" y="255" text-anchor="start">실행</text><rect class="bx" x="20" y="270" width="200" height="50" rx="5"/><text class="tb" x="120" y="292" text-anchor="middle">Pod</text><text class="ts" x="120" y="310" text-anchor="middle">컨테이너를 묶은 단위</text><rect class="bg" x="250" y="56" width="220" height="264" rx="5"/><text class="tb" x="262" y="76" text-anchor="start">호스트 promet</text><rect class="bx" x="262" y="88" width="196" height="224" rx="5"/><text x="274" y="108" text-anchor="start">kind 노드 = Docker 컨테이너</text><rect class="bg" x="274" y="120" width="172" height="184" rx="5"/><text x="286" y="140" text-anchor="start">Pod</text><rect class="hl" x="286" y="152" width="148" height="144" rx="5"/><text class="tb" x="298" y="172" text-anchor="start">bitcoind 컨테이너</text><text class="ts" x="298" y="200" text-anchor="start">= 호스트의 프로세스 1개</text><text class="ts" x="298" y="224" text-anchor="start">모든 층이</text><text class="ts" x="298" y="240" text-anchor="start">커널 1개를 같이 쓴다</text><rect class="bg" x="490" y="56" width="220" height="264" rx="5"/><text class="tb" x="502" y="76" text-anchor="start">namespace bitcoin-lab</text><rect class="hl" x="506" y="90" width="188" height="48" rx="5"/><text class="tb" x="600" y="110" text-anchor="middle">StatefulSet</text><text class="mono" x="600" y="128" text-anchor="middle">bitcoin-node</text><path class="ln" d="M600,138 V176" marker-end="url(#am)"/><text class="ts" x="608" y="162" text-anchor="start">Pod를 만든다</text><rect class="bx" x="506" y="178" width="188" height="48" rx="5"/><text class="tb" x="600" y="198" text-anchor="middle">Pod</text><text class="mono" x="600" y="216" text-anchor="middle">bitcoin-node-0</text><path class="ln" d="M600,226 V264" marker-end="url(#am)"/><text class="ts" x="608" y="250" text-anchor="start">PVC를 붙인다</text><rect class="bx" x="506" y="266" width="188" height="48" rx="5"/><text class="tb" x="600" y="286" text-anchor="middle">PVC</text><text class="mono" x="600" y="304" text-anchor="middle">data-bitcoin-node-0</text></svg></div><figcaption>세 계층은 서로 다른 질문에 답한다. control plane은 ③의 부모가 아니다. ③의 객체를 저장하고, 원하는 상태에 맞추는 관리자다.</figcaption></figure>
@@ -272,7 +309,7 @@ docker ps --filter name=bitcoin-lab-control-plane</pre>
           <p class="rel">연결: <a href="#controlplane">control plane</a><a href="#map">전체 지도</a><a href="#statefulset">StatefulSet</a></p>
         </article>
 
-        <article class="c" id="controlplane" data-k="control plane 컨트롤 플레인 worker 워커 노드 api server etcd scheduler controller-manager kubelet containerd kube-system">
+        <article class="c" id="controlplane" data-added="2026-10-12" data-updated="2026-10-12" data-k="control plane 컨트롤 플레인 worker 워커 노드 api server etcd scheduler controller-manager kubelet containerd kube-system">
           <div class="c-head"><h3>control plane과 worker node</h3></div>
           <p class="why"><b>왜 알아야 하나</b>내 노드 이름은 <code>bitcoin-lab-control-plane</code>인데 bitcoind도 여기서 실행된다. 두뇌와 손발이 어떻게 나뉘는지 알면 이 이름이 헷갈리지 않는다.</p>
           <figure class="fig"><div class="sc"><svg viewBox="0 0 720 356" role="img" aria-label="control plane과 worker node: 모든 구성 요소는 API 서버를 통해서만 대화한다" style="min-width:620px;max-width:720px"><rect class="bg" x="190" y="14" width="520" height="196" rx="5" stroke-dasharray="5 4"/><text class="tb" x="204" y="34" text-anchor="start">control plane (두뇌)</text><text class="ts" x="696" y="34" text-anchor="end">kind에서는 kube-system의 Pod들</text><rect class="bx" x="20" y="48" width="120" height="48" rx="5"/><text class="tb" x="80" y="70" text-anchor="middle">kubectl</text><text class="ts" x="80" y="87" text-anchor="middle">나</text><path class="la" d="M140,72 H258" marker-end="url(#aa)"/><text class="ts" x="199" y="64" text-anchor="middle">YAML 제출</text><rect class="hl" x="260" y="48" width="240" height="48" rx="5"/><text class="tb" x="380" y="70" text-anchor="middle">API 서버</text><text class="ts" x="380" y="87" text-anchor="middle">모든 요청의 단일 창구</text><path class="ln" d="M502,72 H558" marker-end="url(#am)" marker-start="url(#am)"/><text class="ts" x="530" y="64" text-anchor="middle">저장</text><rect class="bx" x="560" y="48" width="136" height="48" rx="5"/><text class="tb" x="628" y="70" text-anchor="middle">etcd</text><text class="ts" x="628" y="87" text-anchor="middle">원하는 상태 저장</text><rect class="bx" x="210" y="150" width="160" height="46" rx="5"/><text class="tb" x="290" y="170" text-anchor="middle">scheduler</text><text class="ts" x="290" y="187" text-anchor="middle">Pod를 둘 노드 결정</text><path class="ln" d="M290,148 V98" marker-end="url(#am)" marker-start="url(#am)"/><text class="ts" x="298" y="122" text-anchor="start">watch</text><text class="ts" x="298" y="138" text-anchor="start">배정 기록</text><rect class="bx" x="400" y="150" width="170" height="46" rx="5"/><text class="tb" x="485" y="170" text-anchor="middle">controller-manager</text><text class="ts" x="485" y="187" text-anchor="middle">Deployment · StatefulSet</text><path class="ln" d="M485,148 V98" marker-end="url(#am)" marker-start="url(#am)"/><text class="ts" x="493" y="122" text-anchor="start">watch</text><text class="ts" x="493" y="138" text-anchor="start">Pod 객체 생성</text><rect class="bg" x="190" y="236" width="520" height="110" rx="5" stroke-dasharray="5 4"/><text class="tb" x="204" y="256" text-anchor="start">worker node (손발)</text><text class="ts" x="696" y="256" text-anchor="end">kind: 같은 컨테이너 1개가 둘 다 한다</text><path class="la" d="M382,98 V270" marker-end="url(#aa)" marker-start="url(#aa)"/><text class="ts" x="388" y="228" text-anchor="start">watch · 내 Pod 확인</text><rect class="hl" x="300" y="272" width="164" height="48" rx="5"/><text class="tb" x="382" y="293" text-anchor="middle">kubelet</text><text class="ts" x="382" y="310" text-anchor="middle">노드마다 1개</text><path class="la" d="M464,296 H528" marker-end="url(#aa)"/><text class="ts" x="496" y="288" text-anchor="middle">실행</text><rect class="bx" x="530" y="272" width="166" height="48" rx="5"/><text class="tb" x="613" y="293" text-anchor="middle">containerd</text><text class="ts" x="613" y="310" text-anchor="middle">컨테이너 생성</text></svg></div><figcaption>구성 요소끼리 직접 대화하지 않는다. 모두 API 서버를 보고(watch) API 서버에 쓴다. etcd에 접근하는 것은 API 서버뿐이다.</figcaption></figure>
@@ -294,7 +331,7 @@ kubectl get nodes -o wide</pre>
           <p class="rel">연결: <a href="#desired">desired state</a><a href="#hier">세 가지 계층</a><a href="#kind">kind 구조</a></p>
         </article>
 
-        <article class="c" id="twonodes" data-k="노드 두 가지 뜻 kubernetes 노드 bitcoin 노드 서버 pod 워커">
+        <article class="c" id="twonodes" data-added="2026-10-12" data-updated="2026-10-12" data-k="노드 두 가지 뜻 kubernetes 노드 bitcoin 노드 서버 pod 워커">
           <div class="c-head"><h3>"노드"의 두 가지 뜻</h3></div>
           <p class="why"><b>왜 알아야 하나</b>이 프로젝트에서는 "노드"라는 말이 두 가지 뜻으로 쓰인다. 뜻을 섞으면 "노드 3개를 띄운다"가 서버 3대처럼 들린다.</p>
           <figure class="fig"><div class="sc"><svg viewBox="0 0 720 236" role="img" aria-label="Kubernetes 노드 1대 위에 Bitcoin 노드 3개가 있다" style="min-width:620px;max-width:720px"><rect class="bg" x="20" y="20" width="500" height="200" rx="5"/><text class="tb" x="36" y="44" text-anchor="start">Kubernetes 노드 = 서버 1대</text><text class="mono" x="36" y="64" text-anchor="start">bitcoin-lab-control-plane  (kubectl get nodes)</text><rect class="hl" x="36" y="82" width="148" height="76" rx="5"/><text class="tb" x="110" y="102" text-anchor="middle">Bitcoin 노드</text><text class="mono" x="110" y="122" text-anchor="middle">bitcoin-signet-…</text><text class="ts" x="110" y="142" text-anchor="middle">Pod 1개 · Deployment</text><rect class="hl" x="196" y="82" width="148" height="76" rx="5"/><text class="tb" x="270" y="102" text-anchor="middle">Bitcoin 노드</text><text class="mono" x="270" y="122" text-anchor="middle">bitcoin-node-0</text><text class="ts" x="270" y="142" text-anchor="middle">Pod 1개 · StatefulSet</text><rect class="hl" x="356" y="82" width="148" height="76" rx="5"/><text class="tb" x="430" y="102" text-anchor="middle">Bitcoin 노드</text><text class="mono" x="430" y="122" text-anchor="middle">bitcoin-node-1</text><text class="ts" x="430" y="142" text-anchor="middle">Pod 1개 · StatefulSet</text><path class="la" d="M270,158 V184 H430 V160" marker-end="url(#aa)"/><text class="ts" x="350" y="204" text-anchor="middle">P2P 38333 (addnode)</text><path class="la" d="M520,120 H578" marker-end="url(#aa)"/><text class="ts" x="550" y="112" text-anchor="middle">outbound</text><rect class="bx" x="580" y="82" width="120" height="76" rx="5"/><text class="tb" x="640" y="108" text-anchor="middle">인터넷의</text><text class="tb" x="640" y="126" text-anchor="middle">Signet 피어</text><text class="ts" x="640" y="146" text-anchor="middle">다른 사람의 노드</text></svg></div><figcaption>"노드"는 두 가지 뜻이다. Kubernetes 노드는 Pod를 실행하는 서버다. Bitcoin 노드는 bitcoind 하나, 여기서는 Pod 하나다.</figcaption></figure>
@@ -318,7 +355,7 @@ kubectl get nodes -o wide</pre>
       <p class="lead">컨테이너와 Kubernetes는 리눅스 기능 위에 있다. 이 기본이 약하면 위층의 동작을 설명할 수 없다.</p>
       <div class="cards">
 
-        <article class="c" id="process" data-k="프로세스 사용자 uid 권한 소유권 root 계정 taehwi nodelab">
+        <article class="c" id="process" data-added="2026-10-12" data-updated="2026-10-12" data-k="프로세스 사용자 uid 권한 소유권 root 계정 taehwi nodelab">
           <div class="c-head"><h3>프로세스, 사용자, 권한<span class="en">process · UID</span></h3></div>
           <p class="why"><b>왜 알아야 하나</b>"Permission denied"는 가장 흔한 오류다. 원인은 항상 "어떤 사용자의 프로세스가, 누구 소유의 파일에, 어떤 동작을 했는가"이다.</p>
           <ul>
@@ -337,7 +374,7 @@ ps -o pid,uid,user,cmd -u nodelab</pre>
           <p class="rel">연결: <a href="#dockergroup">docker 그룹</a><a href="#namespace">namespace</a></p>
         </article>
 
-        <article class="c" id="mount" data-k="파일시스템 마운트 mount 디렉터리 트리 ext4 /mnt/hdd lvm">
+        <article class="c" id="mount" data-added="2026-10-12" data-updated="2026-10-12" data-k="파일시스템 마운트 mount 디렉터리 트리 ext4 /mnt/hdd lvm">
           <div class="c-head"><h3>파일시스템과 마운트<span class="en">mount</span></h3></div>
           <p class="why"><b>왜 알아야 하나</b>리눅스에서 경로는 디스크를 알려 주지 않는다. <code>/mnt/hdd</code>는 HDD다. <code>/var/lib/docker</code>는 SSD다. 성능 실험에서 데이터가 어느 장치에 있는지 모르면 결과를 설명할 수 없다.</p>
           <figure class="fig"><div class="sc"><svg viewBox="0 0 720 212" role="img" aria-label="디렉터리 트리와 실제 장치의 연결" style="min-width:560px;max-width:720px"><rect class="bx" x="20" y="56" width="100" height="36" rx="5"/><text class="mono" x="70" y="79" text-anchor="middle">/</text><path class="ln" d="M50,92 V128 H158"/><path class="ln" d="M50,128 V182 H158"/><rect class="bx" x="160" y="110" width="170" height="36" rx="5"/><text class="mono" x="245" y="133" text-anchor="middle">/var/lib/docker</text><rect class="bx" x="160" y="164" width="170" height="36" rx="5"/><text class="mono" x="245" y="187" text-anchor="middle">/mnt/hdd</text><path class="la" d="M120,74 H468" marker-end="url(#aa)"/><text class="ts ta" x="295" y="66" text-anchor="middle">마운트</text><path class="ln" d="M330,128 H400 V92 H468" marker-end="url(#am)" stroke-dasharray="4 3"/><text class="ts" x="408" y="118" text-anchor="start">따로 마운트 없음</text><text class="ts" x="408" y="134" text-anchor="start">→ / 의 장치 (SSD)</text><path class="lw" d="M330,182 H468" marker-end="url(#aw)"/><text class="ts tw" x="400" y="174" text-anchor="middle">마운트</text><rect class="hl" x="470" y="50" width="230" height="50" rx="5"/><text class="tb" x="585" y="72" text-anchor="middle">SATA SSD (MX500)</text><text class="ts" x="585" y="90" text-anchor="middle">ext4 · LVM · 약 226 GB</text><rect class="wr" x="470" y="150" width="230" height="50" rx="5"/><text class="tb" x="585" y="172" text-anchor="middle">HDD (WD Blue 2 TB)</text><text class="ts" x="585" y="190" text-anchor="middle">SMR · 7200 RPM</text></svg></div><figcaption>경로 이름은 장치를 알려 주지 않는다. 가장 가까운 마운트 지점이 장치를 정한다. kind와 PVC 데이터는 /var/lib/docker 아래, 즉 SSD에 있다.</figcaption></figure>
@@ -356,7 +393,7 @@ lsblk -f                 <span class="cm"># 장치와 파일시스템</span></pr
           <p class="rel">연결: <a href="#dudf">du와 df</a><a href="#mountns">mount namespace</a><a href="#ssdhdd">SSD와 HDD</a></p>
         </article>
 
-        <article class="c" id="dudf" data-k="du df 디스크 사용량 용량 여유 공간 삭제 열린 파일 예약 블록">
+        <article class="c" id="dudf" data-added="2026-10-12" data-updated="2026-10-12" data-k="du df 디스크 사용량 용량 여유 공간 삭제 열린 파일 예약 블록">
           <div class="c-head"><h3>du와 df는 왜 다른 값을 보이는가</h3></div>
           <p class="why"><b>왜 알아야 하나</b>실습 A에서 "노드를 몇 개 더 둘 수 있는가"를 계산한다. 두 명령의 값이 다르면 어느 쪽을 믿을지 알아야 한다.</p>
           <figure class="fig"><div class="sc"><svg viewBox="0 0 720 186" role="img" aria-label="파일시스템 공간에서 du와 df가 세는 부분" style="min-width:560px;max-width:720px"><rect class="hl" x="20" y="70" width="310" height="40" rx="5"/><text x="175" y="95" text-anchor="middle">보이는 파일</text><rect class="wr" x="330" y="70" width="100" height="40" rx="5"/><text class="ts" x="380" y="95" text-anchor="middle">삭제됐지만 열림</text><rect class="bg" x="430" y="70" width="90" height="40" rx="5" stroke-dasharray="4 3"/><text class="ts" x="475" y="95" text-anchor="middle">예약 약 5%</text><rect class="bx" x="520" y="70" width="180" height="40" rx="5"/><text x="610" y="95" text-anchor="middle">빈 공간</text><path class="ln" d="M20,34 V28 H430 V34"/><text class="ts" x="225" y="22" text-anchor="middle">df의 Used</text><path class="la" d="M20,58 V52 H330 V58"/><text class="ts ta" x="175" y="46" text-anchor="middle">du가 센다 (경로 아래 파일만)</text><path class="ln" d="M520,116 V122 H700 V116"/><text class="ts" x="610" y="138" text-anchor="middle">df의 Avail</text><path class="ln" d="M20,152 V158 H700 V152"/><text class="ts" x="360" y="176" text-anchor="middle">df의 Size (파일시스템 전체)</text></svg></div><figcaption>df의 Used + Avail은 Size보다 작다. 차이는 예약 블록이다. 지워졌지만 열린 파일은 df만 센다.</figcaption></figure>
@@ -386,7 +423,7 @@ sudo lsof +L1 | head                            <span class="cm"># 지워졌지�
           <p class="rel">연결: <a href="#mount">마운트</a><a href="#pvpvc">PV와 PVC</a><a href="#prune">pruned 노드</a></p>
         </article>
 
-        <article class="c" id="dockergroup" data-k="docker 그룹 root 권한 보안 sock 소켓">
+        <article class="c" id="dockergroup" data-added="2026-10-12" data-updated="2026-10-12" data-k="docker 그룹 root 권한 보안 sock 소켓">
           <div class="c-head"><h3>docker 그룹은 root와 같다</h3></div>
           <p class="why"><b>왜 알아야 하나</b>계정의 권한을 정할 때 필요하다. <code>nodelab</code>에 docker 그룹을 주면 사실상 root를 주는 것이다.</p>
           <ul>
@@ -403,7 +440,7 @@ getent group docker            <span class="cm"># 누가 그룹에 있는가</sp
           <p class="rel">연결: <a href="#process">사용자와 권한</a><a href="#kind">kind 구조</a></p>
         </article>
 
-        <article class="c" id="memory" data-k="메모리 페이지 캐시 swap 스왑 free available buff cache oom">
+        <article class="c" id="memory" data-added="2026-10-12" data-updated="2026-10-14" data-k="메모리 페이지 캐시 swap 스왑 free available buff cache oom">
           <div class="c-head"><h3>메모리, 페이지 캐시, 스왑</h3></div>
           <p class="why"><b>왜 알아야 하나</b>bitcoind 성능은 메모리와 디스크 사이에서 정해진다. "메모리가 부족하다"와 "캐시가 많다"를 구분하지 못하면 측정을 잘못 읽는다.</p>
           <figure class="fig"><div class="sc"><svg viewBox="0 0 720 120" role="img" aria-label="free 명령의 used, 페이지 캐시, free, available의 관계" style="min-width:560px;max-width:720px"><rect class="bx" x="20" y="40" width="280" height="40" rx="5"/><text class="ts" x="160" y="65" text-anchor="middle">프로세스가 쓰는 메모리</text><rect class="hl" x="300" y="40" width="260" height="40" rx="5"/><text class="ts" x="430" y="65" text-anchor="middle">페이지 캐시 (디스크 내용)</text><rect class="bg" x="560" y="40" width="140" height="40" rx="5"/><text class="ts" x="630" y="65" text-anchor="middle">free</text><path class="ln" d="M20,34 V28 H300 V34"/><text class="ts" x="160" y="22" text-anchor="middle">used</text><path class="la" d="M300,86 V92 H700 V86"/><text class="ts ta" x="500" y="110" text-anchor="middle">available ≈ free + 비울 수 있는 캐시</text></svg></div><figcaption>free 값이 작아도 문제가 아니다. 커널이 빈 메모리를 캐시로 쓰고 있을 뿐이다. 판단은 available로 한다.</figcaption></figure>
@@ -424,7 +461,7 @@ vmstat 1 5       <span class="cm"># si, so 열: 스왑 입출력</span></pre>
           <p class="rel">연결: <a href="#refault">refault</a><a href="#cgroup">cgroup</a><a href="#dbcache">UTXO와 dbcache</a><a href="#experiment">실험 설계</a></p>
         </article>
 
-        <article class="c" id="refault" data-k="refault thrashing 페이지 캐시 page cache evict workingset memory.stat memory.events memory.peak 다시 읽기 sock_throttled">
+        <article class="c" id="refault" data-added="2026-10-14" data-updated="2026-10-14" data-k="refault thrashing 페이지 캐시 page cache evict workingset memory.stat memory.events memory.peak 다시 읽기 sock_throttled">
           <div class="c-head"><h3>캐시를 잃으면: refault와 thrashing</h3></div>
           <p class="why"><b>왜 알아야 하나</b>메모리가 부족해도 프로세스는 바로 죽지 않는다. 커널은 먼저 page cache를 버린다. 그러면 프로그램은 오류 없이 느려지기만 한다. 그래서 이 문제는 숫자로만 찾을 수 있다.</p>
           <figure class="fig"><div class="sc"><svg viewBox="0 0 720 152" role="img" aria-label="디스크에서 읽은 데이터가 page cache에 들어가고, 상자가 가득 차서 버려지고, 다시 디스크에서 읽히는 반복" style="min-width:600px;max-width:720px"><rect class="bx" x="10" y="30" width="160" height="56" rx="5"/><text class="tb" x="90" y="54" text-anchor="middle">디스크 읽기</text><text class="ts" x="90" y="73" text-anchor="middle">chainstate/ (LevelDB)</text><rect class="hl" x="190" y="30" width="160" height="56" rx="5"/><text class="tb" x="270" y="54" text-anchor="middle">page cache</text><text class="ts" x="270" y="73" text-anchor="middle">다음 읽기는 빠르다</text><rect class="wr" x="370" y="30" width="160" height="56" rx="5"/><text class="tb" x="450" y="54" text-anchor="middle">kind 상자 가득 참</text><text class="ts" x="450" y="73" text-anchor="middle">커널이 캐시를 버림</text><rect class="bx" x="550" y="30" width="160" height="56" rx="5"/><text class="tb" x="630" y="54" text-anchor="middle">다시 필요</text><text class="ts" x="630" y="73" text-anchor="middle">refault로 센다</text><path class="ln" d="M170,58 H188" marker-end="url(#am)"/><path class="ln" d="M350,58 H368" marker-end="url(#am)"/><path class="ln" d="M530,58 H548" marker-end="url(#am)"/><path class="lw" d="M630,86 V120 H90 V88" marker-end="url(#aw)"/><text class="ts tw" x="360" y="140" text-anchor="middle">IBD 동안 반복: 약 1.89TB = 데이터(약 27GB)의 약 70배</text></svg></div><figcaption>이 반복을 thrashing이라고 한다. node-1에서는 디스크 읽기의 99.96%가 refault였다. 오류는 하나도 없었다. 느려지기만 했다.</figcaption></figure>
@@ -463,7 +500,7 @@ cat /sys/fs/cgroup/system.slice/docker-$id.scope/memory.events</pre>
       <p class="lead">컨테이너는 특별한 프로세스다. "격리"는 namespace가, "제한"은 cgroup이 한다.</p>
       <div class="cards">
 
-        <article class="c" id="image" data-k="이미지 컨테이너 레이어 overlay 쓰기 계층 image">
+        <article class="c" id="image" data-added="2026-10-12" data-updated="2026-10-12" data-k="이미지 컨테이너 레이어 overlay 쓰기 계층 image">
           <div class="c-head"><h3>이미지와 컨테이너</h3></div>
           <p class="why"><b>왜 알아야 하나</b>컨테이너를 지우면 안의 데이터도 지워진다. 노드 데이터를 어디에 둘지 정하려면 이 구조를 알아야 한다.</p>
           <figure class="fig"><div class="sc"><svg viewBox="0 0 720 206" role="img" aria-label="이미지 층, 쓰기 층, 볼륨의 관계" style="min-width:560px;max-width:720px"><rect class="wr" x="20" y="30" width="340" height="32" rx="5" stroke-dasharray="5 4"/><text class="ts" x="190" y="51" text-anchor="middle">쓰기 층: 컨테이너를 지우면 사라진다</text><rect class="bg" x="20" y="68" width="340" height="32" rx="5"/><text class="ts" x="190" y="89" text-anchor="middle">이미지 층 3: bitcoind 프로그램</text><rect class="bg" x="20" y="104" width="340" height="32" rx="5"/><text class="ts" x="190" y="125" text-anchor="middle">이미지 층 2: 라이브러리</text><rect class="bg" x="20" y="140" width="340" height="32" rx="5"/><text class="ts" x="190" y="161" text-anchor="middle">이미지 층 1: 기본 OS 파일</text><path class="ln" d="M366,68 H374 V168 H366"/><text class="ts" x="382" y="114" text-anchor="start">읽기 전용</text><text class="ts" x="382" y="130" text-anchor="start">여러 컨테이너가 공유</text><rect class="hl" x="530" y="30" width="170" height="138" rx="5"/><text class="tb" x="615" y="60" text-anchor="middle">볼륨</text><text class="mono" x="615" y="84" text-anchor="middle">/home/bitcoin/.bitcoin</text><text class="ts" x="615" y="112" text-anchor="middle">컨테이너 수명과</text><text class="ts" x="615" y="128" text-anchor="middle">따로 산다</text><path class="la" d="M528,46 H364" marker-end="url(#aa)"/><text class="ts ta" x="446" y="38" text-anchor="middle">마운트</text><text class="ts" x="190" y="196" text-anchor="middle">컨테이너 = 이미지 층들 + 쓰기 층 1개</text></svg></div><figcaption>노드 데이터를 쓰기 층에 두면 컨테이너와 함께 사라진다. 그래서 데이터 디렉터리는 볼륨으로 마운트한다.</figcaption></figure>
@@ -481,7 +518,7 @@ cat /sys/fs/cgroup/system.slice/docker-$id.scope/memory.events</pre>
           <p class="rel">연결: <a href="#volume">볼륨</a><a href="#pod">Pod</a></p>
         </article>
 
-        <article class="c" id="namespace" data-k="namespace 네임스페이스 격리 pid net mnt uts ipc user 리눅스">
+        <article class="c" id="namespace" data-added="2026-10-12" data-updated="2026-10-14" data-k="namespace 네임스페이스 격리 pid net mnt uts ipc user 리눅스">
           <div class="c-head"><h3>리눅스 namespace: 다르게 보이게 하기</h3></div>
           <p class="why"><b>왜 알아야 하나</b>컨테이너 안에서 <code>ps</code>를 하면 프로세스가 몇 개만 보인다. 호스트에서는 전부 보인다. 이 차이를 만드는 것이 namespace다.</p>
           <figure class="fig"><div class="sc"><svg viewBox="0 0 720 184" role="img" aria-label="같은 bitcoind 프로세스가 호스트에서는 PID 2345, 컨테이너에서는 PID 1이다" style="min-width:560px;max-width:720px"><rect class="bg" x="20" y="30" width="310" height="124" rx="5"/><text class="ts" x="34" y="22" text-anchor="start">호스트의 PID namespace: 모두 보인다</text><text class="mono" x="70" y="58" text-anchor="end">1</text><text class="mono" x="84" y="58" text-anchor="start">systemd</text><text class="mono" x="70" y="84" text-anchor="end">812</text><text class="mono" x="84" y="84" text-anchor="start">dockerd</text><text class="mono" x="70" y="110" text-anchor="end">1530</text><text class="mono" x="84" y="110" text-anchor="start">containerd</text><rect class="hl" x="28" y="119" width="294" height="24" rx="5"/><text class="mono" x="70" y="136" text-anchor="end">2345</text><text class="mono" x="84" y="136" text-anchor="start">bitcoind</text><rect class="bg" x="400" y="30" width="300" height="124" rx="5"/><text class="ts" x="414" y="22" text-anchor="start">컨테이너의 PID namespace</text><rect class="hl" x="408" y="41" width="284" height="24" rx="5"/><text class="mono" x="450" y="58" text-anchor="end">1</text><text class="mono" x="464" y="58" text-anchor="start">bitcoind</text><text class="ts" x="414" y="96" text-anchor="start">다른 프로세스는 보이지 않는다</text><path class="la" d="M322,129 H362 V53 H406" marker-end="url(#aa)"/><text class="ts ta" x="366" y="176" text-anchor="middle">같은 프로세스, 다른 번호</text></svg></div><figcaption>namespace는 보는 범위만 바꾼다. 프로세스는 호스트에 하나뿐이다. PID 번호는 예시다.</figcaption></figure>
@@ -505,7 +542,7 @@ sudo lsns -t net         <span class="cm"># 호스트의 모든 net namespace</s
           <p class="rel">연결: <a href="#mountns">mount namespace</a><a href="#cgroup">cgroup</a><a href="#pod">Pod</a></p>
         </article>
 
-        <article class="c" id="mountns" data-k="mount namespace 컨테이너 파일시스템 호스트 파일시스템 경로 다르다 /home/bitcoin">
+        <article class="c" id="mountns" data-added="2026-10-12" data-updated="2026-10-12" data-k="mount namespace 컨테이너 파일시스템 호스트 파일시스템 경로 다르다 /home/bitcoin">
           <div class="c-head"><h3>컨테이너 파일시스템과 호스트 파일시스템</h3></div>
           <p class="why"><b>왜 알아야 하나</b>Pod 안의 <code>/home/bitcoin/.bitcoin</code>은 호스트에 그 경로로 있지 않다. 같은 파일이 층마다 다른 경로로 보인다. 이것을 모르면 "파일이 없다"고 잘못 판단한다.</p>
           <p>mount namespace 때문에 각 층은 자기 마운트 목록을 가진다. 같은 데이터가 이렇게 보인다:</p>
@@ -532,7 +569,7 @@ kubectl -n bitcoin-lab exec deploy/bitcoin-signet -- cat /proc/self/mountinfo</p
           <p class="rel">연결: <a href="#mount">마운트</a><a href="#pvpvc">PV와 PVC</a><a href="#kind">kind 구조</a></p>
         </article>
 
-        <article class="c" id="cgroup" data-k="cgroup 자원 제한 cpu memory 메모리 한도 cpu.max memory.max memory-swap docker update">
+        <article class="c" id="cgroup" data-added="2026-10-12" data-updated="2026-10-14" data-k="cgroup 자원 제한 cpu memory 메모리 한도 cpu.max memory.max memory-swap docker update">
           <div class="c-head"><h3>cgroup: 자원을 세고 제한하기</h3></div>
           <p class="why"><b>왜 알아야 하나</b>자원 실험(실습 E, F)은 전부 cgroup으로 한다. <code>kubectl top</code>, Docker 한도, Kubernetes <code>limits</code>는 모두 cgroup 값을 쓰거나 읽는다.</p>
           <figure class="fig"><div class="sc"><svg viewBox="0 0 720 302" role="img" aria-label="cgroup 나무: 호스트, kind 노드 컨테이너, kubepods, Pod, 컨테이너와 2026-10-13 측정 값" style="min-width:600px;max-width:720px"><rect class="bx" x="20" y="16" width="250" height="34" rx="5"/><text x="34" y="38" text-anchor="start">promet 호스트 (뿌리)</text><path class="ln" d="M272,33 H392" stroke-dasharray="2 4"/><text class="ts mono" x="400" y="37" text-anchor="start">/sys/fs/cgroup · 메모리 14Gi</text><path class="ln" d="M34,50 V87 H46"/><rect class="wr" x="46" y="70" width="250" height="34" rx="5"/><text class="tb" x="60" y="92" text-anchor="start">kind 노드 컨테이너</text><path class="ln" d="M298,87 H392" stroke-dasharray="2 4"/><text class="ts mono" x="400" y="83" text-anchor="start">system.slice/docker-&lt;id&gt;.scope</text><text class="ts tw" x="400" y="100" text-anchor="start">memory.max 4GiB · 가득 참 24,428,625번</text><path class="ln" d="M60,104 V141 H72"/><rect class="bx" x="72" y="124" width="250" height="34" rx="5"/><text x="86" y="146" text-anchor="start">kubepods (kubelet)</text><path class="ln" d="M324,141 H392" stroke-dasharray="2 4"/><text class="ts" x="400" y="145" text-anchor="start">노드 위 모든 Pod</text><path class="ln" d="M86,158 V195 H98"/><rect class="bx" x="98" y="178" width="250" height="34" rx="5"/><text x="112" y="200" text-anchor="start">Pod bitcoin-node-1</text><path class="ln" d="M350,195 H392" stroke-dasharray="2 4"/><text class="ts" x="400" y="199" text-anchor="start">Pod 안 컨테이너의 합</text><path class="ln" d="M112,212 V249 H124"/><rect class="hl" x="124" y="232" width="250" height="34" rx="5"/><text class="tb" x="138" y="254" text-anchor="start">bitcoind 컨테이너</text><path class="ln" d="M376,249 H392" stroke-dasharray="2 4"/><text class="ts mono" x="400" y="245" text-anchor="start">memory.max 2Gi · peak 1.55GB</text><text class="ts" x="400" y="262" text-anchor="start">자기 한도에 닿은 횟수 0</text><text class="ts ta" x="116" y="254" text-anchor="end">Pod 안의 뿌리 →</text><text class="ts" x="20" y="292" text-anchor="start">위 네 층은 호스트에서만 보인다. Pod 안에서는 맨 아래 칸이 뿌리처럼 보인다 (cgroup namespace).</text></svg></div><figcaption>2026-10-13 측정 값이다. 컨테이너는 자기 한도(2Gi)에 닿지 않았다. 그러나 부모인 kind 상자(4GiB)가 가득 차서 캐시를 잃었다. 자식은 부모의 한도를 넘을 수 없다. 같은 날 상자를 8GiB로 늘렸다.</figcaption></figure>
@@ -562,7 +599,7 @@ cat /proc/$(pgrep -n bitcoind)/cgroup                <span class="cm"># 호스�
           <p class="rel">연결: <a href="#cputhrottle">cpu.max와 throttling</a><a href="#refault">refault</a><a href="#resources">requests와 limits</a><a href="#memory">메모리</a><a href="#map">전체 지도</a></p>
         </article>
 
-        <article class="c" id="cputhrottle" data-k="cpu.max throttling 스로틀링 cpu.stat usage_usec nr_throttled nr_periods quota period 밀리 1000m 코어 par 평균">
+        <article class="c" id="cputhrottle" data-added="2026-10-14" data-updated="2026-10-14" data-k="cpu.max throttling 스로틀링 cpu.stat usage_usec nr_throttled nr_periods quota period 밀리 1000m 코어 par 평균">
           <div class="c-head"><h3>CPU limit의 실체: cpu.max와 throttling</h3></div>
           <p class="why"><b>왜 알아야 하나</b>"CPU 한도가 느리게 했는가?"에는 추측하지 않고 숫자로 답할 수 있다. Kubernetes의 <code>limits.cpu</code>는 커널의 <code>cpu.max</code> 파일이 된다. 커널은 멈춘 횟수와 시간을 <code>cpu.stat</code>에 센다.</p>
           <figure class="fig"><div class="sc"><svg viewBox="0 0 720 158" role="img" aria-label="CPU limit 1코어에서 스레드 2개가 창의 절반에 quota를 다 쓰고 나머지 절반은 멈춘다" style="min-width:560px;max-width:720px"><path class="ln" d="M110,28 V108" stroke-dasharray="3 3"/><path class="ln" d="M310,28 V108" stroke-dasharray="3 3"/><path class="ln" d="M510,28 V108" stroke-dasharray="3 3"/><path class="ln" d="M710,28 V108" stroke-dasharray="3 3"/><text class="ts" x="210" y="20" text-anchor="middle">창 1 (100ms)</text><text class="ts" x="410" y="20" text-anchor="middle">창 2 (100ms)</text><text class="ts" x="610" y="20" text-anchor="middle">창 3 (100ms)</text><text x="10" y="55" text-anchor="start">스레드 1</text><rect class="hl" x="112" y="38" width="96" height="26" rx="5"/><text class="ts" x="160" y="55" text-anchor="middle">실행</text><rect class="wr" x="212" y="38" width="96" height="26" rx="5"/><text class="ts tw" x="260" y="55" text-anchor="middle">멈춤</text><rect class="hl" x="312" y="38" width="96" height="26" rx="5"/><text class="ts" x="360" y="55" text-anchor="middle">실행</text><rect class="wr" x="412" y="38" width="96" height="26" rx="5"/><text class="ts tw" x="460" y="55" text-anchor="middle">멈춤</text><rect class="hl" x="512" y="38" width="96" height="26" rx="5"/><text class="ts" x="560" y="55" text-anchor="middle">실행</text><rect class="wr" x="612" y="38" width="96" height="26" rx="5"/><text class="ts tw" x="660" y="55" text-anchor="middle">멈춤</text><text x="10" y="89" text-anchor="start">스레드 2</text><rect class="hl" x="112" y="72" width="96" height="26" rx="5"/><text class="ts" x="160" y="89" text-anchor="middle">실행</text><rect class="wr" x="212" y="72" width="96" height="26" rx="5"/><text class="ts tw" x="260" y="89" text-anchor="middle">멈춤</text><rect class="hl" x="312" y="72" width="96" height="26" rx="5"/><text class="ts" x="360" y="89" text-anchor="middle">실행</text><rect class="wr" x="412" y="72" width="96" height="26" rx="5"/><text class="ts tw" x="460" y="89" text-anchor="middle">멈춤</text><rect class="hl" x="512" y="72" width="96" height="26" rx="5"/><text class="ts" x="560" y="89" text-anchor="middle">실행</text><rect class="wr" x="612" y="72" width="96" height="26" rx="5"/><text class="ts tw" x="660" y="89" text-anchor="middle">멈춤</text><text class="ts mono" x="110" y="130" text-anchor="start">cpu.max = 100000 100000 (1000m): 창마다 CPU 시간 100ms</text><text class="ts" x="110" y="148" text-anchor="start">스레드 2개 × 50ms = 100ms → 창의 절반에서 quota를 다 쓴다</text></svg></div><figcaption>최악의 경우를 그렸다. 멈춤 구간에는 빈 CPU가 있어도 기다린다. 실제 node-1의 IBD에서는 창의 약 2.6%에서만 멈췄다.</figcaption></figure>
@@ -589,7 +626,7 @@ kubectl -n bitcoin-lab exec bitcoin-node-1 -- cat /sys/fs/cgroup/cpu.stat</pre>
           <p class="rel">연결: <a href="#cgroup">cgroup</a><a href="#resources">requests와 limits</a><a href="#use">성능을 보는 순서</a></p>
         </article>
 
-        <article class="c" id="volume" data-k="볼륨 volume 바인드 마운트 bind mount 데이터 보존">
+        <article class="c" id="volume" data-added="2026-10-12" data-updated="2026-10-12" data-k="볼륨 volume 바인드 마운트 bind mount 데이터 보존">
           <div class="c-head"><h3>볼륨: 컨테이너 밖에 데이터 두기</h3></div>
           <p class="why"><b>왜 알아야 하나</b>노드 데이터는 수 GB다. 컨테이너를 다시 만들 때마다 처음부터 동기화하면 안 된다.</p>
           <ul>
@@ -608,7 +645,7 @@ kubectl -n bitcoin-lab exec bitcoin-node-1 -- cat /sys/fs/cgroup/cpu.stat</pre>
       <p class="lead">Kubernetes는 "명령을 실행하는 도구"가 아니다. "원하는 상태를 적어 두면 계속 맞추는 시스템"이다.</p>
       <div class="cards">
 
-        <article class="c" id="desired" data-k="api 서버 desired state 원하는 상태 컨트롤러 reconcile 선언형 apply etcd control loop">
+        <article class="c" id="desired" data-added="2026-10-12" data-updated="2026-10-12" data-k="api 서버 desired state 원하는 상태 컨트롤러 reconcile 선언형 apply etcd control loop">
           <div class="c-head"><h3>API 서버와 desired state</h3></div>
           <p class="why"><b>왜 알아야 하나</b>Pod를 지워도 다시 생긴다. 이것은 오류가 아니다. Kubernetes의 기본 동작이다. 이 원리를 알면 대부분의 "이상한 동작"이 설명된다.</p>
           <div class="dia"><div class="flow">
@@ -632,7 +669,7 @@ kubectl -n bitcoin-lab get events --sort-by=.lastTimestamp       <span class="cm
           <p class="rel">연결: <a href="#controlplane">control plane</a><a href="#deployment">Deployment</a><a href="#yaml">YAML 구조</a><a href="#kubectl">kubectl로 읽기</a></p>
         </article>
 
-        <article class="c" id="yaml" data-k="yaml 들여쓰기 indentation 매니페스트 apiVersion kind metadata spec 리스트 맵">
+        <article class="c" id="yaml" data-added="2026-10-12" data-updated="2026-10-12" data-k="yaml 들여쓰기 indentation 매니페스트 apiVersion kind metadata spec 리스트 맵">
           <div class="c-head"><h3>YAML 구조와 들여쓰기</h3></div>
           <p class="why"><b>왜 알아야 하나</b>YAML에서 들여쓰기는 구조 자체다. 공백 두 칸이 틀리면 값이 다른 부모에 붙는다. 오류가 안 나고 다르게 동작할 때도 있다.</p>
           <figure class="fig"><div class="sc"><svg viewBox="0 0 720 176" role="img" aria-label="들여쓰기 깊이가 부모를 정한다. 두 칸 차이로 image가 다른 부모에 붙는다" style="min-width:560px;max-width:720px"><text class="tb" x="30" y="20" text-anchor="start">맞음: image가 name과 같은 깊이</text><text class="mono" x="30" y="48" text-anchor="start">spec:</text><path class="ln" d="M34,54 V72 H56"/><text class="mono" x="60" y="76" text-anchor="start">containers:</text><path class="ln" d="M64,82 V100 H86"/><text class="mono" x="90" y="104" text-anchor="start">- (항목 0)</text><path class="ln" d="M94,110 V128 H116"/><text class="mono" x="120" y="132" text-anchor="start">name: bitcoind</text><path class="la" d="M94,128 V156 H116"/><text class="mono ta" x="120" y="160" text-anchor="start">image: …</text><text class="tb" x="390" y="20" text-anchor="start">틀림: image가 두 칸 왼쪽</text><text class="mono" x="390" y="48" text-anchor="start">spec:</text><path class="ln" d="M394,54 V72 H416"/><text class="mono" x="420" y="76" text-anchor="start">containers:</text><path class="ln" d="M424,82 V100 H446"/><text class="mono" x="450" y="104" text-anchor="start">- (항목 0)</text><path class="ln" d="M454,110 V128 H476"/><text class="mono" x="480" y="132" text-anchor="start">name: bitcoind</text><path class="lw" d="M394,72 V156 H416"/><text class="mono tw" x="420" y="160" text-anchor="start">image: …</text><text class="ts tw" x="510" y="160" text-anchor="start">← spec에 붙는다</text><path class="ln" d="M360,10 V170" stroke-dasharray="4 4"/></svg></div><figcaption>같은 깊이의 키는 같은 부모에 속한다. 선은 YAML 파서가 보는 부모-자식 관계다.</figcaption></figure>
@@ -666,7 +703,7 @@ kubectl apply --dry-run=server -f bitcoin.yaml</pre>
           <p class="rel">연결: <a href="#desired">desired state</a><a href="#deployment">Deployment</a><a href="#statefulset">StatefulSet</a></p>
         </article>
 
-        <article class="c" id="k8sns" data-k="kubernetes namespace 네임스페이스 bitcoin-lab -n 논리 폴더">
+        <article class="c" id="k8sns" data-added="2026-10-12" data-updated="2026-10-12" data-k="kubernetes namespace 네임스페이스 bitcoin-lab -n 논리 폴더">
           <div class="c-head"><h3>Kubernetes namespace</h3></div>
           <p class="why"><b>왜 알아야 하나</b><code>kubectl get pods</code>에 내 Pod가 없으면, 보통 namespace를 빠뜨린 것이다.</p>
           <ul>
@@ -680,7 +717,7 @@ kubectl apply --dry-run=server -f bitcoin.yaml</pre>
           <p class="rel">연결: <a href="#namespace">리눅스 namespace (다른 것)</a><a href="#k8sdns">클러스터 DNS</a></p>
         </article>
 
-        <article class="c" id="pod" data-k="pod 컨테이너 차이 pause sidecar 공유 네트워크 ip">
+        <article class="c" id="pod" data-added="2026-10-12" data-updated="2026-10-12" data-k="pod 컨테이너 차이 pause sidecar 공유 네트워크 ip">
           <div class="c-head"><h3>Pod와 컨테이너</h3></div>
           <p class="why"><b>왜 알아야 하나</b>Kubernetes는 컨테이너를 직접 다루지 않는다. 항상 Pod를 다룬다. Pod와 컨테이너의 경계를 알아야 IP, 볼륨, 재시작 동작이 설명된다.</p>
           <div class="dia"><div class="stack">
@@ -705,7 +742,7 @@ kubectl -n bitcoin-lab describe pod -l app=bitcoin-signet   <span class="cm"># �
           <p class="rel">연결: <a href="#deployment">Deployment</a><a href="#namespace">namespace</a><a href="#service">Service</a></p>
         </article>
 
-        <article class="c" id="deployment" data-k="deployment replicaset replicas 복제 롤링 업데이트 무상태">
+        <article class="c" id="deployment" data-added="2026-10-12" data-updated="2026-10-12" data-k="deployment replicaset replicas 복제 롤링 업데이트 무상태">
           <div class="c-head"><h3>Deployment</h3></div>
           <p class="why"><b>왜 알아야 하나</b>지금 노드는 Deployment로 실행된다. 실습 B에서 <code>replicas: 3</code>이 왜 실패하는지 이해하려면 Deployment가 Pod를 어떻게 만드는지 알아야 한다.</p>
           <figure class="fig"><div class="sc"><svg viewBox="0 0 720 198" role="img" aria-label="RollingUpdate는 새 Pod와 옛 Pod가 겹치고, Recreate는 겹치지 않는다" style="min-width:560px;max-width:720px"><text class="tb" x="10" y="52" text-anchor="start">RollingUpdate</text><text class="ts" x="10" y="70" text-anchor="start">(기본값)</text><rect class="bx" x="120" y="34" width="300" height="22" rx="5"/><text class="ts" x="270" y="50" text-anchor="middle">옛 Pod</text><rect class="hl" x="320" y="60" width="380" height="22" rx="5"/><text class="ts" x="510" y="76" text-anchor="middle">새 Pod</text><rect class="bg" x="320" y="30" width="100" height="56" rx="5" fill="none" stroke-dasharray="4 3" style="stroke:var(--warn);fill:none"/><text class="ts tw" x="428" y="50" text-anchor="start">겹침: 두 Pod가 같은 PVC</text><text class="tb" x="10" y="142" text-anchor="start">Recreate</text><text class="ts mono" x="10" y="160" text-anchor="start">(bitcoin-signet)</text><rect class="bx" x="120" y="124" width="260" height="22" rx="5"/><text class="ts" x="250" y="140" text-anchor="middle">옛 Pod</text><rect class="hl" x="440" y="148" width="260" height="22" rx="5"/><text class="ts" x="570" y="164" text-anchor="middle">새 Pod</text><text class="ts ta" x="410" y="188" text-anchor="middle">잠깐 중단, 겹침 없음</text><text class="ts" x="700" y="108" text-anchor="end">시간 →</text></svg></div><figcaption>RollingUpdate에서는 새 bitcoind가 <code>.lock</code>을 얻지 못해 시작하지 못한다. 그래서 같은 데이터 디렉터리를 쓰는 bitcoin-signet은 Recreate를 쓴다.</figcaption></figure>
@@ -726,7 +763,7 @@ kubectl -n bitcoin-lab describe pod -l app=bitcoin-signet   <span class="cm"># �
           <p class="rel">연결: <a href="#datadir">.lock</a><a href="#pvpvc">PV와 PVC</a><a href="#statefulset">StatefulSet</a></p>
         </article>
 
-        <article class="c" id="pvpvc" data-k="pv pvc persistentvolume persistentvolumeclaim storageclass local-path 바인딩 accessmodes rwo 저장소">
+        <article class="c" id="pvpvc" data-added="2026-10-12" data-updated="2026-10-12" data-k="pv pvc persistentvolume persistentvolumeclaim storageclass local-path 바인딩 accessmodes rwo 저장소">
           <div class="c-head"><h3>PV와 PVC</h3></div>
           <p class="why"><b>왜 알아야 하나</b>노드 데이터는 PVC에 있다. PVC를 지우면 동기화한 데이터가 사라질 수 있다. 무엇이 실제 디스크이고 무엇이 요청서인지 구분해야 한다.</p>
           <div class="dia"><div class="flow">
@@ -755,7 +792,7 @@ kubectl get storageclass</pre>
           <p class="rel">연결: <a href="#mountns">컨테이너와 호스트 경로</a><a href="#statefulset">StatefulSet</a><a href="#dudf">du와 df</a></p>
         </article>
 
-        <article class="c" id="statefulset" data-k="statefulset volumeclaimtemplates 순서 고정 이름 stateful 상태 bitcoin-0">
+        <article class="c" id="statefulset" data-added="2026-10-12" data-updated="2026-10-14" data-k="statefulset volumeclaimtemplates 순서 고정 이름 stateful 상태 bitcoin-0">
           <div class="c-head"><h3>StatefulSet</h3></div>
           <p class="why"><b>왜 알아야 하나</b>노드 2–3개를 띄우려면 노드마다 자기 데이터와 고정된 이름이 필요하다. StatefulSet이 이 둘을 준다.</p>
           <figure class="fig"><div class="sc"><svg viewBox="0 0 720 240" role="img" aria-label="Deployment는 모든 Pod가 PVC 하나를 같이 쓰고, StatefulSet은 Pod마다 PVC를 따로 만든다" style="min-width:620px;max-width:720px"><path class="ln" d="M360,10 V236" stroke-dasharray="4 4"/><text class="tb" x="180" y="22" text-anchor="middle">Deployment · replicas: 3</text><rect class="hl" x="30" y="40" width="90" height="40" rx="5"/><text class="mono" x="75" y="65" text-anchor="middle">Pod …a7k</text><rect class="wr" x="130" y="40" width="90" height="40" rx="5"/><text class="mono" x="175" y="65" text-anchor="middle">Pod …x2p</text><rect class="wr" x="230" y="40" width="90" height="40" rx="5"/><text class="mono" x="275" y="65" text-anchor="middle">Pod …m9q</text><path class="la" d="M75,80 L160,156" marker-end="url(#aa)"/><path class="lw" d="M175,80 L180,156" marker-end="url(#aw)"/><path class="lw" d="M275,80 L200,156" marker-end="url(#aw)"/><rect class="bx" x="100" y="158" width="160" height="44" rx="5"/><text class="mono" x="180" y="178" text-anchor="middle">PVC bitcoin-data</text><text class="ts" x="180" y="194" text-anchor="middle">.lock 1개</text><text class="ts tw" x="180" y="226" text-anchor="middle">첫 Pod만 .lock을 얻는다. 나머지는 실패</text><text class="tb" x="540" y="22" text-anchor="middle">StatefulSet · replicas: 2</text><rect class="hl" x="390" y="40" width="150" height="40" rx="5"/><text class="mono" x="465" y="65" text-anchor="middle">bitcoin-node-0</text><path class="la" d="M465,80 V156" marker-end="url(#aa)"/><rect class="bx" x="390" y="158" width="150" height="44" rx="5"/><text class="ts" x="465" y="177" text-anchor="middle">PVC</text><text class="mono" x="465" y="194" text-anchor="middle">data-bitcoin-node-0</text><rect class="hl" x="550" y="40" width="150" height="40" rx="5"/><text class="mono" x="625" y="65" text-anchor="middle">bitcoin-node-1</text><path class="la" d="M625,80 V156" marker-end="url(#aa)"/><rect class="bx" x="550" y="158" width="150" height="44" rx="5"/><text class="ts" x="625" y="177" text-anchor="middle">PVC</text><text class="mono" x="625" y="194" text-anchor="middle">data-bitcoin-node-1</text><text class="ts mono" x="540" y="124" text-anchor="middle">volumeClaimTemplates</text><text class="ts ta" x="540" y="226" text-anchor="middle">Pod마다 자기 PVC, 고정 이름</text></svg></div><figcaption>왼쪽이 실습 B의 실패 원인이다. 오른쪽은 Pod가 다시 만들어져도 같은 이름으로 같은 PVC에 다시 붙는다.</figcaption></figure>
@@ -781,7 +818,7 @@ kubectl get storageclass</pre>
           <p class="rel">연결: <a href="#headless">headless Service</a><a href="#pvpvc">PV와 PVC</a><a href="#deployment">Deployment</a></p>
         </article>
 
-        <article class="c" id="service" data-k="service clusterip 서비스 로드밸런싱 selector label 라벨 endpoint 가상 ip">
+        <article class="c" id="service" data-added="2026-10-12" data-updated="2026-10-12" data-k="service clusterip 서비스 로드밸런싱 selector label 라벨 endpoint 가상 ip">
           <div class="c-head"><h3>Service</h3></div>
           <p class="why"><b>왜 알아야 하나</b>Pod IP는 바뀐다. 다른 Pod가 바뀌는 IP를 따라갈 수 없다. Service는 바뀌지 않는 이름과 주소를 준다.</p>
           <figure class="fig"><div class="sc"><svg viewBox="0 0 720 144" role="img" aria-label="일반 Service의 가상 IP로 보낸 패킷은 커널 규칙이 받는 주소를 Pod IP로 바꿔 쓴다" style="min-width:560px;max-width:720px"><rect class="bx" x="10" y="50" width="140" height="50" rx="5"/><text class="tb" x="80" y="72" text-anchor="middle">클라이언트 Pod</text><text class="ts" x="80" y="90" text-anchor="middle">받는 주소: 가상 IP</text><path class="la" d="M150,75 H248" marker-end="url(#aa)"/><text class="mono" x="199" y="67" text-anchor="middle">10.96.0.20</text><rect class="hl" x="250" y="40" width="220" height="70" rx="5"/><text class="tb" x="360" y="64" text-anchor="middle">커널 규칙 (kube-proxy가 만듦)</text><text class="ts" x="360" y="84" text-anchor="middle">받는 주소를 Pod IP로</text><text class="ts" x="360" y="100" text-anchor="middle">바꿔 쓴다 (DNAT)</text><path class="la" d="M470,75 H568" marker-end="url(#aa)"/><text class="mono" x="519" y="67" text-anchor="middle">10.244.0.11</text><rect class="bx" x="570" y="50" width="140" height="50" rx="5"/><text class="tb" x="640" y="72" text-anchor="middle">대상 Pod</text><text class="ts" x="640" y="90" text-anchor="middle">실제 인터페이스 있음</text><text class="ts tw" x="360" y="134" text-anchor="middle">10.96.0.20을 가진 인터페이스는 어디에도 없다</text></svg></div><figcaption>가상 IP는 커널 규칙 속에만 있다. 그래서 <code>ping</code>은 응답이 없을 수 있지만, 정해진 포트의 연결은 동작한다. IP 값은 예시다.</figcaption></figure>
@@ -796,7 +833,7 @@ kubectl get storageclass</pre>
           <p class="rel">연결: <a href="#headless">headless Service</a><a href="#k8sdns">클러스터 DNS</a><a href="#pod">Pod</a></p>
         </article>
 
-        <article class="c" id="headless" data-k="headless service clusterip none dns pod 이름 statefulset bitcoin-0.bitcoin">
+        <article class="c" id="headless" data-added="2026-10-12" data-updated="2026-10-12" data-k="headless service clusterip none dns pod 이름 statefulset bitcoin-0.bitcoin">
           <div class="c-head"><h3>headless Service</h3></div>
           <p class="why"><b>왜 알아야 하나</b>노드끼리 연결할 때(실습 D), 각 노드는 "아무 노드"가 아니라 "특정 노드"에 연결해야 한다. headless Service가 Pod마다 고정 DNS 이름을 준다.</p>
           <figure class="fig"><div class="sc"><svg viewBox="0 0 720 244" role="img" aria-label="일반 Service는 가상 IP가 아무 Pod로 나눠 보내고, headless Service는 DNS가 특정 Pod의 IP를 직접 준다" style="min-width:620px;max-width:720px"><path class="ln" d="M355,10 V240" stroke-dasharray="4 4"/><text class="tb" x="170" y="22" text-anchor="middle">일반 Service (ClusterIP)</text><rect class="bx" x="100" y="40" width="140" height="36" rx="5"/><text class="mono" x="170" y="63" text-anchor="middle">bitcoin-node-0</text><path class="ln" d="M170,76 V114" marker-end="url(#am)"/><text class="ts" x="178" y="99" text-anchor="start">연결</text><rect class="hl" x="90" y="116" width="160" height="40" rx="5"/><text class="tb" x="170" y="134" text-anchor="middle">가상 IP 1개</text><text class="mono" x="170" y="150" text-anchor="middle">10.96.x.x</text><path class="ln" d="M150,156 L95,194" marker-end="url(#am)"/><path class="ln" d="M190,156 L245,194" marker-end="url(#am)"/><text class="ts" x="170" y="186" text-anchor="middle">무작위</text><rect class="bx" x="30" y="196" width="120" height="36" rx="5"/><text class="mono" x="90" y="219" text-anchor="middle">Pod A</text><rect class="bx" x="190" y="196" width="120" height="36" rx="5"/><text class="mono" x="250" y="219" text-anchor="middle">Pod B</text><text class="tb" x="540" y="22" text-anchor="middle">headless Service (clusterIP: None)</text><rect class="bx" x="380" y="50" width="140" height="36" rx="5"/><text class="mono" x="450" y="73" text-anchor="middle">bitcoin-node-0</text><rect class="hl" x="580" y="50" width="120" height="36" rx="5"/><text class="tb" x="640" y="73" text-anchor="middle">CoreDNS</text><path class="ln" d="M520,60 H578" marker-end="url(#am)"/><text class="ts" x="550" y="46" text-anchor="middle">① 이름</text><path class="ln" d="M580,78 H522" marker-end="url(#am)"/><text class="ts" x="550" y="102" text-anchor="middle">② Pod IP</text><text class="ts" x="640" y="112" text-anchor="middle">가상 IP 없음</text><path class="la" d="M450,86 V194" marker-end="url(#aa)"/><text class="ts ta" x="458" y="146" text-anchor="start">③ 직접 연결</text><rect class="hl" x="380" y="196" width="140" height="36" rx="5"/><text class="mono" x="450" y="219" text-anchor="middle">bitcoin-node-1</text></svg></div><figcaption>P2P에서는 "노드 0"처럼 특정 상대를 골라야 한다. 그래서 가상 IP로 나눠 보내는 일반 Service 대신 headless Service를 쓴다.</figcaption></figure>
@@ -815,7 +852,7 @@ kubectl get storageclass</pre>
           <p class="rel">연결: <a href="#statefulset">StatefulSet</a><a href="#k8sdns">클러스터 DNS</a><a href="#listen">-listen과 피어</a></p>
         </article>
 
-        <article class="c" id="resources" data-k="requests limits 자원 요청 한도 cpu memory oomkilled throttling 스로틀링 qos">
+        <article class="c" id="resources" data-added="2026-10-12" data-updated="2026-10-14" data-k="requests limits 자원 요청 한도 cpu memory oomkilled throttling 스로틀링 qos">
           <div class="c-head"><h3>requests와 limits</h3></div>
           <p class="why"><b>왜 알아야 하나</b>실습 F는 이 값을 바꾸고 동기화 속도를 비교한다. 두 값의 의미가 다르다. CPU와 메모리에서 한도를 넘을 때의 결과도 다르다.</p>
           <figure class="fig"><div class="sc"><svg viewBox="0 0 720 176" role="img" aria-label="메모리 limits를 넘으면 종료되고, CPU limits에 걸리면 느려진다" style="min-width:560px;max-width:720px"><text class="tb" x="20" y="60" text-anchor="start">메모리</text><text class="tb" x="20" y="130" text-anchor="start">CPU</text><rect class="bx" x="110" y="40" width="580" height="30" rx="5"/><rect class="hl" x="110" y="40" width="220" height="30" rx="5"/><text class="ts" x="120" y="60" text-anchor="start">사용량</text><text class="ts tw" x="478" y="60" text-anchor="start">넘으면 → OOMKilled (종료)</text><rect class="bx" x="110" y="110" width="580" height="30" rx="5"/><rect class="hl" x="110" y="110" width="360" height="30" rx="5"/><text class="ts" x="120" y="130" text-anchor="start">사용량</text><rect class="wr" x="470" y="110" width="90" height="30" rx="5" stroke-dasharray="4 3"/><text class="ts" x="515" y="130" text-anchor="middle">원하는 양</text><path class="ln" d="M250,32 V148" stroke-dasharray="4 3"/><text class="ts" x="250" y="26" text-anchor="middle">requests: 배치 기준</text><path class="lw" d="M470,32 V148"/><text class="ts tw" x="470" y="26" text-anchor="middle">limits: 강제 한도</text><text class="ts tw" x="470" y="166" text-anchor="start">넘으려 하면 → 기다린다 (throttling)</text></svg></div><figcaption>같은 limits라도 결과가 다르다. 메모리는 돌려받을 수 없어서 종료하고, CPU는 시간을 나눠서 기다리게 한다.</figcaption></figure>
@@ -843,7 +880,7 @@ kubectl -n bitcoin-lab exec deploy/bitcoin-signet -- cat /sys/fs/cgroup/cpu.stat
           <p class="rel">연결: <a href="#qos">QoS와 OOM 점수</a><a href="#cputhrottle">cpu.max와 throttling</a><a href="#cgroup">cgroup</a><a href="#dbcache">dbcache</a><a href="#experiment">실험 설계</a></p>
         </article>
 
-        <article class="c" id="qos" data-k="qos guaranteed burstable besteffort oom score oom_score_adj 등급 request 예약 정직 종료 순서">
+        <article class="c" id="qos" data-added="2026-10-14" data-updated="2026-10-14" data-k="qos guaranteed burstable besteffort oom score oom_score_adj 등급 request 예약 정직 종료 순서">
           <div class="c-head"><h3>QoS 등급과 OOM 점수</h3></div>
           <p class="why"><b>왜 알아야 하나</b>메모리가 부족하면 커널은 프로세스 하나를 골라 종료한다. 누구를 먼저 고를지는 점수로 정한다. Kubernetes는 requests와 limits로 이 점수를 정한다.</p>
           <figure class="fig"><div class="sc"><svg viewBox="0 0 720 140" role="img" aria-label="OOM 점수가 큰 프로세스부터 종료된다: crawler 1000, bitcoind 약 965, 배치 200, collector 0, Guaranteed −997" style="min-width:600px;max-width:720px"><rect class="bx" x="20" y="20" width="128" height="70" rx="5"/><text class="tb" x="84" y="42" text-anchor="middle">1000</text><text class="ts mono" x="84" y="61" text-anchor="middle">namu-crawler</text><text class="ts" x="84" y="79" text-anchor="middle">호스트 서비스</text><rect class="wr" x="158" y="20" width="128" height="70" rx="5"/><text class="tb" x="222" y="42" text-anchor="middle">약 965</text><text class="ts mono" x="222" y="61" text-anchor="middle">bitcoind Pod</text><text class="ts" x="222" y="79" text-anchor="middle">Burstable</text><rect class="bx" x="296" y="20" width="128" height="70" rx="5"/><text class="tb" x="360" y="42" text-anchor="middle">200</text><text class="ts mono" x="360" y="61" text-anchor="middle">indra 배치</text><text class="ts" x="360" y="79" text-anchor="middle">호스트 서비스</text><rect class="bx" x="434" y="20" width="128" height="70" rx="5"/><text class="tb" x="498" y="42" text-anchor="middle">0</text><text class="ts mono" x="498" y="61" text-anchor="middle">indra-collector</text><text class="ts" x="498" y="79" text-anchor="middle">호스트 서비스</text><rect class="hl" x="572" y="20" width="128" height="70" rx="5"/><text class="tb" x="636" y="42" text-anchor="middle">−997</text><text class="ts mono" x="636" y="61" text-anchor="middle">Guaranteed Pod</text><text class="ts" x="636" y="79" text-anchor="middle">예시: request = limit</text><path class="ln" d="M20,110 H690" marker-end="url(#am)"/><text class="ts" x="20" y="130" text-anchor="start">메모리가 부족할 때 커널이 먼저 고르는 쪽</text><text class="ts" x="700" y="130" text-anchor="end">나중</text></svg></div><figcaption>호스트 서비스의 점수는 사용자의 호스트 설정 표(2026-10-13)에서 왔다. bitcoind의 점수는 Kubernetes가 request로 계산한다. Guaranteed Pod는 내 환경에 없는 예시다.</figcaption></figure>
@@ -870,7 +907,7 @@ cat /proc/$(pgrep -n bitcoind)/oom_score_adj</pre>
           <p class="rel">연결: <a href="#resources">requests와 limits</a><a href="#memory">메모리</a><a href="#refault">refault</a></p>
         </article>
 
-        <article class="c" id="kind" data-k="kind kubernetes in docker 노드 컨테이너 control-plane 로컬 클러스터 포트 매핑">
+        <article class="c" id="kind" data-added="2026-10-12" data-updated="2026-10-14" data-k="kind kubernetes in docker 노드 컨테이너 control-plane 로컬 클러스터 포트 매핑">
           <div class="c-head"><h3>kind 클러스터의 구조</h3></div>
           <p class="why"><b>왜 알아야 하나</b>kind는 실제 서버 클러스터와 다르게 동작하는 부분이 있다. 측정 결과에 kind 때문인 부분이 섞일 수 있다.</p>
           <ul>
@@ -888,7 +925,7 @@ docker exec bitcoin-lab-control-plane crictl ps    <span class="cm"># kind 노�
           <p class="rel">연결: <a href="#map">전체 지도</a><a href="#nat">NAT와 포트</a><a href="#dockergroup">docker 그룹</a></p>
         </article>
 
-        <article class="c" id="kubectl" data-k="kubectl get describe logs exec events 상태 읽기 디버깅 crashloopbackoff pending">
+        <article class="c" id="kubectl" data-added="2026-10-12" data-updated="2026-10-12" data-k="kubectl get describe logs exec events 상태 읽기 디버깅 crashloopbackoff pending">
           <div class="c-head"><h3>kubectl로 상태 읽기</h3></div>
           <p class="why"><b>왜 알아야 하나</b>문제가 생기면 명령을 무작위로 실행하지 않는다. 넓은 것에서 좁은 것으로 읽는다.</p>
           <ol>
@@ -909,7 +946,7 @@ docker exec bitcoin-lab-control-plane crictl ps    <span class="cm"># kind 노�
           <p class="rel">연결: <a href="#kexec">kubectl exec의 구조</a><a href="#desired">desired state</a><a href="#resources">limits</a><a href="#datadir">.lock</a></p>
         </article>
 
-        <article class="c" id="kexec" data-k="kubectl exec 구조 -- 구분선 resource/name 대상 deploy alias btc 오류 슬래시 command 명령">
+        <article class="c" id="kexec" data-added="2026-10-12" data-updated="2026-10-14" data-k="kubectl exec 구조 -- 구분선 resource/name 대상 deploy alias btc 오류 슬래시 command 명령">
           <div class="c-head"><h3>kubectl exec 명령의 구조</h3></div>
           <p class="why"><b>왜 알아야 하나</b>명령의 앞부분은 호스트의 kubectl이 읽는다. <code>--</code> 뒷부분은 컨테이너 안의 프로그램이 읽는다. 이 경계를 모르면 경로를 kubectl에게 주거나, 호스트 경로를 컨테이너에서 찾는 실수를 한다.</p>
           <figure class="fig"><div class="sc"><svg viewBox="0 0 720 146" role="img" aria-label="kubectl exec 명령: -- 앞은 kubectl이, 뒤는 컨테이너 안의 프로그램이 읽는다" style="min-width:620px;max-width:720px"><rect class="bx" x="10" y="40" width="70" height="36" rx="5"/><text class="mono" x="45.0" y="63" text-anchor="middle">kubectl</text><rect class="hl" x="86" y="40" width="118" height="36" rx="5"/><text class="mono" x="145.0" y="63" text-anchor="middle">-n bitcoin-lab</text><text class="ts" x="145.0" y="94" text-anchor="middle">어디에서</text><rect class="bx" x="210" y="40" width="50" height="36" rx="5"/><text class="mono" x="235.0" y="63" text-anchor="middle">exec</text><rect class="hl" x="266" y="40" width="170" height="36" rx="5"/><text class="mono" x="351.0" y="63" text-anchor="middle">deploy/bitcoin-signet</text><text class="ts" x="351.0" y="94" text-anchor="middle">누구 안에서 (종류/이름)</text><rect class="wr" x="442" y="40" width="34" height="36" rx="5"/><text class="mono" x="459.0" y="63" text-anchor="middle">--</text><text class="ts" x="459.0" y="94" text-anchor="middle">구분선</text><rect class="hl" x="482" y="40" width="228" height="36" rx="5"/><text class="mono" x="596.0" y="63" text-anchor="middle">du -sh /home/…/signet</text><text class="ts" x="596.0" y="94" text-anchor="middle">무엇을</text><path class="ln" d="M10,112 V118 H476 V112"/><text class="ts" x="243" y="136" text-anchor="middle">호스트의 kubectl이 읽는다</text><path class="la" d="M482,112 V118 H710 V112"/><text class="ts ta" x="596" y="136" text-anchor="middle">컨테이너 안의 du가 읽는다</text></svg></div><figcaption><code>--</code>가 경계다. 앞은 "어디의 누구 안에서", 뒤는 "무엇을"이다. 경로는 뒤쪽 프로그램의 인수이므로 <code>--</code> 뒤에 둔다.</figcaption></figure>
@@ -948,7 +985,7 @@ kubectl -n bitcoin-lab get deploy -v=6   <span class="cm"># kubectl이 보내는
       <p class="lead">노드는 네트워크 프로그램이다. 피어 연결 수와 전송량은 성능 측정의 기본 값이다.</p>
       <div class="cards">
 
-        <article class="c" id="ipport" data-k="ip 주소 포트 tcp 연결 소켓 38333 38332 handshake ss">
+        <article class="c" id="ipport" data-added="2026-10-12" data-updated="2026-10-12" data-k="ip 주소 포트 tcp 연결 소켓 38333 38332 handshake ss">
           <div class="c-head"><h3>IP 주소, 포트, TCP 연결</h3></div>
           <p class="why"><b>왜 알아야 하나</b>"연결이 안 된다"의 원인은 넷 중 하나다. 주소가 틀리다. 포트가 틀리다. 듣는 프로그램이 없다. 중간에서 막는다.</p>
           <ul>
@@ -981,7 +1018,7 @@ ss -tnp state established</pre>
           <p class="rel">연결: <a href="#netif">네트워크 인터페이스</a><a href="#listen">-listen과 피어</a><a href="#bindaddr">리슨 주소</a><a href="#nat">NAT</a></p>
         </article>
 
-        <article class="c" id="netif" data-k="네트워크 인터페이스 veth lo loopback bridge 브리지 랜카드 nic eth0 ip addr 가상 물리">
+        <article class="c" id="netif" data-added="2026-10-12" data-updated="2026-10-12" data-k="네트워크 인터페이스 veth lo loopback bridge 브리지 랜카드 nic eth0 ip addr 가상 물리">
           <div class="c-head"><h3>네트워크 인터페이스: 랜카드, lo, veth</h3></div>
           <p class="why"><b>왜 알아야 하나</b>IP는 기계가 아니라 인터페이스에 붙는다. Pod IP가 왜 생기고 왜 사라지는지 알려면 인터페이스를 알아야 한다.</p>
           <figure class="fig"><div class="sc"><svg viewBox="0 0 720 252" role="img" aria-label="호스트의 물리 랜카드, lo, kind 브리지, veth 쌍, Pod 안의 eth0" style="min-width:620px;max-width:720px"><rect class="bg" x="10" y="10" width="700" height="232" rx="5"/><text class="tb" x="24" y="32" text-anchor="start">호스트 promet</text><rect class="bx" x="24" y="50" width="124" height="46" rx="5"/><text class="tb" x="86" y="70" text-anchor="middle">물리 랜카드</text><text class="ts" x="86" y="87" text-anchor="middle">192.168.x.x (예시)</text><rect class="bx" x="24" y="112" width="124" height="40" rx="5"/><text class="mono" x="86" y="130" text-anchor="middle">lo</text><text class="ts" x="86" y="146" text-anchor="middle">127.0.0.1</text><path class="ln" d="M180,73 H150" marker-end="url(#am)"/><text class="ts tw" x="165" y="64" text-anchor="middle">NAT</text><rect class="hl" x="182" y="50" width="120" height="46" rx="5"/><text class="mono" x="242" y="70" text-anchor="middle">br-… (kind)</text><text class="ts" x="242" y="87" text-anchor="middle">가상 스위치</text><path class="la" d="M302,73 H350"/><text class="ts ta" x="326" y="64" text-anchor="middle">veth</text><rect class="bx" x="352" y="36" width="344" height="196" rx="5"/><text class="tb" x="366" y="56" text-anchor="start">kind 노드 (자기 net namespace)</text><text class="ts mono" x="366" y="74" text-anchor="start">eth0 172.18.0.x · 커널 라우팅 표</text><path class="la" d="M442,84 V142"/><text class="ts ta" x="450" y="116" text-anchor="start">veth 쌍</text><rect class="hl" x="372" y="144" width="140" height="76" rx="5"/><text class="mono" x="442" y="164" text-anchor="middle">bitcoin-node-0</text><text class="ts" x="442" y="184" text-anchor="middle">eth0 10.244.0.x</text><text class="ts" x="442" y="204" text-anchor="middle">lo 127.0.0.1</text><path class="la" d="M610,84 V142"/><text class="ts ta" x="618" y="116" text-anchor="start">veth 쌍</text><rect class="hl" x="540" y="144" width="140" height="76" rx="5"/><text class="mono" x="610" y="164" text-anchor="middle">bitcoin-node-1</text><text class="ts" x="610" y="184" text-anchor="middle">eth0 10.244.0.11</text><text class="ts" x="610" y="204" text-anchor="middle">lo 127.0.0.1</text></svg></div><figcaption>물리 랜카드 뒤에만 실제 장치가 있다. 나머지는 커널이 만든 가상 인터페이스다. veth는 항상 한 쌍이고, 한쪽 끝은 Pod 안에서 eth0이 된다. 10.244.0.11은 2026-10-12 관찰 값, 나머지 주소는 예시다.</figcaption></figure>
@@ -1007,7 +1044,7 @@ ss -tnp state established</pre>
           <p class="rel">연결: <a href="#ipport">IP와 포트</a><a href="#podip">Pod IP와 CNI</a><a href="#namespace">리눅스 namespace</a></p>
         </article>
 
-        <article class="c" id="podip" data-k="pod ip cni ipam 바뀌는 이유 kubelet containerd veth coredns netlink kindnet 이름">
+        <article class="c" id="podip" data-added="2026-10-12" data-updated="2026-10-12" data-k="pod ip cni ipam 바뀌는 이유 kubelet containerd veth coredns netlink kindnet 이름">
           <div class="c-head"><h3>Pod IP는 어디서 오고, 왜 바뀌는가</h3></div>
           <p class="why"><b>왜 알아야 하나</b>Pod IP는 Pod를 다시 만들 때 바뀔 수 있다. 그래서 bitcoind 설정에 IP 대신 이름을 쓴다. 이 흐름을 알면 "왜 이름이 필요한가"를 설명할 수 있다.</p>
           <figure class="fig"><div class="sc"><svg viewBox="0 0 720 198" role="img" aria-label="Pod IP가 정해지고 DNS에 반영되는 흐름" style="min-width:620px;max-width:720px"><rect class="bx" x="10" y="30" width="120" height="50" rx="5"/><text class="tb" x="70" y="52" text-anchor="middle">Pod 생성</text><text class="ts" x="70" y="70" text-anchor="middle">scheduler가 노드 지정</text><path class="ln" d="M130,55 H158" marker-end="url(#am)"/><rect class="bx" x="160" y="30" width="110" height="50" rx="5"/><text class="tb" x="215" y="60" text-anchor="middle">kubelet</text><path class="ln" d="M270,55 H298" marker-end="url(#am)"/><rect class="bx" x="300" y="30" width="120" height="50" rx="5"/><text class="tb" x="360" y="60" text-anchor="middle">containerd</text><path class="ln" d="M420,55 H448" marker-end="url(#am)"/><rect class="hl" x="450" y="30" width="260" height="50" rx="5"/><text class="tb" x="580" y="52" text-anchor="middle">CNI 플러그인</text><text class="ts" x="580" y="70" text-anchor="middle">veth 쌍 생성 + IPAM이 빈 IP 1개 선택</text><path class="la" d="M580,80 V118" marker-end="url(#aa)"/><text class="ts ta" x="588" y="104" text-anchor="start">IP 결정</text><rect class="bx" x="450" y="120" width="260" height="50" rx="5"/><text class="tb" x="580" y="142" text-anchor="middle">kubelet → API 서버</text><text class="mono" x="580" y="160" text-anchor="middle">status.podIP = 10.244.0.11</text><path class="ln" d="M448,145 H392" marker-end="url(#am)"/><text class="ts" x="420" y="137" text-anchor="middle">watch</text><rect class="hl" x="230" y="120" width="160" height="50" rx="5"/><text class="tb" x="310" y="142" text-anchor="middle">CoreDNS</text><text class="ts" x="310" y="160" text-anchor="middle">DNS 응답 갱신</text><path class="ln" d="M228,145 H192" marker-end="url(#am)" marker-start="url(#am)"/><text class="ts" x="210" y="188" text-anchor="middle">이름 질문 · IP 응답</text><rect class="bx" x="10" y="120" width="180" height="50" rx="5"/><text class="tb" x="100" y="142" text-anchor="middle">bitcoind (node-0)</text><text class="ts" x="100" y="160" text-anchor="middle">이름만 안다</text></svg></div><figcaption>Pod가 다시 생기면 이 흐름이 처음부터 다시 돈다. IPAM은 빈 주소를 고를 뿐, 같은 주소를 약속하지 않는다. 그래서 IP 대신 이름을 쓴다.</figcaption></figure>
@@ -1027,7 +1064,7 @@ ss -tnp state established</pre>
           <p class="rel">연결: <a href="#netif">네트워크 인터페이스</a><a href="#k8sdns">클러스터 DNS</a><a href="#headless">headless Service</a></p>
         </article>
 
-        <article class="c" id="bindaddr" data-k="리슨 주소 bind 127.0.0.1 0.0.0.0 localhost 접근 범위 rpcbind rpcallowip">
+        <article class="c" id="bindaddr" data-added="2026-10-12" data-updated="2026-10-12" data-k="리슨 주소 bind 127.0.0.1 0.0.0.0 localhost 접근 범위 rpcbind rpcallowip">
           <div class="c-head"><h3>리슨 주소: 127.0.0.1과 0.0.0.0</h3></div>
           <p class="why"><b>왜 알아야 하나</b>프로그램이 "실행 중"이어도 다른 Pod에서 접속이 안 될 수 있다. 어느 주소에서 듣는지가 접근 범위를 정한다.</p>
           <figure class="fig"><div class="sc"><svg viewBox="0 0 720 190" role="img" aria-label="127.0.0.1에서 듣는 RPC는 같은 Pod 안에서만, 0.0.0.0에서 듣는 P2P는 밖에서도 연결된다" style="min-width:560px;max-width:720px"><rect class="bg" x="20" y="20" width="390" height="156" rx="5"/><text class="tb" x="34" y="42" text-anchor="start">Pod (net namespace 1개)</text><rect class="bx" x="40" y="56" width="180" height="108" rx="5"/><text class="tb" x="130" y="78" text-anchor="middle">bitcoind</text><rect class="hl" x="52" y="90" width="156" height="28" rx="5"/><text class="mono" x="130" y="109" text-anchor="middle">127.0.0.1:38332 RPC</text><rect class="hl" x="52" y="126" width="156" height="28" rx="5"/><text class="mono" x="130" y="145" text-anchor="middle">0.0.0.0:38333 P2P</text><rect class="bx" x="282" y="90" width="112" height="28" rx="5"/><text class="mono" x="338" y="109" text-anchor="middle">bitcoin-cli</text><path class="la" d="M280,104 H210" marker-end="url(#aa)"/><text class="ts ta" x="245" y="86" text-anchor="middle">localhost</text><rect class="bx" x="530" y="96" width="170" height="64" rx="5"/><text class="tb" x="615" y="120" text-anchor="middle">다른 Pod</text><text class="mono" x="615" y="142" text-anchor="middle">bitcoin-node-1</text><path class="lw" d="M528,112 H414" marker-end="url(#aw)" stroke-dasharray="5 4"/><text class="ts tw" x="470" y="104" text-anchor="middle">RPC ✗</text><path class="la" d="M528,140 H210" marker-end="url(#aa)"/><text class="ts ta" x="470" y="156" text-anchor="middle">P2P ✓</text></svg></div><figcaption>리슨 주소가 접근 범위를 정한다. RPC는 기본으로 localhost에서만 듣는다.</figcaption></figure>
@@ -1040,7 +1077,7 @@ ss -tnp state established</pre>
           <p class="rel">연결: <a href="#ipport">IP와 포트</a><a href="#rpccookie">RPC와 쿠키</a><a href="#pod">Pod</a></p>
         </article>
 
-        <article class="c" id="nat" data-k="nat 포트 포워딩 공유기 사설 ip 공인 ip inbound docker 포트 매핑 nodeport">
+        <article class="c" id="nat" data-added="2026-10-12" data-updated="2026-10-12" data-k="nat 포트 포워딩 공유기 사설 ip 공인 ip inbound docker 포트 매핑 nodeport">
           <div class="c-head"><h3>NAT와 포트 포워딩</h3></div>
           <p class="why"><b>왜 알아야 하나</b>내 노드는 밖으로 연결(outbound)할 수 있다. 하지만 밖에서 내 노드로 연결(inbound)은 보통 안 된다. NAT가 몇 겹 있기 때문이다.</p>
           <figure class="fig"><div class="sc"><svg viewBox="0 0 720 140" role="img" aria-label="인터넷에서 Pod까지 NAT가 세 번 있다" style="min-width:620px;max-width:720px"><rect class="bx" x="10" y="50" width="120" height="50" rx="5"/><text class="tb" x="70" y="72" text-anchor="middle">인터넷 피어</text><text class="mono" x="70" y="90" text-anchor="middle">Signet 노드</text><rect class="bx" x="155" y="50" width="120" height="50" rx="5"/><text class="tb" x="215" y="72" text-anchor="middle">공유기</text><text class="mono" x="215" y="90" text-anchor="middle">공인 IP 1개</text><rect class="bx" x="300" y="50" width="120" height="50" rx="5"/><text class="tb" x="360" y="72" text-anchor="middle">호스트</text><text class="mono" x="360" y="90" text-anchor="middle">192.168.x.x</text><rect class="bx" x="445" y="50" width="120" height="50" rx="5"/><text class="tb" x="505" y="72" text-anchor="middle">kind 노드</text><text class="mono" x="505" y="90" text-anchor="middle">172.18.x.x</text><rect class="hl" x="590" y="50" width="120" height="50" rx="5"/><text class="tb" x="650" y="72" text-anchor="middle">Pod</text><text class="mono" x="650" y="90" text-anchor="middle">10.244.x.x</text><text class="ts tw" x="287" y="80" text-anchor="middle">NAT</text><text class="ts tw" x="432" y="80" text-anchor="middle">NAT</text><text class="ts tw" x="577" y="80" text-anchor="middle">NAT</text><path class="la" d="M650,48 V28 H70 V48" marker-end="url(#aa)"/><text class="ts ta" x="360" y="20" text-anchor="middle">outbound: 안에서 먼저 연결 → 응답이 돌아온다</text><path class="lw" d="M70,102 V124 H210 V104" marker-end="url(#aw)" stroke-dasharray="5 4"/><text class="ts tw" x="226" y="128" text-anchor="start">inbound: 공유기에서 막힌다 (포워딩 규칙 없음)</text></svg></div><figcaption>IP 대역은 kind의 일반적인 기본값이다. 실제 값은 ip addr과 kubectl get pods -o wide로 확인한다.</figcaption></figure>
@@ -1053,7 +1090,7 @@ ss -tnp state established</pre>
           <p class="rel">연결: <a href="#listen">-listen과 피어</a><a href="#kind">kind 구조</a></p>
         </article>
 
-        <article class="c" id="k8sdns" data-k="dns 이름 해석 coredns 클러스터 dns svc.cluster.local resolv.conf">
+        <article class="c" id="k8sdns" data-added="2026-10-12" data-updated="2026-10-12" data-k="dns 이름 해석 coredns 클러스터 dns svc.cluster.local resolv.conf">
           <div class="c-head"><h3>DNS와 클러스터 DNS</h3></div>
           <p class="why"><b>왜 알아야 하나</b>노드끼리 IP 대신 이름으로 연결한다. 이름이 IP로 바뀌는 과정을 알아야 연결 실패를 추적할 수 있다.</p>
           <figure class="fig"><div class="sc"><svg viewBox="0 0 720 134" role="img" aria-label="Pod가 CoreDNS에 이름을 묻고 Pod IP를 받는다. CoreDNS는 API 서버를 보고 답을 만든다" style="min-width:560px;max-width:720px"><rect class="bx" x="20" y="40" width="150" height="50" rx="5"/><text class="tb" x="95" y="62" text-anchor="middle">Pod</text><text class="mono" x="95" y="80" text-anchor="middle">bitcoin-node-0</text><path class="la" d="M170,56 H358" marker-end="url(#aa)"/><text class="mono" x="265" y="34" text-anchor="middle">① bitcoin-node-1.bitcoin-node ?</text><path class="ln" d="M358,76 H172" marker-end="url(#am)"/><text class="mono" x="265" y="104" text-anchor="middle">② 10.244.0.11 (Pod IP)</text><rect class="hl" x="360" y="40" width="140" height="50" rx="5"/><text class="tb" x="430" y="70" text-anchor="middle">CoreDNS</text><path class="ln" d="M502,65 H568" marker-end="url(#am)" marker-start="url(#am)" stroke-dasharray="4 3"/><text class="ts" x="535" y="57" text-anchor="middle">watch</text><rect class="bx" x="570" y="40" width="130" height="50" rx="5"/><text class="tb" x="635" y="62" text-anchor="middle">API 서버</text><text class="ts" x="635" y="80" text-anchor="middle">Service · Pod 목록</text><text class="ts" x="20" y="124" text-anchor="start">resolv.conf: CoreDNS 주소와 검색 도메인 (bitcoin-lab.svc.cluster.local)</text></svg></div><figcaption>2026-10-12 관찰 값이다. 검색 도메인 때문에 같은 namespace에서는 짧은 이름만 써도 된다.</figcaption></figure>
@@ -1081,7 +1118,7 @@ ss -tnp state established</pre>
       <p class="lead">블록 검증의 병목은 보통 디스크다. 장치의 특성을 알아야 측정값을 설명할 수 있다.</p>
       <div class="cards">
 
-        <article class="c" id="ssdhdd" data-k="ssd hdd smr cmr 랜덤 순차 지연 디스크 종류 mx500 wd blue">
+        <article class="c" id="ssdhdd" data-added="2026-10-12" data-updated="2026-10-12" data-k="ssd hdd smr cmr 랜덤 순차 지연 디스크 종류 mx500 wd blue">
           <div class="c-head"><h3>SSD, HDD, SMR</h3></div>
           <p class="why"><b>왜 알아야 하나</b>같은 노드를 SSD와 HDD에 두면 동기화 시간이 크게 다르다. 이 차이는 nodelab의 좋은 실험 변수다.</p>
           <div class="tbl"><table>
@@ -1100,7 +1137,7 @@ ss -tnp state established</pre>
           <p class="rel">연결: <a href="#iometrics">IOPS와 지연</a><a href="#dbcache">UTXO와 dbcache</a><a href="#mount">마운트</a></p>
         </article>
 
-        <article class="c" id="iometrics" data-k="iops 처리량 throughput 지연 latency iostat await util 큐">
+        <article class="c" id="iometrics" data-added="2026-10-12" data-updated="2026-10-14" data-k="iops 처리량 throughput 지연 latency iostat await util 큐">
           <div class="c-head"><h3>IOPS, 처리량, 지연 시간</h3></div>
           <p class="why"><b>왜 알아야 하나</b>"디스크가 느리다"는 측정이 아니다. 무엇이 느린지 숫자로 말해야 한다.</p>
           <div class="tbl"><table>
@@ -1134,7 +1171,7 @@ kubectl -n bitcoin-lab exec bitcoin-node-1 -- cat /sys/fs/cgroup/io.stat</pre>
       <p class="lead">내부 구조는 "Bitcoin Core 내부 동작 학습" 스레드에서 깊게 다룬다. 여기에는 운영할 때 바로 필요한 개념만 둔다.</p>
       <div class="cards">
 
-        <article class="c" id="fullnode" data-k="풀 노드 full node ibd 초기 동기화 헤더 블록 검증 headers-first">
+        <article class="c" id="fullnode" data-added="2026-10-12" data-updated="2026-10-14" data-k="풀 노드 full node ibd 초기 동기화 헤더 블록 검증 headers-first">
           <div class="c-head"><h3>풀 노드가 하는 일</h3></div>
           <p class="why"><b>왜 알아야 하나</b>노드가 무엇을 하는지 알아야 어떤 자원이 바쁜지 예상할 수 있다.</p>
           <figure class="fig"><div class="sc"><svg viewBox="0 0 720 120" role="img" aria-label="풀 노드의 처리 단계와 각 단계가 쓰는 자원" style="min-width:560px;max-width:720px"><rect class="bx" x="10" y="40" width="124" height="46" rx="5"/><text class="tb" x="72" y="68" text-anchor="middle">피어 연결</text><text class="ts" x="72" y="108" text-anchor="middle">네트워크</text><path class="ln" d="M134,63 H152" marker-end="url(#am)"/><rect class="bx" x="154" y="40" width="124" height="46" rx="5"/><text class="tb" x="216" y="68" text-anchor="middle">헤더 받기</text><text class="ts" x="216" y="108" text-anchor="middle">네트워크</text><path class="ln" d="M278,63 H296" marker-end="url(#am)"/><rect class="bx" x="298" y="40" width="124" height="46" rx="5"/><text class="tb" x="360" y="68" text-anchor="middle">블록 받기</text><text class="ts" x="360" y="108" text-anchor="middle">네트워크 · 디스크 쓰기</text><path class="ln" d="M422,63 H440" marker-end="url(#am)"/><rect class="hl" x="442" y="40" width="124" height="46" rx="5"/><text class="tb" x="504" y="68" text-anchor="middle">검증</text><text class="ts" x="504" y="108" text-anchor="middle">CPU</text><path class="ln" d="M566,63 H584" marker-end="url(#am)"/><rect class="hl" x="586" y="40" width="124" height="46" rx="5"/><text class="tb" x="648" y="68" text-anchor="middle">UTXO 갱신</text><text class="ts" x="648" y="108" text-anchor="middle">메모리 · 디스크</text><text class="ts" x="360" y="24" text-anchor="middle">IBD 동안 블록마다 이 흐름을 반복한다</text></svg></div><figcaption>단계마다 바쁜 자원이 다르다. 그래서 병목도 동기화 시점에 따라 바뀔 수 있다.</figcaption></figure>
@@ -1168,7 +1205,7 @@ kubectl -n bitcoin-lab exec bitcoin-node-1 -- \
           <p class="rel">연결: <a href="#dbcache">UTXO와 dbcache</a><a href="#signet">Signet</a><a href="#use">성능을 보는 순서</a></p>
         </article>
 
-        <article class="c" id="signet" data-k="signet testnet mainnet 테스트 네트워크 서명 블록">
+        <article class="c" id="signet" data-added="2026-10-12" data-updated="2026-10-12" data-k="signet testnet mainnet 테스트 네트워크 서명 블록">
           <div class="c-head"><h3>Signet</h3></div>
           <p class="why"><b>왜 알아야 하나</b>Signet에서 얻은 측정값을 메인넷에 그대로 쓰면 안 된다. 차이를 알아야 결과를 바르게 말할 수 있다.</p>
           <ul>
@@ -1181,7 +1218,7 @@ kubectl -n bitcoin-lab exec bitcoin-node-1 -- \
           <p class="rel">연결: <a href="#fullnode">풀 노드</a><a href="#experiment">실험 설계</a></p>
         </article>
 
-        <article class="c" id="datadir" data-k="데이터 디렉터리 datadir blocks chainstate .lock 잠금 debug.log peers.dat settings.json">
+        <article class="c" id="datadir" data-added="2026-10-12" data-updated="2026-10-12" data-k="데이터 디렉터리 datadir blocks chainstate .lock 잠금 debug.log peers.dat settings.json">
           <div class="c-head"><h3>데이터 디렉터리와 .lock</h3></div>
           <p class="why"><b>왜 알아야 하나</b>디스크 사용량, 로그, 오류 원인은 모두 여기 있다. 실습 B의 실패도 <code>.lock</code> 파일로 설명된다.</p>
           <div class="tbl"><table>
@@ -1203,7 +1240,7 @@ kubectl -n bitcoin-lab exec bitcoin-node-1 -- \
           <p class="rel">연결: <a href="#deployment">Deployment</a><a href="#statefulset">StatefulSet</a><a href="#rpccookie">쿠키 인증</a><a href="#prune">pruned 노드</a></p>
         </article>
 
-        <article class="c" id="listen" data-k="-listen inbound outbound 피어 연결 addnode connect maxconnections getpeerinfo">
+        <article class="c" id="listen" data-added="2026-10-12" data-updated="2026-10-12" data-k="-listen inbound outbound 피어 연결 addnode connect maxconnections getpeerinfo">
           <div class="c-head"><h3>-listen과 피어 연결</h3></div>
           <p class="why"><b>왜 알아야 하나</b>노드끼리 연결하려면(실습 D) 한쪽은 들어오는 연결을 받아야 한다. <code>-listen</code>이 이것을 정한다.</p>
           <figure class="fig"><div class="sc"><svg viewBox="0 0 720 182" role="img" aria-label="bitcoin-node-0이 bitcoin-node-1에 먼저 연결한다. node-1에게는 inbound, node-0에게는 outbound다" style="min-width:620px;max-width:720px"><rect class="hl" x="40" y="60" width="190" height="70" rx="5"/><text class="mono" x="135" y="84" text-anchor="middle">bitcoin-node-1</text><text class="mono" x="135" y="104" text-anchor="middle">-listen=1</text><text class="ts" x="135" y="121" text-anchor="middle">38333에서 기다린다</text><rect class="bx" x="300" y="60" width="190" height="70" rx="5"/><text class="mono" x="395" y="84" text-anchor="middle">bitcoin-node-0</text><text class="mono" x="395" y="104" text-anchor="middle">-addnode=…node-1</text><text class="ts" x="395" y="121" text-anchor="middle">먼저 연결한다</text><rect class="bx" x="570" y="60" width="130" height="70" rx="5"/><text class="tb" x="635" y="90" text-anchor="middle">인터넷 피어</text><text class="ts" x="635" y="110" text-anchor="middle">Signet 노드들</text><path class="la" d="M298,80 H232" marker-end="url(#aa)"/><text class="ts ta" x="265" y="72" text-anchor="middle">connect</text><path class="la" d="M492,80 H568" marker-end="url(#aa)"/><text class="ts ta" x="530" y="72" text-anchor="middle">outbound</text><path class="lw" d="M568,112 H494" marker-end="url(#aw)" stroke-dasharray="5 4"/><text class="ts tw" x="531" y="128" text-anchor="middle">NAT에서 막힘</text><text class="ts" x="135" y="154" text-anchor="middle">node-1의 getpeerinfo</text><text class="mono" x="135" y="172" text-anchor="middle">node-0: "inbound": true</text><text class="ts" x="395" y="154" text-anchor="middle">node-0의 getpeerinfo</text><text class="mono" x="395" y="172" text-anchor="middle">node-1: "inbound": false</text></svg></div><figcaption>2026-10-12에 node-0의 getaddednodeinfo로 outbound를 확인했다. node-1 쪽 값은 같은 원리로 예상한 값이다. 같은 연결이 양쪽에서 다르게 보인다. 먼저 연결한 쪽은 outbound, 받은 쪽은 inbound다. 받으려면 listen해야 한다.</figcaption></figure>
@@ -1228,7 +1265,7 @@ kubectl -n bitcoin-lab logs bitcoin-node-0 | grep Bound   <span class="cm"># 실
           <p class="rel">연결: <a href="#headless">headless Service</a><a href="#ipport">IP와 포트</a><a href="#nat">NAT</a></p>
         </article>
 
-        <article class="c" id="rpccookie" data-k="rpc 쿠키 cookie 인증 bitcoin-cli rpcuser rpcpassword rpcauth json-rpc http">
+        <article class="c" id="rpccookie" data-added="2026-10-12" data-updated="2026-10-12" data-k="rpc 쿠키 cookie 인증 bitcoin-cli rpcuser rpcpassword rpcauth json-rpc http">
           <div class="c-head"><h3>RPC와 쿠키 인증</h3></div>
           <p class="why"><b>왜 알아야 하나</b><code>bitcoin-cli</code>가 "Could not locate RPC credentials" 오류를 낼 때가 있다. 원인은 비밀번호가 아니라 쿠키 파일의 위치와 권한이다.</p>
           <figure class="fig"><div class="sc"><svg viewBox="0 0 720 168" role="img" aria-label="bitcoind가 쿠키 파일을 쓰고, bitcoin-cli가 그 파일을 읽어 인증한다" style="min-width:560px;max-width:720px"><rect class="hl" x="20" y="50" width="150" height="60" rx="5"/><text class="tb" x="95" y="76" text-anchor="middle">bitcoind</text><text class="mono" x="95" y="96" text-anchor="middle">RPC 38332</text><rect class="wr" x="260" y="50" width="180" height="60" rx="5"/><text class="mono" x="350" y="74" text-anchor="middle">signet/.cookie</text><text class="mono" x="350" y="94" text-anchor="middle">__cookie__:무작위값</text><rect class="bx" x="530" y="50" width="170" height="60" rx="5"/><text class="tb" x="615" y="76" text-anchor="middle">bitcoin-cli</text><text class="ts" x="615" y="96" text-anchor="middle">같은 datadir</text><path class="ln" d="M170,80 H258" marker-end="url(#am)"/><text class="ts" x="214" y="72" text-anchor="middle">① 시작 시 쓴다</text><path class="ln" d="M440,80 H528" marker-end="url(#am)"/><text class="ts" x="484" y="72" text-anchor="middle">② 읽는다</text><path class="la" d="M615,110 V140 H95 V112" marker-end="url(#aa)"/><text class="ts ta" x="355" y="158" text-anchor="middle">③ HTTP 요청 + 쿠키 값으로 인증</text><text class="ts tw" x="350" y="36" text-anchor="middle">이 파일을 읽을 수 있으면 RPC를 쓸 수 있다</text></svg></div><figcaption>쿠키는 재시작할 때마다 바뀐다. 그래서 비밀번호를 설정 파일에 두지 않아도 된다.</figcaption></figure>
@@ -1243,7 +1280,7 @@ kubectl -n bitcoin-lab logs bitcoin-node-0 | grep Bound   <span class="cm"># 실
           <p class="rel">연결: <a href="#bindaddr">리슨 주소</a><a href="#process">권한</a><a href="#datadir">데이터 디렉터리</a></p>
         </article>
 
-        <article class="c" id="prune" data-k="prune pruned 노드 가지치기 디스크 절약 550 txindex network_limited">
+        <article class="c" id="prune" data-added="2026-10-12" data-updated="2026-10-12" data-k="prune pruned 노드 가지치기 디스크 절약 550 txindex network_limited">
           <div class="c-head"><h3>pruned 노드</h3></div>
           <p class="why"><b>왜 알아야 하나</b>디스크가 작으면 pruning이 답이 될 수 있다. 하지만 잃는 기능도 있다. 노드 여러 개를 둘 때의 선택지다.</p>
           <figure class="fig"><div class="sc"><svg viewBox="0 0 720 152" role="img" aria-label="pruned 노드는 오래된 블록 파일만 지우고 UTXO 집합은 모두 남긴다" style="min-width:560px;max-width:720px"><text class="ts" x="20" y="26" text-anchor="start">blocks/blk*.dat, rev*.dat  (오래됨 → 최신)</text><rect class="bg" x="20" y="38" width="40" height="32" rx="5" stroke-dasharray="3 3"/><rect class="bg" x="65" y="38" width="40" height="32" rx="5" stroke-dasharray="3 3"/><rect class="bg" x="110" y="38" width="40" height="32" rx="5" stroke-dasharray="3 3"/><rect class="bg" x="155" y="38" width="40" height="32" rx="5" stroke-dasharray="3 3"/><rect class="bg" x="200" y="38" width="40" height="32" rx="5" stroke-dasharray="3 3"/><rect class="bg" x="245" y="38" width="40" height="32" rx="5" stroke-dasharray="3 3"/><rect class="bg" x="290" y="38" width="40" height="32" rx="5" stroke-dasharray="3 3"/><rect class="bg" x="335" y="38" width="40" height="32" rx="5" stroke-dasharray="3 3"/><rect class="bg" x="380" y="38" width="40" height="32" rx="5" stroke-dasharray="3 3"/><rect class="bg" x="425" y="38" width="40" height="32" rx="5" stroke-dasharray="3 3"/><rect class="bg" x="470" y="38" width="40" height="32" rx="5" stroke-dasharray="3 3"/><rect class="hl" x="515" y="38" width="40" height="32" rx="5"/><rect class="hl" x="560" y="38" width="40" height="32" rx="5"/><rect class="hl" x="605" y="38" width="40" height="32" rx="5"/><rect class="hl" x="650" y="38" width="40" height="32" rx="5"/><path class="ln" d="M20,76 V82 H470 V76"/><text class="ts" x="245" y="98" text-anchor="middle">검증한 뒤 지운다</text><path class="la" d="M515,76 V82 H690 V76"/><text class="ts ta" x="602" y="98" text-anchor="middle">남긴다 (약 -prune 값)</text><rect class="hl" x="20" y="112" width="670" height="30" rx="5"/><text x="355" y="132" text-anchor="middle">chainstate/ (현재 UTXO 집합): 지우지 않는다</text></svg></div><figcaption>검증은 풀 노드와 똑같이 한다. 지우는 것은 이미 검증한 블록의 원본이다.</figcaption></figure>
@@ -1257,7 +1294,7 @@ kubectl -n bitcoin-lab logs bitcoin-node-0 | grep Bound   <span class="cm"># 실
           <p class="rel">연결: <a href="#datadir">데이터 디렉터리</a><a href="#dudf">du와 df</a></p>
         </article>
 
-        <article class="c" id="dbcache" data-k="utxo dbcache chainstate 캐시 flush leveldb 메모리 동기화 속도">
+        <article class="c" id="dbcache" data-added="2026-10-12" data-updated="2026-10-14" data-k="utxo dbcache chainstate 캐시 flush leveldb 메모리 동기화 속도">
           <div class="c-head"><h3>UTXO 집합과 dbcache</h3></div>
           <p class="why"><b>왜 알아야 하나</b>IBD 속도에 가장 큰 영향을 주는 설정이다. 실습 F의 첫 번째 실험 변수가 될 수 있다.</p>
           <figure class="fig"><div class="sc"><svg viewBox="0 0 720 146" role="img" aria-label="블록 검증은 UTXO 캐시를 사용하고, 캐시가 차면 디스크로 flush한다" style="min-width:560px;max-width:720px"><rect class="bx" x="20" y="50" width="110" height="50" rx="5"/><text class="tb" x="75" y="80" text-anchor="middle">새 블록</text><path class="ln" d="M130,75 H158" marker-end="url(#am)"/><rect class="bx" x="160" y="50" width="120" height="50" rx="5"/><text class="tb" x="220" y="72" text-anchor="middle">검증</text><text class="ts" x="220" y="90" text-anchor="middle">CPU</text><path class="la" d="M282,75 H328" marker-end="url(#aa)" marker-start="url(#aa)"/><text class="ts" x="220" y="120" text-anchor="middle">UTXO 찾기·추가·삭제</text><rect class="none" x="318" y="28" width="204" height="92" rx="5" fill="none" stroke-dasharray="5 4" style="stroke:var(--warn)"/><rect class="hl" x="330" y="50" width="180" height="50" rx="5"/><text class="tb" x="420" y="72" text-anchor="middle">UTXO 캐시</text><text class="ts" x="420" y="90" text-anchor="middle">메모리 · -dbcache</text><text class="ts tw" x="420" y="114" text-anchor="middle">컨테이너 메모리 limits 안</text><path class="la" d="M510,64 H568" marker-end="url(#aa)"/><text class="ts ta" x="540" y="56" text-anchor="middle">flush</text><path class="lw" d="M568,88 H512" marker-end="url(#aw)" stroke-dasharray="5 4"/><text class="ts tw" x="540" y="136" text-anchor="middle">없으면 디스크 읽기</text><rect class="bx" x="570" y="50" width="130" height="50" rx="5"/><text class="mono" x="635" y="72" text-anchor="middle">chainstate/</text><text class="ts" x="635" y="90" text-anchor="middle">LevelDB · 디스크</text></svg></div><figcaption>dbcache가 크면 디스크 읽기와 flush가 줄어든다. 하지만 캐시는 컨테이너 메모리 limits 안에 있어야 한다.</figcaption></figure>
@@ -1277,7 +1314,7 @@ kubectl -n bitcoin-lab logs bitcoin-node-0 | grep Bound   <span class="cm"># 실
           <p class="rel">연결: <a href="#reindex">-reindex-chainstate</a><a href="#memory">메모리와 페이지 캐시</a><a href="#resources">limits</a><a href="#ssdhdd">SSD와 HDD</a></p>
         </article>
 
-        <article class="c" id="reindex" data-k="reindex-chainstate reindex bitcoin.conf 설정 파일 chainstate 재구축 실험 다시 검증 verificationprogress">
+        <article class="c" id="reindex" data-added="2026-10-14" data-updated="2026-10-14" data-k="reindex-chainstate reindex bitcoin.conf 설정 파일 chainstate 재구축 실험 다시 검증 verificationprogress">
           <div class="c-head"><h3>-reindex-chainstate와 bitcoin.conf</h3></div>
           <p class="why"><b>왜 알아야 하나</b>실습 F는 같은 작업을 조건만 바꾸어 두 번 실행한다. IBD를 다시 하면 네트워크(피어 속도)가 결과를 흔든다. <code>-reindex-chainstate</code>는 네트워크 없이 같은 검증 작업을 다시 하게 한다.</p>
           <figure class="fig"><div class="sc"><svg viewBox="0 0 720 156" role="img" aria-label="IBD는 네트워크에서 블록을 받고, reindex-chainstate는 디스크의 블록으로 같은 검증을 다시 한다" style="min-width:600px;max-width:720px"><text class="tb" x="10" y="58" text-anchor="start">IBD</text><text class="mono" x="10" y="120" text-anchor="start">-reindex-</text><text class="mono" x="10" y="136" text-anchor="start">chainstate</text><rect class="bx" x="150" y="30" width="125" height="46" rx="5"/><text class="tb" x="212" y="50" text-anchor="middle">피어</text><text class="ts" x="212" y="67" text-anchor="middle">네트워크</text><path class="ln" d="M275,53 H293" marker-end="url(#am)"/><rect class="bx" x="295" y="30" width="125" height="46" rx="5"/><text class="tb" x="357" y="50" text-anchor="middle">blocks/ 저장</text><text class="ts" x="357" y="67" text-anchor="middle">blk*.dat</text><path class="ln" d="M420,53 H438" marker-end="url(#am)"/><rect class="bx" x="440" y="30" width="125" height="46" rx="5"/><text class="tb" x="502" y="50" text-anchor="middle">검증</text><text class="ts" x="502" y="67" text-anchor="middle">CPU · UTXO 확인</text><path class="ln" d="M565,53 H583" marker-end="url(#am)"/><rect class="bx" x="585" y="30" width="125" height="46" rx="5"/><text class="tb" x="647" y="50" text-anchor="middle">chainstate/</text><text class="ts" x="647" y="67" text-anchor="middle">UTXO 집합 (LevelDB)</text><rect class="bx" x="150" y="100" width="125" height="46" rx="5" stroke-dasharray="4 3"/><text class="ts" x="212" y="128" text-anchor="middle">네트워크 없음</text><rect class="bx" x="295" y="100" width="125" height="46" rx="5"/><text class="tb" x="357" y="120" text-anchor="middle">blocks/ 읽기</text><text class="ts" x="357" y="137" text-anchor="middle">이미 디스크에 있음</text><path class="ln" d="M420,123 H438" marker-end="url(#am)"/><rect class="bx" x="440" y="100" width="125" height="46" rx="5"/><text class="tb" x="502" y="120" text-anchor="middle">검증</text><text class="ts" x="502" y="137" text-anchor="middle">같은 작업</text><path class="ln" d="M565,123 H583" marker-end="url(#am)"/><rect class="hl" x="585" y="100" width="125" height="46" rx="5"/><text class="tb" x="647" y="120" text-anchor="middle">chainstate/</text><text class="ts" x="647" y="137" text-anchor="middle">지우고 새로 만듦</text></svg></div><figcaption><code>-reindex-chainstate</code>는 IBD에서 네트워크를 뺀 작업이다. 그래서 메모리와 디스크(page cache)의 영향만 비교할 수 있다.</figcaption></figure>
@@ -1307,7 +1344,7 @@ kubectl -n bitcoin-lab exec bitcoin-node-1 -- \
       <p class="lead">프로젝트의 최종 목표다. "빨라졌다"가 아니라 "왜, 얼마나 빨라졌다"를 말할 수 있어야 한다.</p>
       <div class="cards">
 
-        <article class="c" id="use" data-k="use method utilization saturation errors 병목 사용률 포화 오류 top vmstat">
+        <article class="c" id="use" data-added="2026-10-12" data-updated="2026-10-14" data-k="use method utilization saturation errors 병목 사용률 포화 오류 top vmstat">
           <div class="c-head"><h3>성능을 보는 순서 (USE)</h3></div>
           <p class="why"><b>왜 알아야 하나</b>느릴 때 아무 도구나 켜면 시간만 쓴다. 정해진 순서로 자원을 하나씩 확인하면 병목을 빠뜨리지 않는다.</p>
           <p>자원(CPU, 메모리, 디스크, 네트워크)마다 세 가지를 본다:</p>
@@ -1333,7 +1370,7 @@ kubectl -n bitcoin-lab exec bitcoin-node-1 -- \
           <p class="rel">연결: <a href="#cputhrottle">throttling</a><a href="#refault">refault</a><a href="#iometrics">IOPS와 지연</a><a href="#cgroup">cgroup</a><a href="#experiment">실험 설계</a></p>
         </article>
 
-        <article class="c" id="experiment" data-k="실험 설계 변수 하나 반복 기록 재현 기준선 baseline 캐시 효과">
+        <article class="c" id="experiment" data-added="2026-10-12" data-updated="2026-10-14" data-k="실험 설계 변수 하나 반복 기록 재현 기준선 baseline 캐시 효과">
           <div class="c-head"><h3>실험 설계의 기본</h3></div>
           <p class="why"><b>왜 알아야 하나</b>측정 한 번은 증거가 아니다. 개선 효과를 남에게 보여 주려면 같은 결과가 다시 나와야 한다.</p>
           <ol>
@@ -1367,7 +1404,21 @@ kubectl -n bitcoin-lab exec bitcoin-node-1 -- \
   var cards = Array.prototype.slice.call(document.querySelectorAll('article.c'));
   var groups = Array.prototype.slice.call(document.querySelectorAll('section.group'));
   var toc = document.getElementById('toc');
-  var links = {};
+  var links = {}, stales = {}, boxes = {};
+
+  function added(c) { return c.getAttribute('data-added') || ''; }
+  function upd(c) { return c.getAttribute('data-updated') || added(c); }
+  function title(c) { return c.querySelector('h3').firstChild.textContent.trim(); }
+  function short(d) { return d ? d.slice(5) : ''; }
+  var latest = cards.reduce(function (m, c) { return upd(c) > m ? upd(c) : m; }, '');
+  function kind(c) { return added(c) === latest ? 'new' : (upd(c) === latest ? 'upd' : ''); }
+
+  // 예전 형식(1)은 지금 버전을 읽은 것으로 본다.
+  var migrated = false;
+  cards.forEach(function (c) { if (read[c.id] === 1 || read[c.id] === true) { read[c.id] = upd(c); migrated = true; } });
+  if (migrated) save();
+  function isRead(c) { var r = read[c.id]; return typeof r === 'string' && r >= upd(c); }
+  function isStale(c) { var r = read[c.id]; return typeof r === 'string' && r < upd(c); }
 
   groups.forEach(function (g) {
     var wrap = document.createElement('div');
@@ -1377,47 +1428,103 @@ kubectl -n bitcoin-lab exec bitcoin-node-1 -- \
       var li = document.createElement('li');
       var a = document.createElement('a'); a.href = '#' + c.id;
       var dot = document.createElement('span'); dot.className = 'dot';
-      var t = document.createElement('span'); t.textContent = c.querySelector('h3').firstChild.textContent.trim();
-      a.appendChild(dot); a.appendChild(t); li.appendChild(a); ul.appendChild(li);
+      var t = document.createElement('span'); t.textContent = title(c);
+      a.appendChild(dot); a.appendChild(t);
+      var k = kind(c);
+      if (k) { var tag = document.createElement('span'); tag.className = 'tag ' + k; tag.textContent = k === 'new' ? 'NEW' : '보충'; a.appendChild(tag); }
+      li.appendChild(a); ul.appendChild(li);
       links[c.id] = a;
     });
     wrap.appendChild(ul); toc.appendChild(wrap);
   });
 
   cards.forEach(function (c) {
+    var meta = document.createElement('div'); meta.className = 'c-meta';
+    var k = kind(c);
+    if (k) {
+      var bd = document.createElement('span'); bd.className = 'badge ' + k; bd.textContent = k === 'new' ? 'NEW' : '보충';
+      meta.appendChild(bd); c.classList.add('is-' + k);
+    }
+    var st = document.createElement('span'); st.className = 'badge stale'; st.textContent = '읽은 뒤 보충됨'; st.hidden = true;
+    meta.appendChild(st); stales[c.id] = st;
+    var d = document.createElement('span'); d.className = 'dates';
+    d.textContent = '추가 ' + short(added(c)) + (upd(c) !== added(c) ? ' · 보충 ' + short(upd(c)) : '');
+    d.title = '추가 ' + added(c) + (upd(c) !== added(c) ? ', 보충 ' + upd(c) : '');
+    meta.appendChild(d);
     var lab = document.createElement('label'); lab.className = 'done';
     var cb = document.createElement('input'); cb.type = 'checkbox'; cb.id = 'read-' + c.id;
-    cb.checked = !!read[c.id];
-    cb.addEventListener('change', function () { if (cb.checked) read[c.id] = 1; else delete read[c.id]; save(); paint(); });
+    cb.addEventListener('change', function () { if (cb.checked) read[c.id] = upd(c); else delete read[c.id]; save(); paint(); });
     lab.appendChild(cb); lab.appendChild(document.createTextNode('읽음'));
-    c.querySelector('.c-head').appendChild(lab);
+    meta.appendChild(lab); boxes[c.id] = cb;
+    c.querySelector('.c-head').appendChild(meta);
   });
+
+  function fillLine(id, list) {
+    var p = document.getElementById(id);
+    while (p.childNodes.length > 1) p.removeChild(p.lastChild);
+    list.forEach(function (c, i) {
+      if (i) p.appendChild(document.createTextNode(', '));
+      var a = document.createElement('a'); a.href = '#' + c.id; a.textContent = title(c); p.appendChild(a);
+    });
+    p.hidden = !list.length;
+  }
+  var newOnes = cards.filter(function (c) { return kind(c) === 'new'; });
+  var updOnes = cards.filter(function (c) { return kind(c) === 'upd'; });
+  if (newOnes.length < cards.length) {
+    fillLine('fresh-new', newOnes); fillLine('fresh-upd', updOnes);
+    document.getElementById('fresh-date').textContent = latest;
+    document.getElementById('fresh').hidden = !(newOnes.length || updOnes.length);
+  }
 
   function paint() {
     var n = 0;
-    cards.forEach(function (c) { var r = !!read[c.id]; if (r) n++; links[c.id].classList.toggle('read', r); });
+    cards.forEach(function (c) {
+      var r = isRead(c); if (r) n++;
+      boxes[c.id].checked = r;
+      links[c.id].classList.toggle('read', r);
+      stales[c.id].hidden = !isStale(c);
+    });
+    fillLine('fresh-stale', cards.filter(isStale));
     document.getElementById('prog').textContent = '읽음 ' + n + ' / ' + cards.length;
     document.getElementById('progbar').style.width = (cards.length ? n / cards.length * 100 : 0) + '%';
   }
   paint();
 
+  var mode = 'all';
   var q = document.getElementById('q');
-  q.addEventListener('input', function () {
+  function applyView() {
     var s = q.value.trim().toLowerCase();
+    var shown = 0;
     cards.forEach(function (c) {
       var hit = !s || (c.textContent + ' ' + (c.getAttribute('data-k') || '')).toLowerCase().indexOf(s) >= 0;
+      if (mode === 'fresh') hit = hit && (!!kind(c) || isStale(c));
+      if (mode === 'unread') hit = hit && !isRead(c);
       c.hidden = !hit; links[c.id].parentNode.hidden = !hit;
+      if (hit) shown++;
     });
     groups.forEach(function (g) {
-      var any = g.querySelectorAll('article.c:not([hidden])').length > 0;
-      g.hidden = !any;
+      g.hidden = g.querySelectorAll('article.c:not([hidden])').length === 0;
     });
-    if (s) document.getElementById('nav').classList.remove('closed');
+    document.getElementById('empty').hidden = shown > 0;
+  }
+  q.addEventListener('input', function () {
+    applyView();
+    if (q.value.trim()) document.getElementById('nav').classList.remove('closed');
+  });
+  var segs = Array.prototype.slice.call(document.querySelectorAll('#view button'));
+  segs.forEach(function (bt) {
+    bt.addEventListener('click', function () {
+      mode = bt.getAttribute('data-v');
+      segs.forEach(function (x) { x.setAttribute('aria-pressed', x === bt ? 'true' : 'false'); });
+      applyView();
+    });
   });
 
   document.getElementById('rand').addEventListener('click', function () {
-    var pool = cards.filter(function (c) { return !read[c.id] && !c.hidden; });
-    if (!pool.length) pool = cards.filter(function (c) { return !c.hidden; });
+    var vis = cards.filter(function (c) { return !c.hidden; });
+    var pool = vis.filter(function (c) { return !isRead(c) && (kind(c) || isStale(c)); });
+    if (!pool.length) pool = vis.filter(function (c) { return !isRead(c); });
+    if (!pool.length) pool = vis;
     if (!pool.length) return;
     var c = pool[Math.floor(Math.random() * pool.length)];
     location.hash = c.id;
