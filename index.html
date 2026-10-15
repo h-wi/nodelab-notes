@@ -93,6 +93,21 @@ main { padding-block: 28px 80px; min-width: 0; display: flex; flex-direction: co
 .seg button[aria-pressed="true"] { background: var(--accent); color: var(--bg); }
 .empty { color: var(--muted); }
 [hidden] { display: none !important; }
+.tabs { flex: none; display: grid; grid-template-columns: 1fr 1fr; border: 1.5px solid var(--accent); border-radius: 6px; overflow: hidden; }
+.tabs button { border: 0; background: transparent; color: var(--accent); font: inherit; font-size: 14.5px; font-weight: 700; line-height: 1.3; padding: 8px 10px 7px; cursor: pointer; text-align: left; }
+.tabs button + button { border-left: 1.5px solid var(--accent); }
+.tabs button small { display: block; font-size: 11px; font-weight: 400; opacity: .85; margin-top: 2px; }
+.tabs button[aria-selected="true"] { background: var(--accent); color: var(--bg); }
+.tabs button[aria-selected="false"]:hover { background: var(--accent-soft); }
+.msgs p { margin: 0 0 6px; color: var(--muted); }
+.msgs .btn { margin-left: 6px; }
+.ask { margin: 12px 0 0; padding: 10px 12px; border: 1.5px dashed var(--accent); border-radius: 4px; max-width: 72ch; }
+.ask b { display: block; font-size: 12px; letter-spacing: .06em; font-weight: 700; color: var(--accent); }
+.legend .l-ask::before { background: transparent; border: 1.5px dashed var(--accent); box-sizing: border-box; }
+.log { margin-top: 18px; max-width: 760px; }
+.log summary { cursor: pointer; font-size: 13.5px; color: var(--accent); font-weight: 500; }
+.log .upd { list-style: none; padding: 0; margin: 8px 0 0; font-size: 13px; color: var(--muted); display: flex; flex-direction: column; gap: 4px; }
+.log .upd b { font-weight: 500; font-variant-numeric: tabular-nums; margin-right: 6px; color: var(--ink); }
 .legend { display: flex; flex-wrap: wrap; gap: 8px 18px; font-size: 13px; color: var(--muted); margin-top: 12px; }
 .legend span::before { content: ""; display: inline-block; width: 10px; height: 10px; margin-right: 6px; border-radius: 2px; vertical-align: -1px; }
 .legend .l-why::before { background: var(--ink); }
@@ -187,7 +202,7 @@ svg .mkw { fill: var(--warn); }
   .intro h1 { font-size: 25px; }
 }
 @media (prefers-reduced-motion: reduce) { .bar i { transition: none; } html { scroll-behavior: auto; } }
-html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
@@ -198,7 +213,11 @@ html { scroll-behavior: smooth; }
 <div class="shell">
   <aside class="nav closed" id="nav">
     <div class="brand"><b>nodelab</b> · 개념 노트</div>
-    <input class="search" id="q" type="search" placeholder="개념 찾기 (예: PVC, cgroup, 쿠키)" aria-label="개념 찾기">
+    <div class="tabs" id="tabs" role="tablist" aria-label="주제" data-default="sol">
+      <button type="button" role="tab" data-t="sol" aria-selected="true">Solana<small>하드웨어 · Solana · 운영</small></button>
+      <button type="button" role="tab" data-t="btc" aria-selected="false">Bitcoin 노드랩<small>Linux · K8s · Bitcoin</small></button>
+    </div>
+    <input class="search" id="q" type="search" placeholder="개념 찾기 (예: NUMA, slot, snapshot)" data-ph-sol="개념 찾기 (예: NUMA, slot, snapshot)" data-ph-btc="개념 찾기 (예: PVC, cgroup, 쿠키)" aria-label="개념 찾기">
     <div class="tools">
       <button class="btn" id="rand" type="button" title="새로 바뀐 카드 중 안 읽은 것을 먼저 고른다">안 읽은 개념 하나</button>
       <button class="btn navtoggle" id="navtoggle" type="button">목차 펼치기</button>
@@ -218,28 +237,45 @@ html { scroll-behavior: smooth; }
   <main>
     <header class="intro">
       <h1>nodelab 개념 노트</h1>
-      <p class="stamp" id="stamp">마지막 갱신 <b><time datetime="2026-10-15T07:11+09:00">2026-10-15 07:11</time></b> (한국 시간) · 매일 06:52에 학습 기록을 읽고 자동으로 갱신한다.</p>
-      <p>노드를 운영할 때 필요한 기본 개념을 모은 페이지다. 한 번에 하나씩 읽는다. 각 개념은 짧다.</p>
-      <p>모든 개념은 같은 순서로 쓴다. 먼저 <b>왜 알아야 하는지</b> 쓴다. 그다음 핵심 내용을 쓴다. 그다음 <b>내 환경</b>(kind 클러스터 <code>bitcoin-lab</code>, namespace <code>bitcoin-lab</code>, deployment <code>bitcoin-signet</code>)과 연결한다. 그림은 "왜"의 바로 아래에 있다. 명령은 접혀 있다. 필요할 때만 연다.</p>
-      <div class="legend"><span class="l-why">왜 알아야 하나</span><span class="l-mine">내 환경에서</span><span class="l-warn">자주 하는 오해</span></div>
+      <p class="stamp" id="stamp">마지막 갱신 <b><time datetime="2026-10-15T11:11+09:00">2026-10-15 11:11</time></b> (한국 시간) · 매일 06:52에 학습 기록을 읽고 자동으로 갱신한다.</p>
+      <div data-track="sol">
+        <p>Solana 노드를 이해하기 위한 기본 개념이다. 지금은 이 탭이 먼저 열린다. 서버 하드웨어의 단어부터 읽는다. 그다음 Solana의 기본 단어, 리눅스 운영 단어를 읽는다.</p>
+        <p>카드는 같은 순서로 쓴다. 먼저 <b>왜 알아야 하는지</b> 쓴다. 그다음 핵심 내용, 그다음 <b>promet이나 내 Bitcoin 노드와 비교</b>한다. 카드는 뜻과 이유를 설명한다. 무엇을 고를지는 쓰지 않는다. 직접 생각할 거리는 <b>생각해 볼 질문</b>에 둔다.</p>
+        <div class="legend"><span class="l-why">왜 알아야 하나</span><span class="l-mine">내 환경과 비교</span><span class="l-warn">자주 하는 오해</span><span class="l-ask">생각해 볼 질문</span></div>
+      </div>
+      <div data-track="btc">
+        <p>노드를 운영할 때 필요한 기본 개념을 모은 페이지다. 한 번에 하나씩 읽는다. 각 개념은 짧다.</p>
+        <p>모든 개념은 같은 순서로 쓴다. 먼저 <b>왜 알아야 하는지</b> 쓴다. 그다음 핵심 내용을 쓴다. 그다음 <b>내 환경</b>(kind 클러스터 <code>bitcoin-lab</code>, namespace <code>bitcoin-lab</code>, deployment <code>bitcoin-signet</code>)과 연결한다. 그림은 "왜"의 바로 아래에 있다. 명령은 접혀 있다. 필요할 때만 연다.</p>
+        <div class="legend"><span class="l-why">왜 알아야 하나</span><span class="l-mine">내 환경에서</span><span class="l-warn">자주 하는 오해</span></div>
+      </div>
       <div class="fresh" id="fresh" hidden>
         <h2>최근 갱신에서 바뀐 카드<span class="dates" id="fresh-date"></span></h2>
         <p id="fresh-new"><span class="badge new">NEW</span></p>
         <p id="fresh-upd"><span class="badge upd">보충</span></p>
         <p id="fresh-stale" hidden><span class="badge stale">읽은 뒤 보충됨</span></p>
       </div>
-      <div class="now" id="now">
+      <div class="now" id="now-sol" data-track="sol">
+        <h2>지금 학습 위치</h2>
+        <p>서버 하드웨어의 단어를 읽고 있다. 지금까지: <a href="#cputopo">소켓, 코어, 스레드</a>, <a href="#alu">코어와 ALU</a>, <a href="#smt">SMT</a>, <a href="#numa">NUMA</a>, <a href="#smtnuma">SMT와 NUMA의 층</a>, <a href="#nvme">NVMe</a>, <a href="#raid0">RAID0</a>. 다음: <a href="#nic">NIC와 드라이버</a>. 그다음은 Solana의 기본 단어다: <a href="#soloverview">cluster와 RPC 노드</a>, <a href="#slot">slot</a>, <a href="#soltx">트랜잭션</a>, <a href="#ledger">ledger</a>, <a href="#snapshot">snapshot</a>, <a href="#solrpc">RPC</a>.</p>
+      </div>
+      <div class="now" id="now" data-track="btc">
         <h2>지금 학습 위치</h2>
         <p>실습 A–F 완료. 실습 F(2026-10-14)의 결과: kind 상자 메모리만 8GiB → 4GiB로 줄이자 같은 <code>-reindex-chainstate</code>가 1.72배 느려졌다(읽기 2.29배). 컨테이너는 자기 한도에 닿지 않았다. 부모 cgroup(상자)이 page cache를 회수한 것이 원인이다. 상자는 8GiB로 되돌렸다. 지금은 <b>inbound 열기</b>다: 외부 피어가 내 노드에 먼저 연결해 올 수 있게 한다. 대상은 이미 <code>-listen=1</code>인 <code>bitcoin-node-0</code>이다. CGNAT 없음 ✓, NodePort <code>bitcoin-node-0-p2p</code>(30333) ✓. 다음: promet DNAT(I-4) → 공유기 38333(I-5) → <code>-externalip</code>(I-6) → 외부 inbound 피어 확인(I-7). 그 다음은 memory request를 측정값으로 고치기, <code>-debug=bench</code>, 소스 코드 읽기다. 먼저 읽을 개념: <a href="#conntrack">연결의 방향과 conntrack</a>, <a href="#dnat">포트 포워딩 = DNAT</a>, <a href="#nodeport">NodePort</a>, <a href="#rproxy">리버스 프록시와 DNAT</a>, <a href="#listen">-listen과 피어</a>.</p>
-        <ul class="upd" id="changelog">
-          <li><b>2026-10-15</b> 10-14 학습(실습 F 결과, inbound 열기 시작) 반영. 새 카드 6개: memory.events와 .local, 연결의 방향과 conntrack, 포트 포워딩 = DNAT, NodePort Service, 리버스 프록시와 DNAT, Tailscale. 실험 설계에 F 결과 그림 추가, cgroup 그림을 실행 2 값으로 다시 그림. 고침: kind 상자의 "가득 참 24,428,625번"은 하위 cgroup을 포함한 값이었다(상자 자신은 약 83%). 고침: 기본 포트 38333을 쓰는 이유는 DNS seed다(예전 설명의 "기본 포트 선호"는 옛 버전의 동작). 보충: refault, cgroup, USE(실무 4단계), dbcache(코드 경로), -reindex-chainstate, NAT(CGNAT), -listen(연결 종류, -externalip), RPC(P2P와 비교, root 오류), IP와 포트, 리슨 주소, desired state, Service, headless, kind, "노드"의 두 뜻.</li>
-          <li><b>2026-10-14 (2)</b> 갱신 날짜, 카드마다 추가일과 보충일, NEW와 보충 표시, "새로 바뀐 것"과 "안 읽음" 보기를 추가. 읽은 카드가 나중에 보충되면 다시 "안 읽음"이 된다.</li>
-          <li><b>2026-10-14</b> 10-13 학습(실습 E, F 시작) 반영. 새 카드 4개: CPU limit의 실체, 캐시를 잃으면(refault), QoS 등급과 OOM 점수, -reindex-chainstate. cgroup 그림을 측정 값으로 다시 그림. 보충: cgroup namespace, 메모리, requests와 limits, kind 상자, io.stat, 풀 노드(IBD 시간), dbcache, USE, 실험 설계, kubectl exec(sh -c, RPC 오류), StatefulSet.</li>
-          <li><b>2026-10-12 (2)</b> 실습 D까지 반영. 새 카드 3개: kubectl exec의 구조, 네트워크 인터페이스, Pod IP와 CNI. 보충: Service, headless, Deployment(strategy), StatefulSet, YAML(---, 오류 경로), namespace, PV와 PVC, -listen, du, IP와 CIDR.</li>
-          <li><b>2026-10-12</b> 처음 만듦. 개념 41개, 그림 21개.</li>
-        </ul>
       </div>
-      <div class="order">
+      <div class="order" data-track="sol">
+        <h2>읽는 순서</h2>
+        <div class="tbl"><table>
+          <thead><tr><th>단계</th><th>먼저 읽을 개념</th></tr></thead>
+          <tbody>
+            <tr><td><b>1. 서버 하드웨어 (지금)</b></td><td><a href="#cputopo">소켓, 코어, 스레드</a>, <a href="#alu">코어와 ALU</a>, <a href="#smt">SMT</a>, <a href="#numa">NUMA</a>, <a href="#smtnuma">SMT와 NUMA의 층</a>, <a href="#nvme">NVMe</a>, <a href="#raid0">RAID0</a>, <a href="#nic">NIC와 드라이버</a></td></tr>
+            <tr><td>2. Solana 기본</td><td><a href="#soloverview">전체 지도</a>, <a href="#slot">slot과 epoch</a>, <a href="#soltx">트랜잭션과 서명</a>, <a href="#ledger">ledger와 shred</a>, <a href="#snapshot">snapshot</a>, <a href="#accounts">account</a>, <a href="#solrpc">RPC</a></td></tr>
+            <tr><td>3. 리눅스 운영</td><td><a href="#systemd">systemd unit</a>, <a href="#sysctl">sysctl</a>, <a href="#ulimit">ulimit</a>, <a href="#idempotent">멱등성</a>, <a href="#bindaddr">리슨 주소</a>, <a href="#ipport">IP와 포트</a>, <a href="#nat">NAT</a></td></tr>
+            <tr><td>Bitcoin 탭에서 같이 볼 것</td><td><a href="#ssdhdd">SSD, HDD</a>, <a href="#iometrics">IOPS와 지연</a>, <a href="#memory">메모리와 페이지 캐시</a>, <a href="#cgroup">cgroup</a>, <a href="#rpccookie">RPC와 쿠키</a>, <a href="#fullnode">풀 노드</a></td></tr>
+          </tbody>
+        </table></div>
+        <p class="note" style="margin:8px 0 0;font-size:13px">리슨 주소, IP와 포트, NAT, 마지막 줄의 카드는 Bitcoin 탭에 있다. 누르면 그 탭으로 바뀐다.</p>
+      </div>
+      <div class="order" data-track="btc">
         <h2>실습과 같이 읽는 순서</h2>
         <div class="tbl"><table>
           <thead><tr><th>실습</th><th>먼저 읽을 개념</th></tr></thead>
@@ -256,12 +292,416 @@ html { scroll-behavior: smooth; }
           </tbody>
         </table></div>
       </div>
+      <details class="log">
+        <summary>업데이트 기록</summary>
+        <ul class="upd" id="changelog">
+          <li><b>2026-10-15 (2)</b> Solana 탭 추가. 왼쪽 위(휴대폰은 맨 위)에서 탭을 고른다. 지금은 Solana 탭이 먼저 열린다. 고른 탭은 이 브라우저에 저장된다. 새 카드 19개. 하드웨어: 소켓·코어·스레드, 코어와 ALU, SMT, NUMA, SMT와 NUMA의 층, NVMe, RAID0, NIC와 드라이버. Solana 기본: 전체 지도, slot과 epoch, 트랜잭션과 서명, ledger와 shred, snapshot, account, RPC. 리눅스 운영: systemd, sysctl, ulimit, 멱등성. 진도, 읽음, NEW 표시는 탭마다 따로 센다.</li>
+        <li><b>2026-10-15</b> 10-14 학습(실습 F 결과, inbound 열기 시작) 반영. 새 카드 6개: memory.events와 .local, 연결의 방향과 conntrack, 포트 포워딩 = DNAT, NodePort Service, 리버스 프록시와 DNAT, Tailscale. 실험 설계에 F 결과 그림 추가, cgroup 그림을 실행 2 값으로 다시 그림. 고침: kind 상자의 "가득 참 24,428,625번"은 하위 cgroup을 포함한 값이었다(상자 자신은 약 83%). 고침: 기본 포트 38333을 쓰는 이유는 DNS seed다(예전 설명의 "기본 포트 선호"는 옛 버전의 동작). 보충: refault, cgroup, USE(실무 4단계), dbcache(코드 경로), -reindex-chainstate, NAT(CGNAT), -listen(연결 종류, -externalip), RPC(P2P와 비교, root 오류), IP와 포트, 리슨 주소, desired state, Service, headless, kind, "노드"의 두 뜻.</li>
+        <li><b>2026-10-14 (2)</b> 갱신 날짜, 카드마다 추가일과 보충일, NEW와 보충 표시, "새로 바뀐 것"과 "안 읽음" 보기를 추가. 읽은 카드가 나중에 보충되면 다시 "안 읽음"이 된다.</li>
+        <li><b>2026-10-14</b> 10-13 학습(실습 E, F 시작) 반영. 새 카드 4개: CPU limit의 실체, 캐시를 잃으면(refault), QoS 등급과 OOM 점수, -reindex-chainstate. cgroup 그림을 측정 값으로 다시 그림. 보충: cgroup namespace, 메모리, requests와 limits, kind 상자, io.stat, 풀 노드(IBD 시간), dbcache, USE, 실험 설계, kubectl exec(sh -c, RPC 오류), StatefulSet.</li>
+        <li><b>2026-10-12 (2)</b> 실습 D까지 반영. 새 카드 3개: kubectl exec의 구조, 네트워크 인터페이스, Pod IP와 CNI. 보충: Service, headless, Deployment(strategy), StatefulSet, YAML(---, 오류 경로), namespace, PV와 PVC, -listen, du, IP와 CIDR.</li>
+        <li><b>2026-10-12</b> 처음 만듦. 개념 41개, 그림 21개.</li>
+      </ul>
+      </details>
     </header>
 
     <!-- ===================== 0. 큰 그림 ===================== -->
-    <p class="empty" id="empty" hidden>이 보기에 맞는 카드가 없다. 왼쪽 위의 "전체"를 누른다.</p>
+    <div class="msgs" id="msgs" hidden>
+      <p class="empty" id="empty" hidden>이 보기에 맞는 카드가 없다. 왼쪽 위의 "전체"를 누른다.</p>
+      <p class="other" id="other" hidden><span id="other-name"></span> 탭에도 맞는 카드가 <b id="other-n">0</b>개 있다.<button class="btn" id="other-go" type="button">그 탭에서 보기</button></p>
+    </div>
+    <!-- ===================== Solana 탭 ===================== -->
+    <section class="group" id="g-hw" data-name="하드웨어" data-track="sol">
+      <h2>하드웨어 <small>HARDWARE</small></h2>
+      <p class="lead">서버 사양을 읽기 위한 단어다. 큰 서버와 promet을 비교한다.</p>
+      <div class="cards">
 
-    <section class="group" id="g-map" data-name="큰 그림">
+        <article class="c" id="cputopo" data-added="2026-10-15" data-updated="2026-10-15" data-k="cpu topology 토폴로지 소켓 socket 코어 core 스레드 thread lscpu cpu(s) 논리 cpu 물리 코어 번호">
+          <div class="c-head"><h3>소켓, 코어, 스레드: CPU 개수 읽기</h3></div>
+          <p class="why"><b>왜 알아야 하나</b>서버 사양의 "CPU 개수"는 물리 코어 수가 아닐 수 있다. 어떤 일을 어느 CPU에서 실행할지 생각하려면 이 숫자를 나눠 읽어야 한다.</p>
+          <figure class="fig"><div class="sc"><svg viewBox="0 0 720 232" role="img" aria-label="소켓 하나 안에 코어 4개가 있고, 코어마다 하드웨어 스레드가 2개 있어서 리눅스는 CPU 8개로 센다" style="min-width:600px;max-width:720px"><rect class="bg" x="10" y="10" width="700" height="166" rx="5"/><text class="tb" x="26" y="32" text-anchor="start">소켓 1개 = CPU 칩 1개 (메인보드의 자리 하나)</text><rect class="bx" x="26" y="46" width="155" height="116" rx="5"/><text class="tb" x="103" y="68" text-anchor="middle">코어 0</text><rect class="hl" x="38" y="82" width="62" height="44" rx="5"/><text x="69" y="109" text-anchor="middle">CPU 0</text><rect class="hl" x="107" y="82" width="62" height="44" rx="5"/><text x="138" y="109" text-anchor="middle">CPU 4</text><text class="ts" x="103" y="148" text-anchor="middle">하드웨어 스레드 2개</text><rect class="bx" x="195" y="46" width="155" height="116" rx="5"/><text class="tb" x="272" y="68" text-anchor="middle">코어 1</text><rect class="hl" x="207" y="82" width="62" height="44" rx="5"/><text x="238" y="109" text-anchor="middle">CPU 1</text><rect class="hl" x="276" y="82" width="62" height="44" rx="5"/><text x="307" y="109" text-anchor="middle">CPU 5</text><text class="ts" x="272" y="148" text-anchor="middle">하드웨어 스레드 2개</text><rect class="bx" x="364" y="46" width="155" height="116" rx="5"/><text class="tb" x="441" y="68" text-anchor="middle">코어 2</text><rect class="hl" x="376" y="82" width="62" height="44" rx="5"/><text x="407" y="109" text-anchor="middle">CPU 2</text><rect class="hl" x="445" y="82" width="62" height="44" rx="5"/><text x="476" y="109" text-anchor="middle">CPU 6</text><text class="ts" x="441" y="148" text-anchor="middle">하드웨어 스레드 2개</text><rect class="bx" x="533" y="46" width="155" height="116" rx="5"/><text class="tb" x="610" y="68" text-anchor="middle">코어 3</text><rect class="hl" x="545" y="82" width="62" height="44" rx="5"/><text x="576" y="109" text-anchor="middle">CPU 3</text><rect class="hl" x="614" y="82" width="62" height="44" rx="5"/><text x="645" y="109" text-anchor="middle">CPU 7</text><text class="ts" x="610" y="148" text-anchor="middle">하드웨어 스레드 2개</text><text class="mono" x="360" y="200" text-anchor="middle">lscpu: Socket(s) 1 × Core(s) per socket 4 × Thread(s) per core 2 = CPU(s) 8</text><text class="ts" x="360" y="222" text-anchor="middle">예시다. 같은 코어의 두 번호(0과 4)가 붙어 있지 않을 수 있다. 번호 붙이는 방식은 기계마다 다르다.</text></svg></div><figcaption>리눅스가 세는 "CPU"는 하드웨어 스레드다. 코어 수가 아니다.</figcaption></figure>
+          <ul>
+            <li><b>소켓</b>: 메인보드에 꽂힌 CPU 칩 하나. 서버는 소켓이 2개 이상일 수 있다.</li>
+            <li><b>코어</b>: 혼자서 프로그램 하나를 실행할 수 있는 단위. 칩 하나 안에 여러 개 있다.</li>
+            <li><b>하드웨어 스레드</b>: 리눅스가 "CPU 하나"로 세는 단위. SMT가 켜져 있으면 코어 하나가 스레드 2개가 된다.</li>
+            <li>리눅스의 <code>CPU(s)</code> = 소켓 수 × 소켓당 코어 수 × 코어당 스레드 수.</li>
+            <li>리눅스는 스레드마다 번호를 붙인다(CPU 0, CPU 1, …). 같은 코어의 두 번호가 이웃하지 않을 수 있다. 그림처럼 0과 4가 짝일 수 있다.</li>
+          </ul>
+          <div class="warn"><b>자주 하는 오해</b>"CPU 8개"는 "코어 8개"가 아니다. SMT가 켜져 있으면 물리 코어는 그 절반이다. 또 프로그램 안의 "스레드"(소프트웨어)와 하드웨어 스레드는 다른 것이다.</div>
+          <div class="mine"><b>promet과 비교</b>promet의 i5-8500은 소켓 1개, 코어 6개, 코어당 스레드 1개다. 그래서 CPU(s)는 6이다. SMT가 없으므로 CPU 번호 하나가 코어 하나다.</div>
+          <details class="try"><summary>직접 확인</summary>
+<pre>lscpu | grep -E '^(CPU\(s\)|Socket|Core|Thread)'
+lscpu -e         <span class="cm"># CPU마다 한 줄: CPU, NODE, SOCKET, CORE</span>
+cat /sys/devices/system/cpu/cpu0/topology/thread_siblings_list   <span class="cm"># cpu0과 같은 코어를 쓰는 CPU 번호</span></pre>
+          </details>
+          <p class="rel">연결: <a href="#alu">코어와 ALU</a><a href="#smt">SMT</a><a href="#numa">NUMA</a><a href="#smtnuma">SMT와 NUMA의 층</a><a href="#cputhrottle">CPU limit (Bitcoin 탭)</a></p>
+        </article>
+
+        <article class="c" id="alu" data-added="2026-10-15" data-updated="2026-10-15" data-k="alu 코어 core 연산 장치 산술 논리 레지스터 캐시 l1 l2 l3 실행 장치 요리사">
+          <div class="c-head"><h3>코어와 ALU</h3></div>
+          <p class="why"><b>왜 알아야 하나</b>코어를 "계산기 하나"로 생각하면 SMT가 왜 2배가 아닌지 이해할 수 없다. 코어 안에 무엇이 있는지 먼저 알아야 한다.</p>
+          <figure class="fig"><div class="sc"><svg viewBox="0 0 720 218" role="img" aria-label="코어 하나 안에 명령 해석부, 레지스터, 여러 개의 ALU, 부동소수점 장치, L1과 L2 캐시가 있다. L3 캐시와 메모리는 코어 밖에 있다" style="min-width:560px;max-width:720px"><rect class="bx" x="10" y="10" width="470" height="200" rx="5"/><text class="tb" x="26" y="32" text-anchor="start">코어 1개 = 요리사 + 조리대 전체</text><rect class="bg" x="26" y="46" width="200" height="44" rx="5"/><text x="126" y="73" text-anchor="middle">명령 가져오기 · 해석</text><rect class="bg" x="246" y="46" width="218" height="44" rx="5"/><text x="355" y="73" text-anchor="middle">레지스터 (작은 메모)</text><rect class="hl" x="26" y="104" width="100" height="40" rx="5"/><text class="tb" x="76" y="129" text-anchor="middle">ALU</text><rect class="hl" x="136" y="104" width="100" height="40" rx="5"/><text class="tb" x="186" y="129" text-anchor="middle">ALU</text><rect class="hl" x="246" y="104" width="100" height="40" rx="5"/><text class="tb" x="296" y="129" text-anchor="middle">ALU</text><rect class="hl" x="356" y="104" width="108" height="40" rx="5"/><text class="ts" x="410" y="129" text-anchor="middle">부동소수점·벡터</text><text class="ts ta" x="245" y="162" text-anchor="middle">↑ 실행 장치: 더하기, 비교, 곱하기를 한다 (칼)</text><rect class="bg" x="26" y="172" width="438" height="30" rx="5"/><text class="ts" x="245" y="192" text-anchor="middle">L1 · L2 캐시 (이 코어 전용)</text><rect class="bx" x="500" y="46" width="210" height="44" rx="5"/><text class="ts" x="605" y="73" text-anchor="middle">L3 캐시 (코어들이 같이 씀)</text><rect class="bx" x="500" y="130" width="210" height="44" rx="5"/><text class="ts" x="605" y="157" text-anchor="middle">메모리 (RAM)</text><path class="ln" d="M482,68 H496" marker-end="url(#am)"/><path class="ln" d="M605,92 V126" marker-end="url(#am)"/></svg></div><figcaption>ALU는 코어 안의 부품 하나다. 코어는 그 부품들을 모은 "실행 단위 전체"다.</figcaption></figure>
+          <ul>
+            <li><b>ALU</b>(Arithmetic Logic Unit)는 더하기, 비교, 논리 연산을 하는 회로다. 계산만 한다.</li>
+            <li><b>코어</b>는 프로그램을 실행하는 단위 전체다. 명령을 가져와 해석하는 부분, 레지스터, 여러 개의 ALU, 부동소수점·벡터 장치, 자기 캐시(L1, L2)가 들어 있다.</li>
+            <li>비유: 코어는 "요리사 한 명과 그 조리대 전체"다. ALU는 조리대 위의 칼 하나다.</li>
+            <li>L3 캐시와 메모리는 여러 코어가 같이 쓴다.</li>
+          </ul>
+          <div class="warn"><b>자주 하는 오해</b>코어 = ALU가 아니다. 요즘 코어 하나에는 ALU가 여러 개 있다. 코어는 명령 여러 개를 동시에 실행하려고 한다.</div>
+          <div class="mine"><b>promet과 비교</b>promet에는 코어가 6개 있다. 코어마다 자기 L1, L2 캐시가 있다. L3 캐시는 6개 코어가 같이 쓴다.</div>
+          <details class="try"><summary>직접 확인</summary>
+<pre>lscpu | grep -i cache    <span class="cm"># L1d, L1i, L2, L3 크기</span>
+lscpu -C                 <span class="cm"># 캐시마다 한 줄. ONE-SIZE는 하나의 크기, ALL-SIZE는 전체 합</span></pre>
+          </details>
+          <p class="rel">연결: <a href="#cputopo">소켓, 코어, 스레드</a><a href="#smt">SMT</a></p>
+        </article>
+
+        <article class="c" id="smt" data-added="2026-10-15" data-updated="2026-10-15" data-k="smt hyper-threading 하이퍼스레딩 hyperthreading 스레드 sibling 짝꿍 thread_siblings 논리 cpu">
+          <div class="c-head"><h3>SMT: 코어 하나를 CPU 2개로</h3></div>
+          <p class="why"><b>왜 알아야 하나</b>SMT가 켜진 서버에서는 CPU 2개가 실제로 코어 하나다. 두 CPU에 무거운 일을 같이 주면 서로 느려진다. 이 관계를 모르면 CPU 수를 잘못 믿는다.</p>
+          <figure class="fig"><div class="sc"><svg viewBox="0 0 720 230" role="img" aria-label="SMT가 없으면 스레드가 메모리를 기다리는 동안 코어가 놀고, SMT가 있으면 다른 스레드가 그 빈 시간을 쓴다" style="min-width:600px;max-width:720px"><text class="tb" x="10" y="24" text-anchor="start">SMT 없음: 스레드 1개</text><text class="ts" x="10" y="57" text-anchor="start">스레드 A</text><rect class="hl" x="110" y="38" width="116" height="28" rx="5"/><text x="168.0" y="57" text-anchor="middle">A 계산</text><rect class="bg" x="230" y="38" width="111" height="28" rx="5"/><text class="ts" x="285.5" y="57" text-anchor="middle">메모리 기다림</text><rect class="hl" x="345" y="38" width="116" height="28" rx="5"/><text x="403.0" y="57" text-anchor="middle">A 계산</text><rect class="bg" x="465" y="38" width="111" height="28" rx="5"/><text class="ts" x="520.5" y="57" text-anchor="middle">메모리 기다림</text><rect class="hl" x="580" y="38" width="118" height="28" rx="5"/><text x="639.0" y="57" text-anchor="middle">A 계산</text><text class="ts tw" x="110" y="86" text-anchor="start">기다리는 동안 실행 장치가 논다.</text><text class="tb" x="10" y="120" text-anchor="start">SMT 있음: 스레드 2개가 코어 하나를 같이 쓴다</text><text class="ts" x="10" y="153" text-anchor="start">스레드 A</text><rect class="hl" x="110" y="134" width="116" height="28" rx="5"/><text x="168.0" y="153" text-anchor="middle">A 계산</text><rect class="bg" x="230" y="134" width="111" height="28" rx="5"/><text class="ts" x="285.5" y="153" text-anchor="middle">메모리 기다림</text><rect class="hl" x="345" y="134" width="116" height="28" rx="5"/><text x="403.0" y="153" text-anchor="middle">A 계산</text><rect class="bg" x="465" y="134" width="111" height="28" rx="5"/><text class="ts" x="520.5" y="153" text-anchor="middle">메모리 기다림</text><rect class="hl" x="580" y="134" width="118" height="28" rx="5"/><text x="639.0" y="153" text-anchor="middle">A 계산</text><text class="ts" x="10" y="187" text-anchor="start">스레드 B</text><rect class="bg" x="110" y="168" width="116" height="28" rx="5"/><text class="ts" x="168.0" y="187" text-anchor="middle">기다림</text><rect class="hl" x="230" y="168" width="111" height="28" rx="5"/><text x="285.5" y="187" text-anchor="middle">B 계산</text><rect class="bg" x="345" y="168" width="116" height="28" rx="5"/><text class="ts" x="403.0" y="187" text-anchor="middle">기다림</text><rect class="hl" x="465" y="168" width="111" height="28" rx="5"/><text x="520.5" y="187" text-anchor="middle">B 계산</text><rect class="bg" x="580" y="168" width="118" height="28" rx="5"/><text class="ts" x="639.0" y="187" text-anchor="middle">기다림</text><text class="ts" x="10" y="220" text-anchor="start">빈 시간을 B가 쓴다. 하지만 둘 다 계산만 많으면 같은 ALU를 두고 서로 기다린다. 그래서 2배가 아니다.</text></svg></div><figcaption>리눅스는 스레드 A와 B를 CPU 2개로 센다. 두 CPU는 같은 코어의 짝꿍(sibling)이다.</figcaption></figure>
+          <ul>
+            <li>SMT(Simultaneous Multi-Threading)는 코어 하나가 명령 흐름 2개를 같이 실행하는 기능이다. Intel은 Hyper-Threading이라고 부른다.</li>
+            <li>왜 만들었나: 코어는 메모리를 기다리는 시간이 많다. 그동안 실행 장치가 논다. 다른 흐름이 그 빈 시간을 쓴다.</li>
+            <li>두 흐름은 실행 장치(ALU 등)와 L1, L2 캐시를 나눠 쓴다. 그래서 성능은 2배가 되지 않는다. 일의 종류에 따라 조금 늘거나 거의 늘지 않는다.</li>
+            <li>리눅스는 두 흐름을 CPU 2개로 센다. 같은 코어의 두 CPU를 서로 <b>sibling</b>(짝꿍)이라고 한다.</li>
+            <li>SMT는 보통 BIOS에서 켜거나 끈다. 리눅스에서도 끌 수 있다.</li>
+          </ul>
+          <div class="warn"><b>자주 하는 오해</b>짝꿍 CPU 두 개는 독립된 코어 두 개가 아니다. 한쪽이 바쁘면 다른 쪽도 영향을 받는다.</div>
+          <div class="mine"><b>promet과 비교</b>i5-8500에는 SMT가 없다. 그래서 promet에서는 짝꿍 문제가 생기지 않는다. SMT가 있는 서버에서는 이 관계를 따로 생각해야 한다.</div>
+          <details class="try"><summary>직접 확인</summary>
+<pre>cat /sys/devices/system/cpu/smt/active    <span class="cm"># 1: 켜짐, 0: 꺼짐 또는 없음</span>
+cat /sys/devices/system/cpu/smt/control   <span class="cm"># on, off, notsupported …</span>
+lscpu | grep 'Thread(s) per core'</pre>
+          </details>
+          <p class="rel">연결: <a href="#alu">코어와 ALU</a><a href="#cputopo">소켓, 코어, 스레드</a><a href="#smtnuma">SMT와 NUMA의 층</a></p>
+        </article>
+
+        <article class="c" id="numa" data-added="2026-10-15" data-updated="2026-10-15" data-k="numa node 노드 메모리 local remote 원격 numactl 소켓 nps snc first-touch 지역성 pcie numa_node 창고">
+          <div class="c-head"><h3>NUMA: 가까운 메모리와 먼 메모리</h3></div>
+          <p class="why"><b>왜 알아야 하나</b>큰 서버에서는 같은 메모리 읽기도 CPU에 따라 속도가 다르다. 프로그램, 메모리, 장치가 서로 멀리 있으면 느려진다. 평균 사용률만 보면 이 원인이 보이지 않는다.</p>
+          <figure class="fig"><div class="sc"><svg viewBox="0 0 720 206" role="img" aria-label="NUMA node 두 개. 각 node에 CPU와 메모리가 있고, 자기 node의 메모리는 빠르고 다른 node의 메모리는 통로를 지나서 느리다. NVMe와 NIC도 각각 한 node에 붙는다" style="min-width:600px;max-width:720px"><rect class="bg" x="10" y="10" width="330" height="150" rx="5"/><text class="tb" x="26" y="32" text-anchor="start">NUMA node 0</text><rect class="bx" x="26" y="46" width="120" height="50" rx="5"/><text class="tb" x="86" y="76" text-anchor="middle">메모리 A</text><rect class="hl" x="200" y="46" width="124" height="50" rx="5"/><text class="tb" x="262" y="76" text-anchor="middle">CPU 0–3</text><path class="la" d="M148,71 H198" marker-end="url(#aa)" marker-start="url(#aa)"/><text class="ts ta" x="173" y="59" text-anchor="middle">빠름</text><path class="ln" d="M240,96 V106"/><rect class="bx" x="200" y="106" width="80" height="44" rx="5"/><text class="tb" x="240" y="124" text-anchor="middle">NVMe</text><text class="ts" x="240" y="142" text-anchor="middle">PCIe 장치</text><rect class="bg" x="380" y="10" width="330" height="150" rx="5"/><text class="tb" x="396" y="32" text-anchor="start">NUMA node 1</text><rect class="hl" x="396" y="46" width="124" height="50" rx="5"/><text class="tb" x="458" y="76" text-anchor="middle">CPU 4–7</text><rect class="bx" x="574" y="46" width="120" height="50" rx="5"/><text class="tb" x="634" y="76" text-anchor="middle">메모리 B</text><path class="la" d="M522,71 H572" marker-end="url(#aa)" marker-start="url(#aa)"/><text class="ts ta" x="547" y="59" text-anchor="middle">빠름</text><path class="ln" d="M441,96 V106"/><rect class="bx" x="396" y="106" width="90" height="44" rx="5"/><text class="tb" x="441" y="124" text-anchor="middle">NIC</text><text class="ts" x="441" y="142" text-anchor="middle">PCIe 장치</text><path class="ln" d="M326,71 H394" marker-end="url(#am)" marker-start="url(#am)"/><text class="ts" x="360" y="59" text-anchor="middle">통로</text><path class="lw" d="M305,98 V180 H634 V98" marker-end="url(#aw)" stroke-dasharray="5 4"/><text class="ts tw" x="470" y="198" text-anchor="middle">먼 메모리: CPU 0–3이 메모리 B를 읽으면 통로를 지나서 느리다</text></svg></div><figcaption>예시 그림이다(CPU 8개, node 2개). 장치(NVMe, NIC)도 한 node에 붙는다. 그 장치와 같은 node의 CPU가 길이 가장 짧다.</figcaption></figure>
+          <ul>
+            <li>NUMA(Non-Uniform Memory Access)는 "메모리까지의 거리가 같지 않다"는 뜻이다.</li>
+            <li>왜 생겼나: CPU가 많아지면 메모리 통로 하나로는 모자란다. 그래서 CPU를 묶음으로 나누고, 묶음마다 자기 메모리를 붙인다. 이 묶음이 <b>NUMA node</b>다.</li>
+            <li>자기 node의 메모리(local)는 빠르다. 다른 node의 메모리(remote)는 통로를 지나야 해서 느리다.</li>
+            <li>소켓이 여러 개면 보통 소켓마다 node가 생긴다. 소켓이 하나여도 BIOS 설정으로 나눌 수 있다(AMD의 NPS, Intel의 SNC 같은 설정).</li>
+            <li>리눅스는 기본으로 메모리를 <b>그 메모리를 처음 쓰는 CPU의 node</b>에 둔다(first-touch).</li>
+            <li>NVMe, NIC 같은 PCIe 장치도 한 node에 붙는다.</li>
+          </ul>
+          <div class="warn"><b>자주 하는 오해</b>NUMA node는 Kubernetes의 node가 아니다. 서버 한 대 안의 "CPU와 메모리 묶음"이다.</div>
+          <div class="mine"><b>promet과 비교</b>promet은 데스크톱 CPU 1개다. NUMA node가 1개뿐이다. 모든 메모리가 같은 거리에 있다. 그래서 이 차이는 promet에서 실험할 수 없다.</div>
+          <details class="try"><summary>직접 확인</summary>
+<pre>lscpu | grep -i numa          <span class="cm"># node 수와 node마다의 CPU 번호</span>
+numactl --hardware             <span class="cm"># node마다 메모리 크기와 거리표 (numactl 패키지)</span>
+cat /sys/class/net/&lt;인터페이스&gt;/device/numa_node   <span class="cm"># 랜카드가 붙은 node. -1이면 정보 없음</span></pre>
+          </details>
+          <p class="rel">연결: <a href="#smtnuma">SMT와 NUMA의 층</a><a href="#cputopo">소켓, 코어, 스레드</a><a href="#nic">NIC와 드라이버</a><a href="#nvme">NVMe</a><a href="#memory">메모리 (Bitcoin 탭)</a></p>
+        </article>
+
+        <article class="c" id="smtnuma" data-added="2026-10-15" data-updated="2026-10-15" data-k="smt numa 층위 계층 비교 차이 topology 둘 다 같이">
+          <div class="c-head"><h3>SMT와 NUMA는 다른 층이다</h3></div>
+          <p class="why"><b>왜 알아야 하나</b>두 단어가 같이 나오면 같은 종류의 설정처럼 보인다. 실제로는 크기가 다른 층의 이야기다. 그래서 한 서버에 둘이 같이 있을 수 있다.</p>
+          <figure class="fig"><div class="sc"><svg viewBox="0 0 720 252" role="img" aria-label="서버 안에 NUMA node 두 개가 있고, node마다 코어 두 개가 있고, 코어마다 CPU 두 개가 있다. NUMA는 바깥 층이고 SMT는 안쪽 층이다" style="min-width:600px;max-width:720px"><rect class="bg" x="10" y="10" width="700" height="186" rx="5"/><text class="tb" x="26" y="30" text-anchor="start">서버</text><rect class="bx" x="26" y="40" width="330" height="146" rx="5"/><text class="tb" x="42" y="62" text-anchor="start">NUMA node 0 (+ 메모리 A)</text><rect class="hl" x="42" y="76" width="146" height="98" rx="5"/><text class="tb" x="115" y="96" text-anchor="middle">코어 0</text><rect class="bx" x="52" y="110" width="60" height="50" rx="5"/><text x="82" y="140" text-anchor="middle">CPU 0</text><rect class="bx" x="118" y="110" width="60" height="50" rx="5"/><text x="148" y="140" text-anchor="middle">CPU 4</text><rect class="hl" x="200" y="76" width="146" height="98" rx="5"/><text class="tb" x="273" y="96" text-anchor="middle">코어 1</text><rect class="bx" x="210" y="110" width="60" height="50" rx="5"/><text x="240" y="140" text-anchor="middle">CPU 1</text><rect class="bx" x="276" y="110" width="60" height="50" rx="5"/><text x="306" y="140" text-anchor="middle">CPU 5</text><rect class="bx" x="370" y="40" width="330" height="146" rx="5"/><text class="tb" x="386" y="62" text-anchor="start">NUMA node 1 (+ 메모리 B)</text><rect class="hl" x="386" y="76" width="146" height="98" rx="5"/><text class="tb" x="459" y="96" text-anchor="middle">코어 2</text><rect class="bx" x="396" y="110" width="60" height="50" rx="5"/><text x="426" y="140" text-anchor="middle">CPU 2</text><rect class="bx" x="462" y="110" width="60" height="50" rx="5"/><text x="492" y="140" text-anchor="middle">CPU 6</text><rect class="hl" x="544" y="76" width="146" height="98" rx="5"/><text class="tb" x="617" y="96" text-anchor="middle">코어 3</text><rect class="bx" x="554" y="110" width="60" height="50" rx="5"/><text x="584" y="140" text-anchor="middle">CPU 3</text><rect class="bx" x="620" y="110" width="60" height="50" rx="5"/><text x="650" y="140" text-anchor="middle">CPU 7</text><text class="ts" x="10" y="220" text-anchor="start">바깥 층 NUMA: 코어 묶음과 메모리를 짝짓는다. 다른 node의 메모리는 멀다.</text><text class="ts" x="10" y="242" text-anchor="start">안쪽 층 SMT: 코어 하나를 CPU 2개로 보이게 한다. 두 CPU는 실행 장치를 나눠 쓴다.</text></svg></div><figcaption>예시다(node 2개 × 코어 2개 × 스레드 2개 = CPU 8개). 상자가 겹쳐 들어간다. 그래서 둘은 서로 막지 않는다.</figcaption></figure>
+          <div class="tbl"><table>
+            <thead><tr><th></th><th>SMT</th><th>NUMA</th></tr></thead>
+            <tbody>
+              <tr><td>층</td><td>코어 하나의 안쪽</td><td>서버 전체 (코어 묶음 + 메모리)</td></tr>
+              <tr><td>나누는 것</td><td>코어 하나 → CPU 2개</td><td>CPU와 메모리 → node 여러 개</td></tr>
+              <tr><td>느려지는 경우</td><td>짝꿍 CPU가 같은 실행 장치를 두고 다툰다</td><td>CPU가 먼 node의 메모리나 장치를 쓴다</td></tr>
+              <tr><td>정하는 곳</td><td>BIOS (리눅스에서도 끌 수 있다)</td><td>하드웨어(소켓 수)와 BIOS 설정</td></tr>
+              <tr><td>리눅스에서 보는 곳</td><td><code>Thread(s) per core</code>, <code>thread_siblings_list</code></td><td><code>NUMA node(s)</code>, <code>numactl --hardware</code></td></tr>
+              <tr><td>비유</td><td>조리대 하나에 요리사 2명</td><td>창고가 두 곳. 조리대마다 가까운 창고가 있다</td></tr>
+            </tbody>
+          </table></div>
+          <div class="mine"><b>내가 낸 결론 (2026-10-15)</b>"SMT와 NUMA는 다른 층위이기 때문에 둘 다 채택될 수 있는 구조다." promet은 두 층 모두 하나뿐이다: 코어당 CPU 1개, node 1개.</div>
+          <p class="ask"><b>생각해 볼 질문</b>그림의 서버에서 CPU 0과 CPU 4는 같은 코어다. CPU 0과 CPU 2는 다른 node다. 그러면 CPU 0과 CPU 1은 어떤 관계일까?</p>
+          <p class="rel">연결: <a href="#smt">SMT</a><a href="#numa">NUMA</a><a href="#cputopo">소켓, 코어, 스레드</a></p>
+        </article>
+
+        <article class="c" id="nvme" data-added="2026-10-15" data-updated="2026-10-15" data-k="nvme sata ahci pcie ssd 큐 queue 줄 프로토콜 nvme0n1 sda 레인 m.2">
+          <div class="c-head"><h3>NVMe: SSD가 말하는 방식</h3></div>
+          <p class="why"><b>왜 알아야 하나</b>"NVMe SSD"와 "SATA SSD"는 둘 다 SSD다. 하지만 동시에 처리할 수 있는 요청 수가 크게 다르다. 작은 읽기와 쓰기를 동시에 아주 많이 하는 프로그램에서는 이 차이가 속도를 정한다.</p>
+          <figure class="fig"><div class="sc"><svg viewBox="0 0 720 202" role="img" aria-label="SATA와 AHCI는 모든 코어가 줄 하나를 나눠 쓰고, NVMe는 코어마다 자기 줄을 쓴다" style="min-width:600px;max-width:720px"><text class="tb" x="10" y="22" text-anchor="start">SATA 길 + AHCI 규칙: 줄 1개, 32칸</text><rect class="bx" x="10" y="36" width="75" height="34" rx="5"/><text class="ts" x="47.5" y="58" text-anchor="middle">코어 0</text><path class="ln" d="M47.5,72 L120,102" marker-end="url(#am)"/><rect class="bx" x="95" y="36" width="75" height="34" rx="5"/><text class="ts" x="132.5" y="58" text-anchor="middle">코어 1</text><path class="ln" d="M132.5,72 L160,102" marker-end="url(#am)"/><rect class="bx" x="180" y="36" width="75" height="34" rx="5"/><text class="ts" x="217.5" y="58" text-anchor="middle">코어 2</text><path class="ln" d="M217.5,72 L200,102" marker-end="url(#am)"/><rect class="bx" x="265" y="36" width="75" height="34" rx="5"/><text class="ts" x="302.5" y="58" text-anchor="middle">코어 3</text><path class="ln" d="M302.5,72 L240,102" marker-end="url(#am)"/><rect class="wr" x="60" y="104" width="240" height="34" rx="5"/><text class="ts tw" x="180" y="126" text-anchor="middle">줄 1개 (최대 32개 대기)</text><path class="ln" d="M180,140 V158" marker-end="url(#am)"/><rect class="bx" x="110" y="160" width="140" height="34" rx="5"/><text class="tb" x="180" y="182" text-anchor="middle">SATA SSD</text><text class="tb" x="380" y="22" text-anchor="start">PCIe 길 + NVMe 규칙: 줄 여러 개</text><rect class="bx" x="380" y="36" width="75" height="34" rx="5"/><text class="ts" x="417.5" y="58" text-anchor="middle">코어 0</text><path class="la" d="M417.5,72 V102" marker-end="url(#aa)"/><rect class="hl" x="380" y="104" width="75" height="34" rx="5"/><text class="ts" x="417.5" y="126" text-anchor="middle">줄 0</text><path class="la" d="M417.5,140 L500,158" marker-end="url(#aa)"/><rect class="bx" x="465" y="36" width="75" height="34" rx="5"/><text class="ts" x="502.5" y="58" text-anchor="middle">코어 1</text><path class="la" d="M502.5,72 V102" marker-end="url(#aa)"/><rect class="hl" x="465" y="104" width="75" height="34" rx="5"/><text class="ts" x="502.5" y="126" text-anchor="middle">줄 1</text><path class="la" d="M502.5,140 L527,158" marker-end="url(#aa)"/><rect class="bx" x="550" y="36" width="75" height="34" rx="5"/><text class="ts" x="587.5" y="58" text-anchor="middle">코어 2</text><path class="la" d="M587.5,72 V102" marker-end="url(#aa)"/><rect class="hl" x="550" y="104" width="75" height="34" rx="5"/><text class="ts" x="587.5" y="126" text-anchor="middle">줄 2</text><path class="la" d="M587.5,140 L554,158" marker-end="url(#aa)"/><rect class="bx" x="635" y="36" width="75" height="34" rx="5"/><text class="ts" x="672.5" y="58" text-anchor="middle">코어 3</text><path class="la" d="M672.5,72 V102" marker-end="url(#aa)"/><rect class="hl" x="635" y="104" width="75" height="34" rx="5"/><text class="ts" x="672.5" y="126" text-anchor="middle">줄 3</text><path class="la" d="M672.5,140 L581,158" marker-end="url(#aa)"/><rect class="bx" x="470" y="160" width="140" height="34" rx="5"/><text class="tb" x="540" y="182" text-anchor="middle">NVMe SSD</text></svg></div><figcaption>NVMe는 줄을 최대 약 65,000개 만들 수 있고, 줄마다 약 65,000개가 기다릴 수 있다. 리눅스는 보통 CPU마다(또는 몇 개마다) 줄을 하나씩 준다.</figcaption></figure>
+          <p>저장장치는 두 가지로 나눠 본다.</p>
+          <ul>
+            <li><b>어느 길로 연결되나</b>: SATA 케이블, 또는 PCIe 레인(메인보드의 고속 통로).</li>
+            <li><b>그 길에서 어떤 규칙으로 말하나</b>: AHCI, 또는 NVMe.</li>
+            <li>SATA SSD는 SATA 길에서 AHCI로 말한다. AHCI는 원래 HDD를 위해 만든 규칙이다. 명령 줄(큐)이 1개이고, 한 줄에 32개까지 기다린다.</li>
+            <li>NVMe SSD는 PCIe 길에서 NVMe로 말한다. 줄을 아주 많이 만들 수 있다. 그래서 여러 CPU가 줄 하나를 두고 다투지 않는다.</li>
+          </ul>
+          <div class="warn"><b>자주 하는 오해</b>NVMe는 SSD의 모양(M.2)이 아니다. M.2 모양의 SATA SSD도 있다. NVMe는 말하는 규칙이다.</div>
+          <div class="mine"><b>promet과 비교</b>promet의 MX500은 SATA SSD다(AHCI). WD Blue는 HDD다. 그래서 promet에서는 NVMe의 동시 처리를 시험할 수 없다. 측정 방법(IOPS, 지연)은 같다.</div>
+          <details class="try"><summary>직접 확인</summary>
+<pre>lsblk -d -o NAME,TRAN,ROTA,MODEL,SIZE   <span class="cm"># TRAN: sata 또는 nvme. ROTA 1: 회전하는 디스크</span>
+cat /sys/block/sda/device/queue_depth   <span class="cm"># SATA 장치가 한 번에 받는 요청 수</span>
+ls /sys/block/nvme0n1/mq/               <span class="cm"># NVMe가 있으면: 하드웨어 줄마다 디렉터리 하나</span></pre>
+          </details>
+          <p class="rel">연결: <a href="#ssdhdd">SSD, HDD, SMR (Bitcoin 탭)</a><a href="#iometrics">IOPS와 지연 (Bitcoin 탭)</a><a href="#raid0">RAID0</a><a href="#numa">NUMA</a></p>
+        </article>
+
+        <article class="c" id="raid0" data-added="2026-10-15" data-updated="2026-10-15" data-k="raid raid0 raid1 스트라이핑 striping 미러링 mirroring mdadm md0 mdstat 디스크 묶기 백업">
+          <div class="c-head"><h3>RAID0: 디스크 여러 개를 하나처럼</h3></div>
+          <p class="why"><b>왜 알아야 하나</b>큰 서버는 디스크 여러 개를 묶어 하나처럼 쓴다. 묶는 방법에 따라 속도, 용량, 고장 때의 결과가 다르다. 디스크 하나가 고장 나면 무엇을 잃는지 미리 알아야 한다.</p>
+          <figure class="fig"><div class="sc"><svg viewBox="0 0 720 230" role="img" aria-label="RAID0은 조각을 두 디스크에 번갈아 써서 하나가 고장 나면 모든 파일을 잃고, RAID1은 같은 내용을 두 디스크에 써서 하나가 고장 나도 남는다" style="min-width:600px;max-width:720px"><text class="tb" x="10" y="22" text-anchor="start">RAID0: 나눠서 번갈아 쓴다</text><rect class="hl" x="30" y="36" width="42" height="28" rx="5"/><text x="51" y="55" text-anchor="middle">1</text><rect class="hl" x="78" y="36" width="42" height="28" rx="5"/><text x="99" y="55" text-anchor="middle">2</text><rect class="hl" x="126" y="36" width="42" height="28" rx="5"/><text x="147" y="55" text-anchor="middle">3</text><rect class="hl" x="174" y="36" width="42" height="28" rx="5"/><text x="195" y="55" text-anchor="middle">4</text><rect class="hl" x="222" y="36" width="42" height="28" rx="5"/><text x="243" y="55" text-anchor="middle">5</text><rect class="hl" x="270" y="36" width="42" height="28" rx="5"/><text x="291" y="55" text-anchor="middle">6</text><path class="ln" d="M120,66 L100,100" marker-end="url(#am)"/><path class="ln" d="M220,66 L260,100" marker-end="url(#am)"/><rect class="bx" x="30" y="104" width="140" height="96" rx="5"/><text class="tb" x="100" y="124" text-anchor="middle">디스크 A</text><rect class="hl" x="40" y="136" width="36" height="28" rx="5"/><text x="58" y="155" text-anchor="middle">1</text><rect class="hl" x="85" y="136" width="36" height="28" rx="5"/><text x="103" y="155" text-anchor="middle">3</text><rect class="hl" x="130" y="136" width="36" height="28" rx="5"/><text x="148" y="155" text-anchor="middle">5</text><text class="ts" x="100" y="188" text-anchor="middle">파일마다 조각 절반</text><rect class="bx" x="190" y="104" width="140" height="96" rx="5"/><text class="tb" x="260" y="124" text-anchor="middle">디스크 B</text><rect class="hl" x="200" y="136" width="36" height="28" rx="5"/><text x="218" y="155" text-anchor="middle">2</text><rect class="hl" x="245" y="136" width="36" height="28" rx="5"/><text x="263" y="155" text-anchor="middle">4</text><rect class="hl" x="290" y="136" width="36" height="28" rx="5"/><text x="308" y="155" text-anchor="middle">6</text><text class="ts" x="260" y="188" text-anchor="middle">파일마다 조각 절반</text><text class="ts tw" x="180" y="220" text-anchor="middle">용량 = A + B · 디스크 하나 고장 = 전부 잃음</text><text class="tb" x="380" y="22" text-anchor="start">RAID1: 똑같이 두 번 쓴다</text><rect class="hl" x="470" y="36" width="42" height="28" rx="5"/><text x="491" y="55" text-anchor="middle">1</text><rect class="hl" x="518" y="36" width="42" height="28" rx="5"/><text x="539" y="55" text-anchor="middle">2</text><rect class="hl" x="566" y="36" width="42" height="28" rx="5"/><text x="587" y="55" text-anchor="middle">3</text><path class="ln" d="M490,66 L460,100" marker-end="url(#am)"/><path class="ln" d="M590,66 L620,100" marker-end="url(#am)"/><rect class="bx" x="390" y="104" width="140" height="96" rx="5"/><text class="tb" x="460" y="124" text-anchor="middle">디스크 A</text><rect class="hl" x="400" y="136" width="36" height="28" rx="5"/><text x="418" y="155" text-anchor="middle">1</text><rect class="hl" x="445" y="136" width="36" height="28" rx="5"/><text x="463" y="155" text-anchor="middle">2</text><rect class="hl" x="490" y="136" width="36" height="28" rx="5"/><text x="508" y="155" text-anchor="middle">3</text><text class="ts" x="460" y="188" text-anchor="middle">전부 들어 있음</text><rect class="bx" x="550" y="104" width="140" height="96" rx="5"/><text class="tb" x="620" y="124" text-anchor="middle">디스크 B</text><rect class="hl" x="560" y="136" width="36" height="28" rx="5"/><text x="578" y="155" text-anchor="middle">1</text><rect class="hl" x="605" y="136" width="36" height="28" rx="5"/><text x="623" y="155" text-anchor="middle">2</text><rect class="hl" x="650" y="136" width="36" height="28" rx="5"/><text x="668" y="155" text-anchor="middle">3</text><text class="ts" x="620" y="188" text-anchor="middle">전부 들어 있음</text><text class="ts ta" x="540" y="220" text-anchor="middle">용량 = 디스크 하나 몫 · 하나 고장 = 괜찮음</text></svg></div><figcaption>비유: RAID0은 책을 낱장으로 뜯어서 책장 두 개에 번갈아 꽂는 것이다. 두 사람이 동시에 꺼내므로 빠르다. 책장 하나가 불에 타면 모든 책이 반쪽이 된다.</figcaption></figure>
+          <ul>
+            <li>디스크 한 개에는 한계가 셋 있다: 용량, 속도, 고장. RAID는 디스크 여러 개를 묶어서 OS에 디스크 하나처럼 보이게 한다. 묶는 방법마다 번호(레벨)가 있다.</li>
+            <li><b>RAID0</b>(스트라이핑): 데이터를 조각으로 잘라 디스크에 번갈아 쓴다. 용량은 합쳐진다. 큰 읽기와 쓰기는 거의 디스크 수만큼 빨라진다.</li>
+            <li>대가: 디스크 하나만 고장 나도 전체를 잃는다. 모든 파일의 조각이 모든 디스크에 흩어져 있기 때문이다. 디스크가 많을수록 고장 확률도 커진다.</li>
+            <li><b>RAID1</b>(미러링): 같은 데이터를 두 디스크에 똑같이 쓴다. 하나가 고장 나도 남는다. 용량은 절반이다.</li>
+            <li>리눅스에서는 소프트웨어 RAID(<code>mdadm</code>)를 많이 쓴다. 묶은 장치는 <code>/dev/md0</code> 같은 이름이 된다.</li>
+          </ul>
+          <div class="warn"><b>자주 하는 오해</b>RAID는 백업이 아니다. RAID1도 실수로 지운 파일은 두 디스크에서 같이 지운다.</div>
+          <div class="mine"><b>promet과 비교</b>promet은 SSD 1개와 HDD 1개를 따로 쓴다. RAID가 없다. 디스크 하나가 고장 나면 그 디스크의 데이터만 잃는다.</div>
+          <p class="ask"><b>생각해 볼 질문</b>블록체인 노드의 데이터를 잃으면, 다시 구할 방법이 있을까? 은행의 데이터베이스를 잃는 것과 무엇이 다를까?</p>
+          <details class="try"><summary>직접 확인</summary>
+<pre>cat /proc/mdstat    <span class="cm"># 소프트웨어 RAID가 있으면 여기에 보인다</span>
+lsblk               <span class="cm"># TYPE 열에 raid0, raid1이 보인다</span></pre>
+          </details>
+          <p class="rel">연결: <a href="#nvme">NVMe</a><a href="#ssdhdd">SSD, HDD, SMR (Bitcoin 탭)</a><a href="#mount">마운트 (Bitcoin 탭)</a></p>
+        </article>
+
+        <article class="c" id="nic" data-added="2026-10-15" data-updated="2026-10-15" data-k="nic 랜카드 네트워크 카드 드라이버 driver 커널 모듈 ethtool lspci 인터페이스 이름 eno enp ens 펌웨어 e1000e">
+          <div class="c-head"><h3>NIC와 드라이버</h3></div>
+          <p class="why"><b>왜 알아야 하나</b>네트워크 문제는 프로그램이 아니라 랜카드나 드라이버에서 생길 수 있다. 어느 카드가 어느 드라이버로 움직이는지 알아야 맞는 문서를 찾을 수 있다.</p>
+          <ul>
+            <li><b>NIC</b>(Network Interface Card)는 랜카드다. 패킷을 신호로 바꿔 케이블로 보낸다. 서버의 NIC는 보통 PCIe 장치다.</li>
+            <li><b>드라이버</b>는 커널이 그 카드와 말하는 방법을 담은 프로그램(커널 모듈)이다. 카드 회사와 모델마다 다르다.</li>
+            <li>드라이버가 카드를 찾으면 커널이 인터페이스를 만든다. IP는 그 인터페이스에 붙는다.</li>
+            <li>인터페이스 이름은 카드의 위치를 뜻한다(systemd의 이름 규칙). <code>en</code> 유선, <code>wl</code> 무선. <code>o1</code> 메인보드 내장 1번. <code>p3s0</code> PCI 버스 3, 슬롯 0. <code>s3</code> 확장 슬롯 3. <code>f1</code> PCI 기능 번호 1(포트가 여럿인 카드는 포트마다 다르다). <code>n…</code> 드라이버가 알려 준 포트 이름(예: <code>np0</code>은 포트 이름 p0).</li>
+          </ul>
+          <div class="warn"><b>자주 하는 오해</b>이름 모양이 같아도 카드 종류는 다를 수 있다. 이름은 위치를 뜻한다. 카드와 드라이버는 <code>ethtool -i</code>로 본다.</div>
+          <div class="mine"><b>promet과 비교</b>promet의 NIC는 메인보드 내장 Intel I219-LM이다. 이 카드의 리눅스 드라이버는 보통 <code>e1000e</code>다. 내장 카드라서 이름은 보통 <code>eno1</code> 같은 모양이다. 정확한 이름은 아래 명령으로 확인한다.</div>
+          <details class="try"><summary>직접 확인</summary>
+<pre>ip -br link                     <span class="cm"># 인터페이스 이름과 상태</span>
+lspci | grep -i ethernet        <span class="cm"># PCIe에 붙은 랜카드</span>
+ethtool -i &lt;인터페이스&gt;          <span class="cm"># driver, firmware-version, bus-info</span>
+cat /sys/class/net/&lt;인터페이스&gt;/device/numa_node</pre>
+          </details>
+          <p class="rel">연결: <a href="#netif">네트워크 인터페이스 (Bitcoin 탭)</a><a href="#numa">NUMA</a><a href="#ipport">IP와 포트 (Bitcoin 탭)</a></p>
+        </article>
+      </div>
+    </section>
+
+    <section class="group" id="g-sol" data-name="Solana 기본" data-track="sol">
+      <h2>Solana 기본 <small>SOLANA</small></h2>
+      <p class="lead">Solana가 블록을 만들고, 저장하고, 질문에 답하는 방식이다. 내 Bitcoin 노드와 비교한다.</p>
+      <div class="cards">
+
+        <article class="c" id="soloverview" data-added="2026-10-15" data-updated="2026-10-15" data-k="solana 솔라나 cluster 클러스터 mainnet-beta testnet devnet validator 검증자 leader 리더 rpc 노드 agave firedancer anza vote 투표 stake 지도">
+          <div class="c-head"><h3>Solana 전체 지도: cluster, validator, RPC 노드</h3></div>
+          <p class="why"><b>왜 알아야 하나</b>Solana의 단어는 Bitcoin과 겹치지만 뜻이 다르다. 누가 블록을 만들고, 누가 확인하고, 누가 사용자에게 답하는지 먼저 나눠야 한다.</p>
+          <figure class="fig"><div class="sc"><svg viewBox="0 0 720 228" role="img" aria-label="사용자와 앱은 RPC 노드에 묻고, RPC 노드는 cluster에서 블록을 받는다. cluster 안에서는 이번 slot의 leader가 블록을 만들고 validator들이 투표한다" style="min-width:600px;max-width:720px"><rect class="bx" x="10" y="90" width="130" height="50" rx="5"/><text class="tb" x="75" y="112" text-anchor="middle">사용자 · 앱</text><text class="ts" x="75" y="130" text-anchor="middle">지갑, 탐색기</text><path class="la" d="M142,105 H186" marker-end="url(#aa)"/><text class="ts ta" x="164" y="98" text-anchor="middle">질문</text><path class="ln" d="M188,125 H144" marker-end="url(#am)"/><text class="ts" x="164" y="142" text-anchor="middle">답</text><rect class="hl" x="190" y="80" width="160" height="70" rx="5"/><text class="tb" x="270" y="104" text-anchor="middle">RPC 노드</text><text class="ts" x="270" y="122" text-anchor="middle">투표하지 않는다</text><text class="ts" x="270" y="140" text-anchor="middle">질문에 답한다</text><text class="ts" x="270" y="176" text-anchor="middle">validator와 같은 프로그램.</text><text class="ts" x="270" y="194" text-anchor="middle">역할만 다르다.</text><path class="ln" d="M428,115 H354" marker-end="url(#am)"/><text class="ts" x="390" y="106" text-anchor="middle">블록을 받는다</text><rect class="bg" x="430" y="10" width="280" height="210" rx="5"/><text class="tb" x="446" y="32" text-anchor="start">cluster (예: mainnet-beta)</text><rect class="wr" x="446" y="46" width="248" height="44" rx="5"/><text class="tb" x="570" y="66" text-anchor="middle">이번 slot의 leader</text><text class="ts" x="570" y="83" text-anchor="middle">블록을 만든다</text><rect class="bx" x="446" y="124" width="80" height="44" rx="5"/><text x="486" y="143" text-anchor="middle">validator</text><text class="ts" x="486" y="160" text-anchor="middle">투표한다</text><path class="ln" d="M570,92 L486,122" marker-end="url(#am)"/><rect class="bx" x="530" y="124" width="80" height="44" rx="5"/><text x="570" y="143" text-anchor="middle">validator</text><text class="ts" x="570" y="160" text-anchor="middle">투표한다</text><path class="ln" d="M570,92 L570,122" marker-end="url(#am)"/><rect class="bx" x="614" y="124" width="80" height="44" rx="5"/><text x="654" y="143" text-anchor="middle">validator</text><text class="ts" x="654" y="160" text-anchor="middle">투표한다</text><path class="ln" d="M570,92 L654,122" marker-end="url(#am)"/><text class="ts" x="570" y="196" text-anchor="middle">투표가 모이면 블록이 확정된다</text></svg></div><figcaption>leader는 돌아가며 맡는다. RPC 노드도 블록을 받아 검증하고 저장한다. 투표만 하지 않는다.</figcaption></figure>
+          <ul>
+            <li><b>cluster</b>: 같은 장부를 같이 만드는 노드들의 모임이다. 실제 돈이 오가는 <code>mainnet-beta</code>, 시험용 <code>testnet</code>과 <code>devnet</code>이 있다. cluster마다 처음 설정(genesis)이 달라서 서로 섞이지 않는다.</li>
+            <li><b>validator</b>: 블록을 받아 검증하고 투표하는 노드다. 맡긴 SOL의 양(stake)이 클수록 투표의 무게가 크다.</li>
+            <li><b>leader</b>: 정해진 시간 칸(slot)에 블록을 만드는 validator다. 순서는 미리 정해져 있다. 돌아가며 맡는다.</li>
+            <li><b>RPC 노드</b>: 같은 프로그램으로 블록을 받아 검증하고 저장한다. 하지만 투표하지 않는다. 사용자와 앱의 질문에 답하는 것이 주된 일이다.</li>
+            <li>노드 프로그램(client)은 여러 개 있다. 많이 쓰는 것은 Anza의 <b>Agave</b>다. Jump Crypto의 <b>Firedancer</b>도 있다.</li>
+          </ul>
+          <div class="warn"><b>자주 하는 오해</b>"RPC 노드"는 특별한 다른 프로그램이 아니다. validator와 같은 프로그램을 다른 역할로 실행한 것이다.</div>
+          <div class="mine"><b>내 Bitcoin 노드와 비교</b>Bitcoin에는 정해진 leader가 없다. 채굴자가 작업증명(PoW)으로 경쟁해서 먼저 찾은 쪽이 블록을 만든다. 내 bitcoind는 블록을 검증하고 저장하지만 채굴하지 않는다. 이 점에서 Solana의 RPC 노드와 역할이 비슷하다. Signet은 시험용 네트워크라는 점에서 devnet, testnet과 비슷하다.</div>
+          <p class="rel">연결: <a href="#slot">slot과 epoch</a><a href="#solrpc">Solana RPC</a><a href="#ledger">ledger</a><a href="#fullnode">풀 노드 (Bitcoin 탭)</a><a href="#signet">Signet (Bitcoin 탭)</a></p>
+        </article>
+
+        <article class="c" id="slot" data-added="2026-10-15" data-updated="2026-10-15" data-k="slot 슬롯 block 블록 epoch 에포크 leader schedule 리더 순서 skipped 건너뛴 block height 블록 높이 400ms 432000">
+          <div class="c-head"><h3>slot, 블록 높이, epoch</h3></div>
+          <p class="why"><b>왜 알아야 하나</b>Solana의 시간은 slot으로 센다. slot 번호와 블록 높이는 다른 숫자다. 둘을 섞으면 "이 slot에는 블록이 없다"는 응답을 오류로 잘못 읽는다.</p>
+          <figure class="fig"><div class="sc"><svg viewBox="0 0 720 174" role="img" aria-label="slot 100부터 111까지 12칸. leader 한 명이 4칸씩 맡는다. slot 106은 건너뛰어서 블록이 없고, 그래서 블록 높이는 slot 번호보다 천천히 는다" style="min-width:600px;max-width:720px"><text class="ts" x="10" y="18" text-anchor="start">slot = 약 400ms의 시간 칸. 칸마다 정해진 leader가 한 명 있다.</text><text class="ts" x="123" y="42" text-anchor="middle">leader A (4칸 연속)</text><text class="ts" x="355" y="42" text-anchor="middle">leader B (4칸 연속)</text><text class="ts" x="587" y="42" text-anchor="middle">leader C (4칸 연속)</text><rect class="hl" x="10" y="50" width="52" height="40" rx="5"/><text class="mono" x="36" y="75" text-anchor="middle">100</text><text class="ts" x="36" y="110" text-anchor="middle">높이 50</text><rect class="hl" x="68" y="50" width="52" height="40" rx="5"/><text class="mono" x="94" y="75" text-anchor="middle">101</text><text class="ts" x="94" y="110" text-anchor="middle">높이 51</text><rect class="hl" x="126" y="50" width="52" height="40" rx="5"/><text class="mono" x="152" y="75" text-anchor="middle">102</text><text class="ts" x="152" y="110" text-anchor="middle">높이 52</text><rect class="hl" x="184" y="50" width="52" height="40" rx="5"/><text class="mono" x="210" y="75" text-anchor="middle">103</text><text class="ts" x="210" y="110" text-anchor="middle">높이 53</text><rect class="bx" x="242" y="50" width="52" height="40" rx="5"/><text class="mono" x="268" y="75" text-anchor="middle">104</text><text class="ts" x="268" y="110" text-anchor="middle">높이 54</text><rect class="bx" x="300" y="50" width="52" height="40" rx="5"/><text class="mono" x="326" y="75" text-anchor="middle">105</text><text class="ts" x="326" y="110" text-anchor="middle">높이 55</text><rect class="wr" x="358" y="50" width="52" height="40" rx="5"/><text class="mono tw" x="384" y="75" text-anchor="middle">106</text><text class="ts tw" x="384" y="110" text-anchor="middle">블록 없음</text><rect class="bx" x="416" y="50" width="52" height="40" rx="5"/><text class="mono" x="442" y="75" text-anchor="middle">107</text><text class="ts" x="442" y="110" text-anchor="middle">높이 56</text><rect class="hl" x="474" y="50" width="52" height="40" rx="5"/><text class="mono" x="500" y="75" text-anchor="middle">108</text><text class="ts" x="500" y="110" text-anchor="middle">높이 57</text><rect class="hl" x="532" y="50" width="52" height="40" rx="5"/><text class="mono" x="558" y="75" text-anchor="middle">109</text><text class="ts" x="558" y="110" text-anchor="middle">높이 58</text><rect class="hl" x="590" y="50" width="52" height="40" rx="5"/><text class="mono" x="616" y="75" text-anchor="middle">110</text><text class="ts" x="616" y="110" text-anchor="middle">높이 59</text><rect class="hl" x="648" y="50" width="52" height="40" rx="5"/><text class="mono" x="674" y="75" text-anchor="middle">111</text><text class="ts" x="674" y="110" text-anchor="middle">높이 60</text><text class="ts" x="10" y="142" text-anchor="start">위 숫자: slot 번호. 시간이 가면 늘 는다. 아래 숫자: 블록 높이. 블록이 있을 때만 는다.</text><text class="ts" x="10" y="164" text-anchor="start">epoch = slot 432,000개 (mainnet-beta, 약 2일 이상). epoch마다 leader 순서표를 정한다.</text></svg></div><figcaption>예시 숫자다. 실제 cluster에서는 slot 번호와 블록 높이의 차이가 훨씬 크다. 건너뛴 slot이 그동안 쌓였기 때문이다.</figcaption></figure>
+          <ul>
+            <li><b>slot</b>: leader 한 명이 블록 하나를 만들 수 있는 시간 칸이다. 목표 길이는 약 400ms다.</li>
+            <li>leader는 slot 4개를 연속으로 맡는다. 그다음 다른 leader로 넘어간다.</li>
+            <li>leader가 블록을 못 만들거나 그 블록이 받아들여지지 않으면 그 slot은 <b>건너뛴 slot</b>(skipped)이 된다. 그 slot에는 블록이 없다.</li>
+            <li>그래서 slot 번호는 시간에 따라 늘고, <b>블록 높이</b>(block height)는 블록이 있을 때만 는다. 블록 높이는 slot 번호보다 작다.</li>
+            <li><b>epoch</b>: slot 432,000개다(mainnet-beta 기준, 약 2일 이상). epoch마다 stake를 보고 leader 순서표(leader schedule)를 정한다.</li>
+          </ul>
+          <div class="mine"><b>내 Bitcoin 노드와 비교</b>Bitcoin은 블록 사이가 평균 10분이다. 정해진 시간 칸이 없다. 그래서 Bitcoin에는 "높이"만 있다. Solana에는 시간 칸(slot)과 높이가 따로 있다.</div>
+          <details class="try"><summary>직접 확인 (공개 devnet에 묻기)</summary>
+<pre>curl -s https://api.devnet.solana.com -X POST -H 'Content-Type: application/json' \
+  -d '{"jsonrpc":"2.0","id":1,"method":"getEpochInfo"}'
+<span class="cm"># absoluteSlot(slot 번호)과 blockHeight(블록 높이)를 비교한다</span></pre>
+          </details>
+          <p class="rel">연결: <a href="#soloverview">Solana 전체 지도</a><a href="#ledger">ledger</a><a href="#soltx">트랜잭션</a><a href="#solrpc">Solana RPC</a></p>
+        </article>
+
+        <article class="c" id="soltx" data-added="2026-10-15" data-updated="2026-10-15" data-k="transaction 트랜잭션 tx signature 서명 txid base58 recent blockhash instruction 명령 account 계정 fee 수수료 compute unit cu 1232">
+          <div class="c-head"><h3>트랜잭션과 서명</h3></div>
+          <p class="why"><b>왜 알아야 하나</b>Solana에서 트랜잭션을 찾는 열쇠는 서명이다. 트랜잭션의 구조를 알아야 "서명으로 트랜잭션을 찾는다"는 말이 이해된다.</p>
+          <figure class="fig"><div class="sc"><svg viewBox="0 0 720 226" role="img" aria-label="트랜잭션은 서명들과 메시지로 되어 있다. 메시지에는 계정 목록, recent blockhash, instruction들이 있다. 첫 번째 서명이 트랜잭션의 ID다" style="min-width:600px;max-width:720px"><rect class="bg" x="10" y="10" width="700" height="184" rx="5"/><text class="tb" x="26" y="30" text-anchor="start">트랜잭션 1개</text><rect class="wr" x="26" y="40" width="200" height="138" rx="5"/><text class="tb" x="126" y="62" text-anchor="middle">서명들</text><text class="ts tw" x="126" y="92" text-anchor="middle">서명 1 = 트랜잭션 ID</text><text class="ts" x="126" y="114" text-anchor="middle">서명 2, 3 … (필요하면)</text><text class="ts" x="126" y="146" text-anchor="middle">64바이트씩</text><text class="ts" x="126" y="164" text-anchor="middle">사람에게는 base58 글자</text><rect class="hl" x="246" y="40" width="448" height="138" rx="5"/><text class="tb" x="470" y="62" text-anchor="middle">메시지 (서명하는 내용)</text><rect class="bx" x="262" y="74" width="416" height="28" rx="5"/><text class="ts" x="470" y="93" text-anchor="middle">계정 목록: 읽거나 쓸 계정의 주소</text><rect class="bx" x="262" y="108" width="416" height="28" rx="5"/><text class="ts" x="470" y="127" text-anchor="middle">recent blockhash: 최근 블록의 해시 (유효 기간 역할)</text><rect class="bx" x="262" y="142" width="416" height="28" rx="5"/><text class="ts" x="470" y="161" text-anchor="middle">instruction들: 어느 프로그램에게 무엇을 시킬지</text><text class="ts" x="360" y="216" text-anchor="middle">크기 한도 1232바이트: UDP 패킷 하나에 들어가야 한다.</text></svg></div><figcaption>서명은 메시지 전체에 대해 만든다. 그래서 메시지를 한 글자라도 바꾸면 서명이 맞지 않는다.</figcaption></figure>
+          <ul>
+            <li>트랜잭션 = 서명들 + 메시지다. 메시지에는 쓸 계정 목록, 최근 블록 해시(recent blockhash), 명령(instruction)들이 있다.</li>
+            <li><b>instruction</b>: "어느 프로그램에게, 어떤 계정으로, 무엇을 하라"는 요청 하나다. 트랜잭션 하나에 여러 개가 들어갈 수 있다. 전부 성공하거나 전부 취소된다.</li>
+            <li><b>첫 번째 서명이 트랜잭션의 ID</b>다. 64바이트이고, 사람이 읽을 때는 base58 글자(약 88자)로 쓴다.</li>
+            <li>recent blockhash는 약 150블록 동안만 유효하다(대략 1분 남짓). 그래서 오래된 트랜잭션을 다시 보내도 처리되지 않는다.</li>
+            <li><b>Compute Unit(CU)</b>: 트랜잭션이 쓰는 계산량의 단위다. 트랜잭션마다 한도가 있고, 블록 전체에도 한도가 있다.</li>
+          </ul>
+          <div class="warn"><b>자주 하는 오해</b>"서명"과 "해시"는 다르다. 해시는 누구나 계산할 수 있다. 서명은 비밀키를 가진 사람만 만들 수 있다.</div>
+          <div class="mine"><b>내 Bitcoin 노드와 비교</b>Bitcoin의 txid는 트랜잭션 내용의 해시다(SHA-256 두 번). Solana의 ID는 해시가 아니라 서명이다. 또 Bitcoin은 UTXO를 쓰고 없앤다. Solana는 계정(account)의 값을 바꾼다.</div>
+          <p class="rel">연결: <a href="#accounts">account</a><a href="#slot">slot</a><a href="#solrpc">Solana RPC</a><a href="#dbcache">UTXO와 dbcache (Bitcoin 탭)</a></p>
+        </article>
+
+        <article class="c" id="ledger" data-added="2026-10-15" data-updated="2026-10-15" data-k="ledger 원장 blockstore rocksdb shred 조각 turbine erasure 복구 genesis genesis.bin 제네시스 genesis hash 기록">
+          <div class="c-head"><h3>ledger, blockstore, shred, genesis</h3></div>
+          <p class="why"><b>왜 알아야 하나</b>노드의 디스크에는 "기록"과 "상태"가 따로 쌓인다. ledger는 기록 쪽이다. 둘을 구분해야 snapshot과 디스크 사용량을 이해할 수 있다.</p>
+          <figure class="fig"><div class="sc"><svg viewBox="0 0 720 188" role="img" aria-label="leader는 블록을 데이터 shred와 복구용 shred로 잘라 UDP로 보낸다. 받는 노드는 잃은 조각을 복구용 조각으로 다시 만들고 blockstore에 저장한다" style="min-width:600px;max-width:720px"><rect class="bx" x="10" y="60" width="110" height="50" rx="5"/><text class="tb" x="65" y="82" text-anchor="middle">블록</text><text class="ts" x="65" y="100" text-anchor="middle">(leader가 만듦)</text><path class="ln" d="M122,85 H150" marker-end="url(#am)"/><text class="ts" x="216" y="60" text-anchor="middle">데이터 shred</text><text class="ts" x="355" y="60" text-anchor="middle">복구용 shred</text><rect class="hl" x="156" y="70" width="34" height="30" rx="5"/><text class="mono" x="173" y="90" text-anchor="middle">D1</text><rect class="hl" x="196" y="70" width="34" height="30" rx="5"/><text class="mono" x="213" y="90" text-anchor="middle">D2</text><rect class="hl" x="236" y="70" width="34" height="30" rx="5"/><text class="mono" x="253" y="90" text-anchor="middle">D3</text><rect class="hl" x="276" y="70" width="34" height="30" rx="5"/><text class="mono" x="293" y="90" text-anchor="middle">D4</text><rect class="wr" x="316" y="70" width="34" height="30" rx="5"/><text class="mono" x="333" y="90" text-anchor="middle">C1</text><rect class="wr" x="356" y="70" width="34" height="30" rx="5"/><text class="mono" x="373" y="90" text-anchor="middle">C2</text><path class="la" d="M394,85 H452" marker-end="url(#aa)"/><text class="ts mono" x="423" y="104" text-anchor="middle">UDP</text><rect class="bg" x="456" y="30" width="254" height="150" rx="5"/><text class="tb" x="472" y="50" text-anchor="start">받는 노드</text><rect class="hl" x="472" y="62" width="30" height="28" rx="5"/><text class="mono" x="487" y="81" text-anchor="middle">D1</text><rect class="bx" x="506" y="62" width="30" height="28" rx="5" stroke-dasharray="4 3"/><text class="tb tw" x="521" y="81" text-anchor="middle">✕</text><rect class="hl" x="540" y="62" width="30" height="28" rx="5"/><text class="mono" x="555" y="81" text-anchor="middle">D3</text><rect class="hl" x="574" y="62" width="30" height="28" rx="5"/><text class="mono" x="589" y="81" text-anchor="middle">D4</text><rect class="wr" x="608" y="62" width="30" height="28" rx="5"/><text class="mono" x="623" y="81" text-anchor="middle">C1</text><rect class="wr" x="642" y="62" width="30" height="28" rx="5"/><text class="mono" x="657" y="81" text-anchor="middle">C2</text><text class="ts ta" x="583" y="110" text-anchor="middle">D2를 잃어도 C로 다시 만든다</text><rect class="hl" x="472" y="124" width="222" height="44" rx="5"/><text class="tb" x="583" y="142" text-anchor="middle">blockstore (RocksDB)</text><text class="ts" x="583" y="160" text-anchor="middle">ledger 디렉터리 안</text><text class="ts" x="10" y="152" text-anchor="start">genesis.bin = slot 0의 설정.</text><text class="ts" x="10" y="172" text-anchor="start">처음 계정과 규칙이 있다.</text></svg></div><figcaption>조각은 나무 모양으로 퍼진다(Turbine). 받은 노드가 다음 노드들에게 넘긴다.</figcaption></figure>
+          <ul>
+            <li><b>ledger</b>: slot마다의 블록과 트랜잭션 기록이다. 노드는 이것을 <b>blockstore</b>에 저장한다. blockstore는 RocksDB(키-값 데이터베이스)다.</li>
+            <li><b>shred</b>: leader는 블록을 작은 조각으로 잘라 보낸다. 조각 하나는 UDP 패킷 하나에 들어간다.</li>
+            <li>조각은 두 종류다: 데이터 shred와 복구용 shred(coding shred). 데이터 조각 일부를 잃어도 복구용 조각으로 다시 만든다(erasure coding).</li>
+            <li>조각은 나무 모양으로 퍼진다(<b>Turbine</b>). leader가 모든 노드에 직접 보내지 않는다. 받은 노드가 다음 노드들에게 넘긴다.</li>
+            <li><b>genesis</b>: slot 0의 설정이다. 처음 계정들과 규칙(예: epoch 길이)이 들어 있다. 파일 이름은 <code>genesis.bin</code>이다. genesis의 해시로 cluster를 구분한다.</li>
+          </ul>
+          <div class="warn"><b>자주 하는 오해</b>ledger와 계정 상태는 다르다. ledger는 "무슨 일이 있었나"(기록)다. 계정 상태는 "지금 얼마인가"(결과)다. 상태는 <a href="#accounts">accounts DB</a>에 따로 있다.</div>
+          <div class="mine"><b>내 Bitcoin 노드와 비교</b>bitcoind는 블록을 <code>blocks/blk*.dat</code> 파일에 쌓고, 블록의 위치를 LevelDB 인덱스에 둔다. Bitcoin의 genesis 블록은 프로그램 코드 안에 들어 있다. Solana는 genesis를 파일로 받는다.</div>
+          <p class="rel">연결: <a href="#snapshot">snapshot</a><a href="#accounts">account</a><a href="#slot">slot</a><a href="#datadir">데이터 디렉터리 (Bitcoin 탭)</a></p>
+        </article>
+
+        <article class="c" id="snapshot" data-added="2026-10-15" data-updated="2026-10-15" data-k="snapshot 스냅샷 full incremental 증분 상태 state tar zst 내려받기 시작 부트스트랩 assumeutxo ibd">
+          <div class="c-head"><h3>snapshot: full과 incremental</h3></div>
+          <p class="why"><b>왜 알아야 하나</b>새 노드는 처음 블록부터 모두 다시 실행하지 않는다. 다른 노드가 만든 상태의 사진(snapshot)에서 시작한다. snapshot에 무엇이 있고 무엇이 없는지 알아야 한다.</p>
+          <figure class="fig"><div class="sc"><svg viewBox="0 0 720 190" role="img" aria-label="slot 축 위에 genesis, full snapshot S, 그 뒤의 incremental snapshot 두 개가 있다. 새 노드는 S와 가장 새 incremental로 상태를 만들고 그 뒤 블록만 실행한다. S 이전의 블록 기록은 없다" style="min-width:600px;max-width:720px"><path class="ln" d="M30,70 H700" marker-end="url(#am)"/><text class="ts" x="700" y="58" text-anchor="end">slot</text><rect class="bx" x="30" y="60" width="20" height="20" rx="5"/><text class="ts mono" x="40" y="98" text-anchor="middle">genesis</text><rect class="hl" x="344" y="52" width="32" height="36" rx="5"/><text class="tb" x="360" y="76" text-anchor="middle">F</text><text class="ts" x="360" y="104" text-anchor="middle">full (slot S)</text><rect class="bx" x="458" y="56" width="24" height="28" rx="5"/><text class="tb" x="470" y="75" text-anchor="middle">I</text><rect class="bx" x="568" y="56" width="24" height="28" rx="5"/><text class="tb" x="580" y="75" text-anchor="middle">I</text><path class="la" d="M366,50 Q418,18 466,54" marker-end="url(#aa)"/><path class="la" d="M372,50 Q480,-4 576,54" marker-end="url(#aa)"/><text class="ts" x="525" y="104" text-anchor="middle">incremental: S 이후 바뀐 것만</text><text class="tb" x="650" y="98" text-anchor="middle">지금</text><rect class="wr" x="40" y="120" width="300" height="30" rx="5"/><text class="ts tw" x="190" y="140" text-anchor="middle">S 이전의 블록 기록: 이 노드에 없다</text><rect class="hl" x="344" y="120" width="306" height="30" rx="5"/><text class="ts ta" x="497" y="140" text-anchor="middle">S 이후: F와 I로 만들고, 이어서 블록을 실행</text><text class="ts" x="360" y="180" text-anchor="middle">새 노드 = full S + 같은 S 기준의 가장 새 incremental. 이 둘로 그 시점의 상태를 만든다.</text></svg></div><figcaption>snapshot은 상태의 사진이다. 기록(블록, 트랜잭션)은 들어 있지 않다.</figcaption></figure>
+          <ul>
+            <li><b>snapshot</b>: 어느 slot 시점의 계정 상태 전체를 묶은 파일이다. 상태만 있다. 그 이전의 블록과 트랜잭션 기록은 없다.</li>
+            <li><b>full snapshot</b>: 그 시점의 상태 전부다. 크다.</li>
+            <li><b>incremental snapshot</b>: 어느 full snapshot 뒤에 바뀐 계정만 담는다. 작다. 기준(base)이 되는 full snapshot이 있어야 쓸 수 있다.</li>
+            <li>새 노드는 full 하나와, 같은 base의 가장 새 incremental 하나를 내려받는다. 그 시점의 상태를 만들고, 그 뒤의 블록을 받아 실행해서 따라잡는다.</li>
+            <li>노드는 실행 중에도 자기 snapshot을 주기적으로 만든다. 다시 시작할 때 쓴다.</li>
+            <li>파일 이름에 slot 번호가 있다: <code>snapshot-&lt;slot&gt;-&lt;해시&gt;.tar.zst</code>, <code>incremental-snapshot-&lt;base slot&gt;-&lt;slot&gt;-&lt;해시&gt;.tar.zst</code>.</li>
+          </ul>
+          <div class="warn"><b>자주 하는 오해</b>snapshot은 노드 데이터 전체의 백업이 아니다. 상태만 있다. snapshot에서 시작한 노드는 그 이전 slot의 블록을 자기 디스크에 갖고 있지 않다.</div>
+          <div class="mine"><b>내 Bitcoin 노드와 비교</b>내 bitcoind는 IBD에서 genesis부터 모든 블록을 검증했다. Bitcoin Core에도 비슷한 방법(assumeutxo: UTXO 집합의 사진에서 시작)이 있다. 하지만 Bitcoin Core는 그 뒤에 처음부터 다시 검증하는 일을 뒤에서 한다. Solana 노드는 snapshot의 해시를 확인하고 그 시점부터 시작한다.</div>
+          <p class="rel">연결: <a href="#ledger">ledger</a><a href="#accounts">account</a><a href="#slot">slot</a><a href="#reindex">-reindex-chainstate (Bitcoin 탭)</a><a href="#fullnode">풀 노드 (Bitcoin 탭)</a></p>
+        </article>
+
+        <article class="c" id="accounts" data-added="2026-10-15" data-updated="2026-10-15" data-k="account 계정 accounts db accountsdb 인덱스 index lamports sol owner program 프로그램 data executable rent 상태">
+          <div class="c-head"><h3>account와 accounts DB</h3></div>
+          <p class="why"><b>왜 알아야 하나</b>Solana의 상태는 모두 계정(account)이다. 노드가 메모리를 많이 쓰는 큰 이유 하나가 계정의 수다.</p>
+          <figure class="fig"><div class="sc"><svg viewBox="0 0 720 220" role="img" aria-label="account는 주소, lamports, owner, data, executable을 가진다. 노드는 계정들을 디스크의 파일에 두고, 주소로 찾기 위한 인덱스를 메모리에 둔다" style="min-width:600px;max-width:720px"><rect class="hl" x="10" y="10" width="300" height="200" rx="5"/><text class="tb" x="160" y="32" text-anchor="middle">account 하나</text><rect class="bx" x="22" y="44" width="276" height="26" rx="5"/><text class="ts" x="30" y="62" text-anchor="start">주소: 공개키 32바이트 (base58)</text><rect class="bx" x="22" y="76" width="276" height="26" rx="5"/><text class="ts" x="30" y="94" text-anchor="start">lamports: 잔액 (1 SOL = 10⁹)</text><rect class="bx" x="22" y="108" width="276" height="26" rx="5"/><text class="ts" x="30" y="126" text-anchor="start">owner: 이 계정을 바꿀 수 있는 프로그램</text><rect class="bx" x="22" y="140" width="276" height="26" rx="5"/><text class="ts" x="30" y="158" text-anchor="start">data: 바이트 (형식은 프로그램이 정한다)</text><rect class="bx" x="22" y="172" width="276" height="26" rx="5"/><text class="ts" x="30" y="190" text-anchor="start">executable: 프로그램이면 true</text><rect class="wr" x="380" y="16" width="330" height="76" rx="5"/><text class="tb" x="545" y="38" text-anchor="middle">인덱스 (메모리)</text><text class="ts" x="545" y="58" text-anchor="middle">주소 → 어느 파일의 어디에 있나</text><text class="ts tw" x="545" y="78" text-anchor="middle">계정이 아주 많아서 메모리를 많이 쓴다</text><path class="ln" d="M312,54 H376" marker-end="url(#am)"/><text class="ts" x="344" y="46" text-anchor="middle">찾기</text><path class="la" d="M545,94 V118" marker-end="url(#aa)"/><rect class="bx" x="380" y="120" width="330" height="90" rx="5"/><text class="tb" x="545" y="142" text-anchor="middle">accounts DB (디스크의 파일들)</text><rect class="bg" x="396" y="154" width="66" height="40" rx="5"/><text class="ts" x="429" y="179" text-anchor="middle">파일</text><rect class="bg" x="474" y="154" width="66" height="40" rx="5"/><text class="ts" x="507" y="179" text-anchor="middle">파일</text><rect class="bg" x="552" y="154" width="66" height="40" rx="5"/><text class="ts" x="585" y="179" text-anchor="middle">파일</text><rect class="bg" x="630" y="154" width="66" height="40" rx="5"/><text class="ts" x="663" y="179" text-anchor="middle">파일</text></svg></div><figcaption>상태 = 모든 계정의 지금 값이다. snapshot은 이 계정들을 묶은 파일이다.</figcaption></figure>
+          <ul>
+            <li>계정 하나는 주소와 다섯 가지 값을 가진다: <code>lamports</code>(잔액), <code>owner</code>(이 계정을 바꿀 수 있는 프로그램), <code>data</code>(바이트), <code>executable</code>(프로그램인가), <code>rent_epoch</code>.</li>
+            <li>1 SOL = 1,000,000,000 lamports다.</li>
+            <li>프로그램(스마트 컨트랙트)도 계정이다. <code>executable</code>이 true다. 프로그램이 다루는 데이터는 다른 계정들에 따로 둔다.</li>
+            <li>owner인 프로그램만 그 계정의 data를 바꾸거나 lamports를 뺄 수 있다.</li>
+            <li>노드는 계정들을 <b>accounts DB</b>(디스크의 파일들)에 둔다. 주소로 빨리 찾기 위해 <b>인덱스</b>(주소 → 위치)를 메모리에 둔다. 계정이 아주 많아서 이 인덱스가 메모리를 많이 쓴다.</li>
+          </ul>
+          <div class="warn"><b>자주 하는 오해</b>"계정"은 "지갑 하나"가 아니다. 지갑 주소도 계정이다. 하지만 토큰 잔액, 프로그램, 프로그램의 데이터도 각각 계정이다.</div>
+          <div class="mine"><b>내 Bitcoin 노드와 비교</b>bitcoind의 상태는 UTXO 집합이다. chainstate(LevelDB)에 있고, dbcache가 그 메모리 캐시다. Solana의 상태는 계정 집합이다. 둘 다 "기록(블록)"과 "지금 상태"를 따로 둔다.</div>
+          <p class="rel">연결: <a href="#ledger">ledger</a><a href="#snapshot">snapshot</a><a href="#soltx">트랜잭션</a><a href="#dbcache">UTXO와 dbcache (Bitcoin 탭)</a><a href="#memory">메모리 (Bitcoin 탭)</a></p>
+        </article>
+
+        <article class="c" id="solrpc" data-added="2026-10-15" data-updated="2026-10-15" data-k="rpc json-rpc jsonrpc http post websocket ws pubsub subscribe 구독 getblock gettransaction getslot getbalance commitment processed confirmed finalized">
+          <div class="c-head"><h3>Solana RPC: HTTP와 WebSocket</h3></div>
+          <p class="why"><b>왜 알아야 하나</b>앱은 노드 안을 직접 보지 않는다. RPC로 묻는다. 묻는 방법은 두 가지(HTTP, WebSocket)다. 답이 얼마나 확정된 것인지(commitment)도 고를 수 있다.</p>
+          <figure class="fig"><div class="sc"><svg viewBox="0 0 720 232" role="img" aria-label="HTTP는 요청 하나에 답 하나다. WebSocket은 연결을 열어 두고 한 번 구독하면 노드가 바뀔 때마다 알림을 보낸다" style="min-width:600px;max-width:720px"><text class="tb" x="10" y="20" text-anchor="start">HTTP: 한 번 묻고 한 번 답한다</text><rect class="bx" x="10" y="32" width="100" height="56" rx="5"/><text class="tb" x="60" y="65" text-anchor="middle">앱</text><rect class="hl" x="610" y="32" width="100" height="56" rx="5"/><text class="tb" x="660" y="65" text-anchor="middle">RPC 노드</text><text class="ts mono ta" x="360" y="44" text-anchor="middle">POST {"method":"getSlot"}</text><path class="la" d="M112,52 H606" marker-end="url(#aa)"/><path class="ln" d="M606,72 H114" marker-end="url(#am)"/><text class="ts mono" x="360" y="88" text-anchor="middle">{"result": 지금 slot 번호}</text><text class="tb" x="10" y="124" text-anchor="start">WebSocket: 연결 하나를 열어 두고, 바뀔 때마다 받는다</text><rect class="bx" x="10" y="136" width="100" height="70" rx="5"/><text class="tb" x="60" y="176" text-anchor="middle">앱</text><rect class="hl" x="610" y="136" width="100" height="70" rx="5"/><text class="tb" x="660" y="176" text-anchor="middle">RPC 노드</text><text class="ts mono ta" x="360" y="146" text-anchor="middle">slotSubscribe (한 번)</text><path class="la" d="M112,154 H606" marker-end="url(#aa)"/><path class="ln" d="M606,170 H114" marker-end="url(#am)"/><path class="ln" d="M606,184 H114" marker-end="url(#am)"/><path class="ln" d="M606,198 H114" marker-end="url(#am)"/><text class="ts" x="360" y="224" text-anchor="middle">알림, 알림, 알림 … (slot이 바뀔 때마다 노드가 먼저 보낸다)</text></svg></div><figcaption>둘 다 JSON-RPC 2.0 형식의 메시지를 쓴다. 다른 것은 전달 방법이다.</figcaption></figure>
+          <ul>
+            <li>Solana RPC는 <b>JSON-RPC 2.0</b> 형식이다. 요청에 <code>method</code>와 <code>params</code>를 넣는다. 답은 <code>result</code>나 <code>error</code>로 온다.</li>
+            <li><b>HTTP</b>: POST 요청 하나에 답 하나다. 예: <code>getSlot</code>(지금 slot), <code>getBalance</code>(잔액), <code>getBlock</code>(slot 번호로 블록 하나), <code>getTransaction</code>(서명으로 트랜잭션 하나).</li>
+            <li><b>WebSocket</b>: 연결을 열어 두고 구독(subscribe)한다. 그 뒤 값이 바뀔 때마다 노드가 먼저 보낸다. 예: <code>slotSubscribe</code>, <code>accountSubscribe</code>, <code>signatureSubscribe</code>.</li>
+            <li><b>commitment</b>: 답의 확정 정도다. <code>processed</code>(이 노드가 처리함. 뒤집힐 수 있다) → <code>confirmed</code>(stake의 3분의 2 이상이 투표함) → <code>finalized</code>(그 위에 블록이 충분히 쌓여 되돌릴 수 없음).</li>
+          </ul>
+          <div class="warn"><b>자주 하는 오해</b>JSON-RPC의 "RPC"와 노드 종류의 "RPC 노드"는 같은 말에서 왔지만 다른 것이다. validator도 RPC 요청에 답할 수 있다. RPC 노드는 그 일을 주로 하는 노드다.</div>
+          <div class="mine"><b>내 Bitcoin 노드와 비교</b><code>bitcoin-cli getblockcount</code>도 JSON-RPC 요청이다. HTTP POST로 bitcoind에 묻는다. bitcoind의 RPC는 쿠키나 비밀번호로 인증한다. Bitcoin의 "확정"은 블록 위에 쌓인 블록 수(confirmations)로 센다.</div>
+          <details class="try"><summary>직접 확인 (공개 devnet에 묻기)</summary>
+<pre>curl -s https://api.devnet.solana.com -X POST -H 'Content-Type: application/json' \
+  -d '{"jsonrpc":"2.0","id":1,"method":"getSlot","params":[{"commitment":"finalized"}]}'
+<span class="cm"># commitment를 processed로 바꿔서 다시 묻는다. 숫자가 왜 다른지 생각해 본다</span></pre>
+          </details>
+          <p class="rel">연결: <a href="#soltx">트랜잭션</a><a href="#slot">slot</a><a href="#rpccookie">RPC와 쿠키 (Bitcoin 탭)</a><a href="#bindaddr">리슨 주소 (Bitcoin 탭)</a></p>
+        </article>
+      </div>
+    </section>
+
+    <section class="group" id="g-ops" data-name="리눅스 운영" data-track="sol">
+      <h2>리눅스 운영 <small>LINUX OPS</small></h2>
+      <p class="lead">서버 프로그램을 오래, 안전하게 실행하기 위한 리눅스 기본이다. 일부는 Bitcoin 탭의 카드와 이어진다.</p>
+      <div class="cards">
+
+        <article class="c" id="systemd" data-added="2026-10-15" data-updated="2026-10-15" data-k="systemd unit 유닛 service 서비스 systemctl journalctl execstart restart wantedby enable daemon-reload 부팅 자동 시작">
+          <div class="c-head"><h3>systemd unit: 프로그램을 서비스로</h3></div>
+          <p class="why"><b>왜 알아야 하나</b>서버 프로그램은 부팅할 때 시작하고, 죽으면 다시 시작해야 한다. 사람이 터미널에서 실행하면 이것을 보장할 수 없다. 리눅스에서는 systemd가 이 일을 한다.</p>
+          <ul>
+            <li>systemd는 부팅 때 처음 실행되는 프로세스(PID 1)다. 다른 프로그램을 시작하고 지켜본다.</li>
+            <li><b>unit 파일</b>은 "무엇을 어떻게 실행할지" 적은 설정 파일이다. 서비스는 <code>이름.service</code>다. 직접 만드는 파일은 보통 <code>/etc/systemd/system/</code>에 둔다.</li>
+            <li><code>[Unit]</code>: 설명, 시작 순서(<code>After=</code>). <code>[Service]</code>: 실행 명령(<code>ExecStart=</code>), 실행 사용자(<code>User=</code>), 다시 시작 규칙(<code>Restart=</code>), 자원 한도(<code>LimitNOFILE=</code> 등). <code>[Install]</code>: 부팅 때 켤지(<code>WantedBy=multi-user.target</code>).</li>
+            <li>unit 파일을 고친 뒤에는 <code>systemctl daemon-reload</code>로 다시 읽게 한다.</li>
+            <li>로그는 journald가 모은다. <code>journalctl -u 이름</code>으로 본다.</li>
+          </ul>
+          <div class="warn"><b>자주 하는 오해</b>systemd 서비스는 <code>/etc/security/limits.conf</code>를 읽지 않는다. 그 파일은 로그인한 사용자 세션에 쓰인다. 서비스의 한도는 unit 파일의 <code>Limit…=</code>로 정한다.</div>
+          <div class="mine"><b>내 환경과 비교</b>promet의 Docker도 보통 systemd 서비스다(<code>docker.service</code>). kind 클러스터는 그 위에서 돈다. 생각은 Kubernetes와 같다: "이 상태로 유지하라"를 적어 두면 관리자가 지킨다. 다른 점: systemd는 서버 한 대 안에서만 지킨다.</div>
+          <details class="try"><summary>직접 확인</summary>
+<pre>systemctl list-units --type=service | grep -i docker   <span class="cm"># 정확한 서비스 이름</span>
+systemctl status docker            <span class="cm"># 상태, PID, 최근 로그</span>
+systemctl cat docker               <span class="cm"># unit 파일 내용</span>
+journalctl -u docker --since today</pre>
+          </details>
+          <p class="rel">연결: <a href="#ulimit">ulimit</a><a href="#idempotent">멱등성</a><a href="#desired">desired state (Bitcoin 탭)</a><a href="#process">프로세스 (Bitcoin 탭)</a></p>
+        </article>
+
+        <article class="c" id="sysctl" data-added="2026-10-15" data-updated="2026-10-15" data-k="sysctl 커널 파라미터 kernel parameter /proc/sys sysctl.d ip_forward inotify 버퍼 네트워크 vm net fs">
+          <div class="c-head"><h3>커널 파라미터: sysctl</h3></div>
+          <p class="why"><b>왜 알아야 하나</b>커널에는 실행 중에 바꿀 수 있는 설정이 아주 많다. 기본값은 보통의 컴퓨터에 맞춰져 있다. 큰 서버 프로그램은 어떤 기본값이 작아서 문제를 겪을 수 있다.</p>
+          <ul>
+            <li>sysctl 값은 <code>/proc/sys/</code> 아래의 파일로 보인다. 이름의 점(.)은 경로의 /와 같다. <code>net.ipv4.ip_forward</code> = <code>/proc/sys/net/ipv4/ip_forward</code>.</li>
+            <li>이름의 앞부분이 영역이다: <code>net.</code> 네트워크, <code>vm.</code> 메모리, <code>fs.</code> 파일, <code>kernel.</code> 그 밖.</li>
+            <li><code>sysctl -w 이름=값</code>은 지금만 바꾼다. 재부팅하면 사라진다. 계속 쓰려면 <code>/etc/sysctl.d/</code>의 <code>.conf</code> 파일에 적고 <code>sysctl --system</code>으로 읽게 한다.</li>
+            <li><code>net.</code> 값의 많은 수는 network namespace마다 따로 있다(전부는 아니다). 그래서 Pod 안의 값과 호스트의 값이 다를 수 있다.</li>
+            <li>값을 바꾸기 전에 "왜 이 값인가"를 그 프로그램의 공식 문서에서 확인한다. 어디서 본 값을 이유 없이 붙이지 않는다.</li>
+          </ul>
+          <div class="mine"><b>내 환경과 비교</b>promet이 DNAT로 패킷을 Pod 쪽으로 넘기려면 <code>net.ipv4.ip_forward</code>가 1이어야 한다(Docker가 보통 켠다). kind 문서는 Pod가 많을 때 <code>fs.inotify.max_user_watches</code>와 <code>fs.inotify.max_user_instances</code>를 늘리라고 한다. 둘 다 "기본값이 작아서" 생기는 문제의 예다.</div>
+          <details class="try"><summary>직접 확인</summary>
+<pre>sysctl net.ipv4.ip_forward
+sysctl fs.inotify.max_user_watches fs.inotify.max_user_instances
+ls /etc/sysctl.d/                  <span class="cm"># 계속 쓰는 설정 파일들</span>
+kubectl -n bitcoin-lab exec bitcoin-node-0 -- cat /proc/sys/net/core/somaxconn   <span class="cm"># Pod 안의 값</span></pre>
+          </details>
+          <p class="rel">연결: <a href="#ulimit">ulimit</a><a href="#dnat">DNAT (Bitcoin 탭)</a><a href="#namespace">리눅스 namespace (Bitcoin 탭)</a><a href="#kind">kind (Bitcoin 탭)</a></p>
+        </article>
+
+        <article class="c" id="ulimit" data-added="2026-10-15" data-updated="2026-10-15" data-k="ulimit rlimit 리소스 제한 nofile open files 파일 디스크립터 fd too many open files limitnofile limits.conf memlock nproc soft hard /proc/pid/limits">
+          <div class="c-head"><h3>리소스 한도: ulimit과 LimitNOFILE</h3></div>
+          <p class="why"><b>왜 알아야 하나</b>프로그램이 "Too many open files" 오류로 멈출 수 있다. 메모리와 CPU가 남아 있어도 생긴다. 프로세스마다 "열 수 있는 개수"의 한도가 따로 있기 때문이다.</p>
+          <ul>
+            <li>리눅스는 프로세스마다 한도(rlimit)를 둔다. 예: 열린 파일 수(<code>nofile</code>), 프로세스 수(<code>nproc</code>), 잠근 메모리(<code>memlock</code>).</li>
+            <li>리눅스에서는 소켓(네트워크 연결)도 파일로 센다. 연결이 많은 서버는 nofile을 많이 쓴다.</li>
+            <li>한도는 두 개다. <b>soft</b>는 지금 적용되는 값이다. <b>hard</b>는 soft를 올릴 수 있는 최대값이다.</li>
+            <li>정하는 곳: 셸은 <code>ulimit</code>, 로그인 세션은 <code>/etc/security/limits.conf</code>, systemd 서비스는 unit 파일의 <code>LimitNOFILE=</code> 등. 컨테이너는 컨테이너 런타임이 정한다.</li>
+          </ul>
+          <div class="warn"><b>자주 하는 오해</b>ulimit과 cgroup은 다르다. cgroup은 프로세스 묶음 전체의 양(메모리 바이트, CPU 시간)을 제한한다. ulimit은 프로세스 하나가 가질 수 있는 개수를 제한한다.</div>
+          <div class="mine"><b>내 환경과 비교</b>bitcoind도 파일과 소켓을 많이 연다: 블록 파일, LevelDB 파일, 피어 연결. bitcoind는 시작할 때 이 한도를 확인한다. 한도가 작으면 연결 수(<code>-maxconnections</code>)를 스스로 줄이고 경고를 남긴다.</div>
+          <details class="try"><summary>직접 확인</summary>
+<pre>ulimit -n; ulimit -Hn                    <span class="cm"># 지금 셸의 soft, hard nofile</span>
+grep -i 'open files' /proc/$(pidof dockerd)/limits
+kubectl -n bitcoin-lab exec bitcoin-node-0 -- cat /proc/1/limits   <span class="cm"># 컨테이너의 첫 프로세스</span></pre>
+          </details>
+          <p class="rel">연결: <a href="#systemd">systemd unit</a><a href="#sysctl">sysctl</a><a href="#cgroup">cgroup (Bitcoin 탭)</a><a href="#process">프로세스 (Bitcoin 탭)</a></p>
+        </article>
+
+        <article class="c" id="idempotent" data-added="2026-10-15" data-updated="2026-10-15" data-k="멱등성 멱등 idempotent idempotency 다시 실행 재실행 스크립트 apply create mkdir -p 안전">
+          <div class="c-head"><h3>멱등성: 여러 번 실행해도 같은 결과</h3></div>
+          <p class="why"><b>왜 알아야 하나</b>설치·설정 스크립트는 중간에 실패하면 다시 실행한다. 두 번 실행해서 결과가 달라지면(중복된 줄, 오류, 두 번 시작) 문제가 커진다.</p>
+          <ul>
+            <li><b>멱등</b>(idempotent): 한 번 실행한 결과와 여러 번 실행한 결과가 같은 성질이다.</li>
+            <li>멱등이 아닌 예: <code>mkdir dir</code>(두 번째에 오류), <code>echo 줄 &gt;&gt; 파일</code>(줄이 두 번 들어간다), <code>kubectl create</code>(두 번째에 AlreadyExists 오류).</li>
+            <li>멱등인 예: <code>mkdir -p dir</code>, 파일 전체를 다시 쓰기(<code>&gt;</code>), <code>kubectl apply</code>, <code>systemctl enable</code>.</li>
+            <li>만드는 방법: "이것을 하라" 대신 "이 상태여야 한다"로 쓴다. 또는 바꾸기 전에 지금 상태를 확인한다.</li>
+          </ul>
+          <div class="warn"><b>자주 하는 오해</b>"오류 없이 끝났다"는 멱등이라는 뜻이 아니다. 오류 없이 같은 줄을 두 번 추가할 수 있다. 두 번 실행하고 결과를 비교해서 확인한다.</div>
+          <div class="mine"><b>내 환경과 비교</b>실습에서 쓰는 <code>kubectl apply -f</code>가 멱등이다. 같은 YAML을 열 번 적용해도 결과는 하나다. desired state 방식이기 때문이다.</div>
+          <details class="try"><summary>직접 확인</summary>
+<pre>f=$(mktemp)
+for i in 1 2; do echo 'a=1' &gt;&gt; "$f"; done; cat "$f"   <span class="cm"># 두 줄</span>
+for i in 1 2; do echo 'a=1' &gt; "$f"; done; cat "$f"    <span class="cm"># 한 줄</span>
+grep -qx 'a=1' "$f" || echo 'a=1' &gt;&gt; "$f"             <span class="cm"># 없을 때만 추가</span></pre>
+          </details>
+          <p class="rel">연결: <a href="#desired">desired state (Bitcoin 탭)</a><a href="#yaml">YAML (Bitcoin 탭)</a><a href="#systemd">systemd unit</a></p>
+        </article>
+      </div>
+    </section>
+
+    <!-- ===================== Bitcoin 노드랩 탭 ===================== -->
+
+
+    <section class="group" id="g-map" data-name="큰 그림" data-track="btc">
       <h2>큰 그림 <small>OVERVIEW</small></h2>
       <p class="lead">다른 모든 개념은 이 지도의 한 층이다. 헷갈리면 여기로 돌아온다.</p>
       <div class="cards">
@@ -353,7 +793,7 @@ kubectl get nodes -o wide</pre>
     </section>
 
     <!-- ===================== 1. Linux ===================== -->
-    <section class="group" id="g-linux" data-name="Linux">
+    <section class="group" id="g-linux" data-name="Linux" data-track="btc">
       <h2>Linux <small>LINUX</small></h2>
       <p class="lead">컨테이너와 Kubernetes는 리눅스 기능 위에 있다. 이 기본이 약하면 위층의 동작을 설명할 수 없다.</p>
       <div class="cards">
@@ -499,7 +939,7 @@ cat /sys/fs/cgroup/system.slice/docker-$id.scope/memory.events.local</pre>
     </section>
 
     <!-- ===================== 2. Containers ===================== -->
-    <section class="group" id="g-container" data-name="컨테이너">
+    <section class="group" id="g-container" data-name="컨테이너" data-track="btc">
       <h2>컨테이너 <small>CONTAINERS</small></h2>
       <p class="lead">컨테이너는 특별한 프로세스다. "격리"는 namespace가, "제한"은 cgroup이 한다.</p>
       <div class="cards">
@@ -669,7 +1109,7 @@ kubectl -n bitcoin-lab exec bitcoin-node-1 -- cat /sys/fs/cgroup/memory.events</
     </section>
 
     <!-- ===================== 3. Kubernetes ===================== -->
-    <section class="group" id="g-k8s" data-name="Kubernetes">
+    <section class="group" id="g-k8s" data-name="Kubernetes" data-track="btc">
       <h2>Kubernetes <small>KUBERNETES</small></h2>
       <p class="lead">Kubernetes는 "명령을 실행하는 도구"가 아니다. "원하는 상태를 적어 두면 계속 맞추는 시스템"이다.</p>
       <div class="cards">
@@ -1053,7 +1493,7 @@ kubectl -n bitcoin-lab get deploy -v=6   <span class="cm"># kubectl이 보내는
     </section>
 
     <!-- ===================== 4. Network ===================== -->
-    <section class="group" id="g-net" data-name="네트워크">
+    <section class="group" id="g-net" data-name="네트워크" data-track="btc">
       <h2>네트워크 <small>NETWORK</small></h2>
       <p class="lead">노드는 네트워크 프로그램이다. 피어 연결 수와 전송량은 성능 측정의 기본 값이다.</p>
       <div class="cards">
@@ -1304,7 +1744,7 @@ tailscale ip -4      <span class="cm"># 이 기기의 100.x 주소</span></pre>
     </section>
 
     <!-- ===================== 5. Storage ===================== -->
-    <section class="group" id="g-storage" data-name="저장장치">
+    <section class="group" id="g-storage" data-name="저장장치" data-track="btc">
       <h2>저장장치 <small>STORAGE</small></h2>
       <p class="lead">블록 검증의 병목은 보통 디스크다. 장치의 특성을 알아야 측정값을 설명할 수 있다.</p>
       <div class="cards">
@@ -1357,7 +1797,7 @@ kubectl -n bitcoin-lab exec bitcoin-node-1 -- cat /sys/fs/cgroup/io.stat</pre>
     </section>
 
     <!-- ===================== 6. Bitcoin Core ===================== -->
-    <section class="group" id="g-btc" data-name="Bitcoin Core">
+    <section class="group" id="g-btc" data-name="Bitcoin Core" data-track="btc">
       <h2>Bitcoin Core <small>BITCOIN CORE</small></h2>
       <p class="lead">내부 구조는 "Bitcoin Core 내부 동작 학습" 스레드에서 깊게 다룬다. 여기에는 운영할 때 바로 필요한 개념만 둔다.</p>
       <div class="cards">
@@ -1554,7 +1994,7 @@ kubectl -n bitcoin-lab exec bitcoin-node-1 -- \
     </section>
 
     <!-- ===================== 7. Performance ===================== -->
-    <section class="group" id="g-perf" data-name="성능 측정">
+    <section class="group" id="g-perf" data-name="성능 측정" data-track="btc">
       <h2>성능 측정 <small>PERFORMANCE</small></h2>
       <p class="lead">프로젝트의 최종 목표다. "빨라졌다"가 아니라 "왜, 얼마나 빨라졌다"를 말할 수 있어야 한다.</p>
       <div class="cards">
@@ -1632,7 +2072,7 @@ kubectl -n bitcoin-lab exec bitcoin-node-1 -- \
     </section>
 
     <footer style="color:var(--muted);font-size:13px;border-top:1px solid var(--line);padding-top:14px;">
-      nodelab 개념 노트 · 2026-10-12 시작, 같은 날 그림 추가 · 새 개념은 같은 페이지에 계속 추가한다. 읽음 표시는 이 브라우저에만 저장된다.
+      nodelab 개념 노트 · 2026-10-12 시작, 같은 날 그림 추가 · 새 개념은 같은 페이지에 계속 추가한다. 읽음 표시와 고른 탭은 이 브라우저에만 저장된다.
     </footer>
   </main>
 </div>
@@ -1640,21 +2080,37 @@ kubectl -n bitcoin-lab exec bitcoin-node-1 -- \
 <script>
 (function () {
   var KEY = 'nodelab-concepts-read-v1';
+  var TKEY = 'nodelab-concepts-tab-v1';
   var read = {};
   try { read = JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) { read = {}; }
   function save() { try { localStorage.setItem(KEY, JSON.stringify(read)); } catch (e) {} }
 
   var cards = Array.prototype.slice.call(document.querySelectorAll('article.c'));
   var groups = Array.prototype.slice.call(document.querySelectorAll('section.group'));
+  var parts = Array.prototype.slice.call(document.querySelectorAll('.intro [data-track]'));
+  var tabbar = document.getElementById('tabs');
+  var tabs = Array.prototype.slice.call(tabbar.querySelectorAll('[data-t]'));
   var toc = document.getElementById('toc');
-  var links = {}, stales = {}, boxes = {};
+  var q = document.getElementById('q');
+  var links = {}, stales = {}, boxes = {}, wraps = [];
 
+  function trackOf(el) { var t = el.closest('[data-track]'); return t ? t.getAttribute('data-track') : ''; }
   function added(c) { return c.getAttribute('data-added') || ''; }
   function upd(c) { return c.getAttribute('data-updated') || added(c); }
   function title(c) { return c.querySelector('h3').firstChild.textContent.trim(); }
   function short(d) { return d ? d.slice(5) : ''; }
-  var latest = cards.reduce(function (m, c) { return upd(c) > m ? upd(c) : m; }, '');
-  function kind(c) { return added(c) === latest ? 'new' : (upd(c) === latest ? 'upd' : ''); }
+
+  // NEW와 보충은 탭마다 따로 정한다. 기준은 그 탭에서 가장 새 날짜다.
+  var latest = {}, allNew = {};
+  cards.forEach(function (c) { var t = trackOf(c); if (!latest[t] || upd(c) > latest[t]) latest[t] = upd(c); });
+  Object.keys(latest).forEach(function (t) {
+    allNew[t] = cards.every(function (c) { return trackOf(c) !== t || added(c) === latest[t]; });
+  });
+  function kind(c) {
+    var t = trackOf(c), l = latest[t];
+    if (allNew[t]) return '';   // 탭을 처음 만든 날에는 모든 카드가 새것이다. 표시하지 않는다.
+    return added(c) === l ? 'new' : (upd(c) === l ? 'upd' : '');
+  }
 
   // 예전 형식(1)은 지금 버전을 읽은 것으로 본다.
   var migrated = false;
@@ -1665,6 +2121,7 @@ kubectl -n bitcoin-lab exec bitcoin-node-1 -- \
 
   groups.forEach(function (g) {
     var wrap = document.createElement('div');
+    wrap.setAttribute('data-track', trackOf(g));
     var h = document.createElement('h4'); h.textContent = g.getAttribute('data-name'); wrap.appendChild(h);
     var ul = document.createElement('ul');
     g.querySelectorAll('article.c').forEach(function (c) {
@@ -1678,7 +2135,7 @@ kubectl -n bitcoin-lab exec bitcoin-node-1 -- \
       li.appendChild(a); ul.appendChild(li);
       links[c.id] = a;
     });
-    wrap.appendChild(ul); toc.appendChild(wrap);
+    wrap.appendChild(ul); toc.appendChild(wrap); wraps.push(wrap);
   });
 
   cards.forEach(function (c) {
@@ -1711,56 +2168,138 @@ kubectl -n bitcoin-lab exec bitcoin-node-1 -- \
     });
     p.hidden = !list.length;
   }
-  var newOnes = cards.filter(function (c) { return kind(c) === 'new'; });
-  var updOnes = cards.filter(function (c) { return kind(c) === 'upd'; });
-  if (newOnes.length < cards.length) {
+
+  var cur = '', freshN = 0;
+  function inCur(c) { return trackOf(c) === cur; }
+
+  function renderFresh() {
+    var mine = cards.filter(inCur);
+    var newOnes = mine.filter(function (c) { return kind(c) === 'new'; });
+    var updOnes = mine.filter(function (c) { return kind(c) === 'upd'; });
     fillLine('fresh-new', newOnes); fillLine('fresh-upd', updOnes);
-    document.getElementById('fresh-date').textContent = latest;
-    document.getElementById('fresh').hidden = !(newOnes.length || updOnes.length);
+    document.getElementById('fresh-date').textContent = latest[cur] || '';
+    freshN = newOnes.length + updOnes.length;
   }
 
   function paint() {
-    var n = 0;
+    var mine = cards.filter(inCur), n = 0;
     cards.forEach(function (c) {
-      var r = isRead(c); if (r) n++;
+      var r = isRead(c);
       boxes[c.id].checked = r;
       links[c.id].classList.toggle('read', r);
       stales[c.id].hidden = !isStale(c);
     });
-    fillLine('fresh-stale', cards.filter(isStale));
-    document.getElementById('prog').textContent = '읽음 ' + n + ' / ' + cards.length;
-    document.getElementById('progbar').style.width = (cards.length ? n / cards.length * 100 : 0) + '%';
+    mine.forEach(function (c) { if (isRead(c)) n++; });
+    var st = mine.filter(isStale);
+    fillLine('fresh-stale', st);
+    document.getElementById('fresh').hidden = !(freshN || st.length);
+    document.getElementById('prog').textContent = '읽음 ' + n + ' / ' + mine.length;
+    document.getElementById('progbar').style.width = (mine.length ? n / mine.length * 100 : 0) + '%';
   }
-  paint();
 
-  var mode = 'all';
-  var q = document.getElementById('q');
+  var mode = 'all', otherT = '';
+  var segs = Array.prototype.slice.call(document.querySelectorAll('#view button'));
+  function setMode(m) {
+    mode = m;
+    segs.forEach(function (x) { x.setAttribute('aria-pressed', x.getAttribute('data-v') === m ? 'true' : 'false'); });
+  }
+  function tabName(t) {
+    var b = tabbar.querySelector('[data-t="' + t + '"]');
+    return b ? b.firstChild.textContent.trim() : t;
+  }
   function applyView() {
-    var s = q.value.trim().toLowerCase();
-    var shown = 0;
+    var s = q.value.trim().toLowerCase(), shown = 0, other = {};
     cards.forEach(function (c) {
       var hit = !s || (c.textContent + ' ' + (c.getAttribute('data-k') || '')).toLowerCase().indexOf(s) >= 0;
       if (mode === 'fresh') hit = hit && (!!kind(c) || isStale(c));
       if (mode === 'unread') hit = hit && !isRead(c);
+      if (hit && s && !inCur(c)) { var t = trackOf(c); other[t] = (other[t] || 0) + 1; }
+      hit = hit && inCur(c);
       c.hidden = !hit; links[c.id].parentNode.hidden = !hit;
       if (hit) shown++;
     });
-    groups.forEach(function (g) {
-      g.hidden = g.querySelectorAll('article.c:not([hidden])').length === 0;
-    });
+    groups.forEach(function (g) { g.hidden = g.querySelectorAll('article.c:not([hidden])').length === 0; });
+    wraps.forEach(function (w) { w.hidden = trackOf(w) !== cur || !w.querySelector('li:not([hidden])'); });
+    otherT = Object.keys(other)[0] || '';
     document.getElementById('empty').hidden = shown > 0;
+    document.getElementById('other').hidden = !otherT;
+    if (otherT) {
+      document.getElementById('other-n').textContent = other[otherT];
+      document.getElementById('other-name').textContent = tabName(otherT);
+    }
+    document.getElementById('msgs').hidden = shown > 0 && !otherT;
   }
+
+  function setTrack(t, keep) {
+    cur = t;
+    tabs.forEach(function (b) {
+      var on = b.getAttribute('data-t') === t;
+      b.setAttribute('aria-selected', on ? 'true' : 'false');
+      b.tabIndex = on ? 0 : -1;
+    });
+    parts.forEach(function (p) { p.hidden = p.getAttribute('data-track') !== t; });
+    var ph = q.getAttribute('data-ph-' + t); if (ph) q.placeholder = ph;
+    if (keep) { try { localStorage.setItem(TKEY, t); } catch (e) {} }
+    renderFresh(); paint(); applyView();
+  }
+
+  function hashTarget() {
+    var id = '';
+    try { id = decodeURIComponent(location.hash.slice(1)); } catch (e) { return null; }
+    var el = id ? document.getElementById(id) : null;
+    return el && trackOf(el) ? el : null;
+  }
+  function jump(el) {
+    try { el.scrollIntoView({ block: 'start', behavior: 'instant' }); } catch (e) { el.scrollIntoView(true); }
+  }
+
+  // 처음 열 탭: 주소의 #카드 → 이 브라우저에서 고른 탭 → 페이지의 기본 탭(data-default).
+  var known = tabs.map(function (b) { return b.getAttribute('data-t'); });
+  var start = '';
+  try { start = localStorage.getItem(TKEY) || ''; } catch (e) { start = ''; }
+  if (known.indexOf(start) < 0) start = tabbar.getAttribute('data-default') || known[0];
+  var target = hashTarget();
+  if (target) start = trackOf(target);
+  setTrack(start, false);
+  if (target) requestAnimationFrame(function () { jump(target); });
+
+  tabs.forEach(function (b) {
+    b.addEventListener('click', function () {
+      var t = b.getAttribute('data-t');
+      if (t === cur) return;
+      setTrack(t, true);
+      if (location.hash) { try { history.replaceState(null, '', location.pathname + location.search); } catch (e) {} }
+      if (window.scrollY > 0) { try { window.scrollTo({ top: 0, behavior: 'instant' }); } catch (e) { window.scrollTo(0, 0); } }
+    });
+    b.addEventListener('keydown', function (e) {
+      if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+      var i = tabs.indexOf(b) + (e.key === 'ArrowRight' ? 1 : -1);
+      var nb = tabs[(i + tabs.length) % tabs.length];
+      nb.focus(); nb.click(); e.preventDefault();
+    });
+  });
+
+  // 다른 탭의 카드로 가는 링크: 탭을 바꾸고, 걸러져 숨은 카드면 보기를 "전체"로 돌린 뒤 이동한다.
+  window.addEventListener('hashchange', function () {
+    var el = hashTarget();
+    if (!el) return;
+    var moved = false;
+    if (trackOf(el) !== cur) { setTrack(trackOf(el), false); moved = true; }
+    var g = el.closest('section.group');
+    if (el.hidden || (g && g.hidden)) { q.value = ''; setMode('all'); applyView(); moved = true; }
+    if (moved) jump(el);
+  });
+
+  document.getElementById('other-go').addEventListener('click', function () {
+    if (otherT) setTrack(otherT, true);
+  });
+
   q.addEventListener('input', function () {
     applyView();
     if (q.value.trim()) document.getElementById('nav').classList.remove('closed');
   });
-  var segs = Array.prototype.slice.call(document.querySelectorAll('#view button'));
   segs.forEach(function (bt) {
-    bt.addEventListener('click', function () {
-      mode = bt.getAttribute('data-v');
-      segs.forEach(function (x) { x.setAttribute('aria-pressed', x === bt ? 'true' : 'false'); });
-      applyView();
-    });
+    bt.addEventListener('click', function () { setMode(bt.getAttribute('data-v')); applyView(); });
   });
 
   document.getElementById('rand').addEventListener('click', function () {
