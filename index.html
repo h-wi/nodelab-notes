@@ -237,7 +237,7 @@ svg .mkw { fill: var(--warn); }
   <main>
     <header class="intro">
       <h1>nodelab 개념 노트</h1>
-      <p class="stamp" id="stamp">마지막 갱신 <b><time datetime="2026-10-15T11:11+09:00">2026-10-15 11:11</time></b> (한국 시간) · 매일 06:52에 학습 기록을 읽고 자동으로 갱신한다.</p>
+      <p class="stamp" id="stamp">마지막 갱신 <b><time datetime="2026-10-16T07:12+09:00">2026-10-16 07:12</time></b> (한국 시간) · 매일 06:52에 학습 기록을 읽고 자동으로 갱신한다.</p>
       <div data-track="sol">
         <p>Solana 노드를 이해하기 위한 기본 개념이다. 지금은 이 탭이 먼저 열린다. 서버 하드웨어의 단어부터 읽는다. 그다음 Solana의 기본 단어, 리눅스 운영 단어를 읽는다.</p>
         <p>카드는 같은 순서로 쓴다. 먼저 <b>왜 알아야 하는지</b> 쓴다. 그다음 핵심 내용, 그다음 <b>promet이나 내 Bitcoin 노드와 비교</b>한다. 카드는 뜻과 이유를 설명한다. 무엇을 고를지는 쓰지 않는다. 직접 생각할 거리는 <b>생각해 볼 질문</b>에 둔다.</p>
@@ -256,7 +256,7 @@ svg .mkw { fill: var(--warn); }
       </div>
       <div class="now" id="now-sol" data-track="sol">
         <h2>지금 학습 위치</h2>
-        <p>서버 하드웨어의 단어를 읽고 있다. 지금까지: <a href="#cputopo">소켓, 코어, 스레드</a>, <a href="#alu">코어와 ALU</a>, <a href="#smt">SMT</a>, <a href="#numa">NUMA</a>, <a href="#smtnuma">SMT와 NUMA의 층</a>, <a href="#nvme">NVMe</a>, <a href="#raid0">RAID0</a>. 다음: <a href="#nic">NIC와 드라이버</a>. 그다음은 Solana의 기본 단어다: <a href="#soloverview">cluster와 RPC 노드</a>, <a href="#slot">slot</a>, <a href="#soltx">트랜잭션</a>, <a href="#ledger">ledger</a>, <a href="#snapshot">snapshot</a>, <a href="#solrpc">RPC</a>.</p>
+        <p>하드웨어와 Solana 기본 단어를 읽었다. 지금: 서비스를 직접 설치하고 운영하는 단어다. <a href="#bashsafe">bash 스크립트</a>, <a href="#systemd">systemd unit</a>과 <a href="#sdeps">의존성</a>, <a href="#fstab">/etc/fstab</a>, <a href="#ports">포트 번호</a>, <a href="#keypair">keypair</a>, <a href="#svcuser">서비스 사용자</a>. 같이 볼 것: <a href="#statehist">상태와 기록</a>, <a href="#txmeta">transaction과 meta</a>, <a href="#rpclayers">RPC의 층</a>, <a href="#gossip">gossip과 ContactInfo</a>.</p>
       </div>
       <div class="now" id="now" data-track="btc">
         <h2>지금 학습 위치</h2>
@@ -267,10 +267,10 @@ svg .mkw { fill: var(--warn); }
         <div class="tbl"><table>
           <thead><tr><th>단계</th><th>먼저 읽을 개념</th></tr></thead>
           <tbody>
-            <tr><td><b>1. 서버 하드웨어 (지금)</b></td><td><a href="#cputopo">소켓, 코어, 스레드</a>, <a href="#alu">코어와 ALU</a>, <a href="#smt">SMT</a>, <a href="#numa">NUMA</a>, <a href="#smtnuma">SMT와 NUMA의 층</a>, <a href="#nvme">NVMe</a>, <a href="#raid0">RAID0</a>, <a href="#nic">NIC와 드라이버</a></td></tr>
-            <tr><td>2. Solana 기본</td><td><a href="#soloverview">전체 지도</a>, <a href="#slot">slot과 epoch</a>, <a href="#soltx">트랜잭션과 서명</a>, <a href="#ledger">ledger와 shred</a>, <a href="#snapshot">snapshot</a>, <a href="#accounts">account</a>, <a href="#solrpc">RPC</a></td></tr>
-            <tr><td>3. 리눅스 운영</td><td><a href="#systemd">systemd unit</a>, <a href="#sysctl">sysctl</a>, <a href="#ulimit">ulimit</a>, <a href="#idempotent">멱등성</a>, <a href="#bindaddr">리슨 주소</a>, <a href="#ipport">IP와 포트</a>, <a href="#nat">NAT</a></td></tr>
-            <tr><td>Bitcoin 탭에서 같이 볼 것</td><td><a href="#ssdhdd">SSD, HDD</a>, <a href="#iometrics">IOPS와 지연</a>, <a href="#memory">메모리와 페이지 캐시</a>, <a href="#cgroup">cgroup</a>, <a href="#rpccookie">RPC와 쿠키</a>, <a href="#fullnode">풀 노드</a></td></tr>
+            <tr><td>1. 서버 하드웨어</td><td><a href="#cputopo">소켓, 코어, 스레드</a>, <a href="#alu">코어와 ALU</a>, <a href="#smt">SMT</a>, <a href="#numa">NUMA</a>, <a href="#smtnuma">SMT와 NUMA의 층</a>, <a href="#nvme">NVMe</a>, <a href="#raid0">RAID0</a>, <a href="#nic">NIC와 드라이버</a></td></tr>
+            <tr><td>2. Solana 기본</td><td><a href="#soloverview">전체 지도</a>, <a href="#slot">slot과 epoch</a>, <a href="#soltx">트랜잭션과 서명</a>, <a href="#ledger">ledger와 shred</a>, <a href="#snapshot">snapshot</a>, <a href="#accounts">account</a>, <a href="#statehist">상태와 기록</a>, <a href="#solrpc">RPC</a>, <a href="#rpclayers">RPC의 층</a>, <a href="#txmeta">transaction과 meta</a>, <a href="#gossip">gossip</a>, <a href="#keypair">keypair</a></td></tr>
+            <tr><td><b>3. 리눅스 운영 (지금)</b></td><td><a href="#bashsafe">bash 스크립트</a>, <a href="#idempotent">멱등성</a>, <a href="#systemd">systemd unit</a>, <a href="#sdeps">systemd 의존성</a>, <a href="#fstab">/etc/fstab</a>, <a href="#svcuser">서비스 사용자</a>, <a href="#sysctl">sysctl</a>, <a href="#ulimit">ulimit</a>, <a href="#ports">포트 번호</a>, <a href="#bindaddr">리슨 주소</a>, <a href="#ipport">IP와 포트</a>, <a href="#nat">NAT</a></td></tr>
+            <tr><td>Bitcoin 탭에서 같이 볼 것</td><td><a href="#mount">마운트</a>, <a href="#process">프로세스와 권한</a>, <a href="#ssdhdd">SSD, HDD</a>, <a href="#iometrics">IOPS와 지연</a>, <a href="#memory">메모리와 페이지 캐시</a>, <a href="#cgroup">cgroup</a>, <a href="#rpccookie">RPC와 쿠키</a>, <a href="#prune">-prune</a>, <a href="#fullnode">풀 노드</a></td></tr>
           </tbody>
         </table></div>
         <p class="note" style="margin:8px 0 0;font-size:13px">리슨 주소, IP와 포트, NAT, 마지막 줄의 카드는 Bitcoin 탭에 있다. 누르면 그 탭으로 바뀐다.</p>
@@ -295,6 +295,7 @@ svg .mkw { fill: var(--warn); }
       <details class="log">
         <summary>업데이트 기록</summary>
         <ul class="upd" id="changelog">
+          <li><b>2026-10-16</b> Solana 탭에 새 카드 10개. Solana 기본: 상태와 기록, transaction과 meta, RPC의 층(TCP, HTTP, JSON-RPC, WebSocket), gossip과 ContactInfo, keypair. 리눅스 운영: /etc/fstab, systemd 의존성, bash 스크립트(set -euo pipefail), 포트 번호와 범위 표기, 서비스 사용자와 최소 권한. 보충: Solana RPC(구독 짝, 무거운 요청), slot, ledger(genesis 해시), 전체 지도(validator의 키 셋), RAID0(chunk), systemd unit(/usr/lib와 /etc, enable, Restart=), sysctl(버퍼, 매핑 수, nr_open, sysctl·rlimit·cgroup 비교), ulimit, 멱등성. Bitcoin 탭 보충: UTXO와 dbcache(정상 종료), kind(잠시 끄는 순서), 마운트.</li>
           <li><b>2026-10-15 (2)</b> Solana 탭 추가. 왼쪽 위(휴대폰은 맨 위)에서 탭을 고른다. 지금은 Solana 탭이 먼저 열린다. 고른 탭은 이 브라우저에 저장된다. 새 카드 19개. 하드웨어: 소켓·코어·스레드, 코어와 ALU, SMT, NUMA, SMT와 NUMA의 층, NVMe, RAID0, NIC와 드라이버. Solana 기본: 전체 지도, slot과 epoch, 트랜잭션과 서명, ledger와 shred, snapshot, account, RPC. 리눅스 운영: systemd, sysctl, ulimit, 멱등성. 진도, 읽음, NEW 표시는 탭마다 따로 센다.</li>
         <li><b>2026-10-15</b> 10-14 학습(실습 F 결과, inbound 열기 시작) 반영. 새 카드 6개: memory.events와 .local, 연결의 방향과 conntrack, 포트 포워딩 = DNAT, NodePort Service, 리버스 프록시와 DNAT, Tailscale. 실험 설계에 F 결과 그림 추가, cgroup 그림을 실행 2 값으로 다시 그림. 고침: kind 상자의 "가득 참 24,428,625번"은 하위 cgroup을 포함한 값이었다(상자 자신은 약 83%). 고침: 기본 포트 38333을 쓰는 이유는 DNS seed다(예전 설명의 "기본 포트 선호"는 옛 버전의 동작). 보충: refault, cgroup, USE(실무 4단계), dbcache(코드 경로), -reindex-chainstate, NAT(CGNAT), -listen(연결 종류, -externalip), RPC(P2P와 비교, root 오류), IP와 포트, 리슨 주소, desired state, Service, headless, kind, "노드"의 두 뜻.</li>
         <li><b>2026-10-14 (2)</b> 갱신 날짜, 카드마다 추가일과 보충일, NEW와 보충 표시, "새로 바뀐 것"과 "안 읽음" 보기를 추가. 읽은 카드가 나중에 보충되면 다시 "안 읽음"이 된다.</li>
@@ -440,7 +441,7 @@ ls /sys/block/nvme0n1/mq/               <span class="cm"># NVMe가 있으면: �
           <p class="rel">연결: <a href="#ssdhdd">SSD, HDD, SMR (Bitcoin 탭)</a><a href="#iometrics">IOPS와 지연 (Bitcoin 탭)</a><a href="#raid0">RAID0</a><a href="#numa">NUMA</a></p>
         </article>
 
-        <article class="c" id="raid0" data-added="2026-10-15" data-updated="2026-10-15" data-k="raid raid0 raid1 스트라이핑 striping 미러링 mirroring mdadm md0 mdstat 디스크 묶기 백업">
+        <article class="c" id="raid0" data-added="2026-10-15" data-updated="2026-10-16" data-k="raid raid0 raid1 스트라이핑 striping 미러링 mirroring mdadm md0 mdstat 디스크 묶기 백업 chunk 청크 stripe unit 라운드로빈 round robin">
           <div class="c-head"><h3>RAID0: 디스크 여러 개를 하나처럼</h3></div>
           <p class="why"><b>왜 알아야 하나</b>큰 서버는 디스크 여러 개를 묶어 하나처럼 쓴다. 묶는 방법에 따라 속도, 용량, 고장 때의 결과가 다르다. 디스크 하나가 고장 나면 무엇을 잃는지 미리 알아야 한다.</p>
           <figure class="fig"><div class="sc"><svg viewBox="0 0 720 230" role="img" aria-label="RAID0은 조각을 두 디스크에 번갈아 써서 하나가 고장 나면 모든 파일을 잃고, RAID1은 같은 내용을 두 디스크에 써서 하나가 고장 나도 남는다" style="min-width:600px;max-width:720px"><text class="tb" x="10" y="22" text-anchor="start">RAID0: 나눠서 번갈아 쓴다</text><rect class="hl" x="30" y="36" width="42" height="28" rx="5"/><text x="51" y="55" text-anchor="middle">1</text><rect class="hl" x="78" y="36" width="42" height="28" rx="5"/><text x="99" y="55" text-anchor="middle">2</text><rect class="hl" x="126" y="36" width="42" height="28" rx="5"/><text x="147" y="55" text-anchor="middle">3</text><rect class="hl" x="174" y="36" width="42" height="28" rx="5"/><text x="195" y="55" text-anchor="middle">4</text><rect class="hl" x="222" y="36" width="42" height="28" rx="5"/><text x="243" y="55" text-anchor="middle">5</text><rect class="hl" x="270" y="36" width="42" height="28" rx="5"/><text x="291" y="55" text-anchor="middle">6</text><path class="ln" d="M120,66 L100,100" marker-end="url(#am)"/><path class="ln" d="M220,66 L260,100" marker-end="url(#am)"/><rect class="bx" x="30" y="104" width="140" height="96" rx="5"/><text class="tb" x="100" y="124" text-anchor="middle">디스크 A</text><rect class="hl" x="40" y="136" width="36" height="28" rx="5"/><text x="58" y="155" text-anchor="middle">1</text><rect class="hl" x="85" y="136" width="36" height="28" rx="5"/><text x="103" y="155" text-anchor="middle">3</text><rect class="hl" x="130" y="136" width="36" height="28" rx="5"/><text x="148" y="155" text-anchor="middle">5</text><text class="ts" x="100" y="188" text-anchor="middle">파일마다 조각 절반</text><rect class="bx" x="190" y="104" width="140" height="96" rx="5"/><text class="tb" x="260" y="124" text-anchor="middle">디스크 B</text><rect class="hl" x="200" y="136" width="36" height="28" rx="5"/><text x="218" y="155" text-anchor="middle">2</text><rect class="hl" x="245" y="136" width="36" height="28" rx="5"/><text x="263" y="155" text-anchor="middle">4</text><rect class="hl" x="290" y="136" width="36" height="28" rx="5"/><text x="308" y="155" text-anchor="middle">6</text><text class="ts" x="260" y="188" text-anchor="middle">파일마다 조각 절반</text><text class="ts tw" x="180" y="220" text-anchor="middle">용량 = A + B · 디스크 하나 고장 = 전부 잃음</text><text class="tb" x="380" y="22" text-anchor="start">RAID1: 똑같이 두 번 쓴다</text><rect class="hl" x="470" y="36" width="42" height="28" rx="5"/><text x="491" y="55" text-anchor="middle">1</text><rect class="hl" x="518" y="36" width="42" height="28" rx="5"/><text x="539" y="55" text-anchor="middle">2</text><rect class="hl" x="566" y="36" width="42" height="28" rx="5"/><text x="587" y="55" text-anchor="middle">3</text><path class="ln" d="M490,66 L460,100" marker-end="url(#am)"/><path class="ln" d="M590,66 L620,100" marker-end="url(#am)"/><rect class="bx" x="390" y="104" width="140" height="96" rx="5"/><text class="tb" x="460" y="124" text-anchor="middle">디스크 A</text><rect class="hl" x="400" y="136" width="36" height="28" rx="5"/><text x="418" y="155" text-anchor="middle">1</text><rect class="hl" x="445" y="136" width="36" height="28" rx="5"/><text x="463" y="155" text-anchor="middle">2</text><rect class="hl" x="490" y="136" width="36" height="28" rx="5"/><text x="508" y="155" text-anchor="middle">3</text><text class="ts" x="460" y="188" text-anchor="middle">전부 들어 있음</text><rect class="bx" x="550" y="104" width="140" height="96" rx="5"/><text class="tb" x="620" y="124" text-anchor="middle">디스크 B</text><rect class="hl" x="560" y="136" width="36" height="28" rx="5"/><text x="578" y="155" text-anchor="middle">1</text><rect class="hl" x="605" y="136" width="36" height="28" rx="5"/><text x="623" y="155" text-anchor="middle">2</text><rect class="hl" x="650" y="136" width="36" height="28" rx="5"/><text x="668" y="155" text-anchor="middle">3</text><text class="ts" x="620" y="188" text-anchor="middle">전부 들어 있음</text><text class="ts ta" x="540" y="220" text-anchor="middle">용량 = 디스크 하나 몫 · 하나 고장 = 괜찮음</text></svg></div><figcaption>비유: RAID0은 책을 낱장으로 뜯어서 책장 두 개에 번갈아 꽂는 것이다. 두 사람이 동시에 꺼내므로 빠르다. 책장 하나가 불에 타면 모든 책이 반쪽이 된다.</figcaption></figure>
@@ -448,6 +449,8 @@ ls /sys/block/nvme0n1/mq/               <span class="cm"># NVMe가 있으면: �
             <li>디스크 한 개에는 한계가 셋 있다: 용량, 속도, 고장. RAID는 디스크 여러 개를 묶어서 OS에 디스크 하나처럼 보이게 한다. 묶는 방법마다 번호(레벨)가 있다.</li>
             <li><b>RAID0</b>(스트라이핑): 데이터를 조각으로 잘라 디스크에 번갈아 쓴다. 용량은 합쳐진다. 큰 읽기와 쓰기는 거의 디스크 수만큼 빨라진다.</li>
             <li>대가: 디스크 하나만 고장 나도 전체를 잃는다. 모든 파일의 조각이 모든 디스크에 흩어져 있기 때문이다. 디스크가 많을수록 고장 확률도 커진다.</li>
+            <li>자르는 단위를 <b>chunk</b>(stripe unit)라고 한다. 크기는 정할 수 있다(mdadm 기본 512KiB). 놓는 규칙은 고정이다: chunk 번호를 디스크 수로 나눈 나머지가 디스크 번호다(라운드로빈). 규칙이 계산이라서 "어느 조각이 어디 있나"를 적는 장부가 필요 없다.</li>
+            <li>chunk 크기의 효과: 큰 파일 하나를 읽을 때는 chunk가 작을수록 여러 디스크가 같이 일한다. 작은 요청이 많을 때는 요청 하나가 디스크 하나에서 끝나는 편이 낫다. chunk가 작으면 작은 요청도 chunk 경계에 걸려 디스크 둘로 나뉠 수 있다. 어느 쪽이 좋은지는 작업 형태가 정한다.</li>
             <li><b>RAID1</b>(미러링): 같은 데이터를 두 디스크에 똑같이 쓴다. 하나가 고장 나도 남는다. 용량은 절반이다.</li>
             <li>리눅스에서는 소프트웨어 RAID(<code>mdadm</code>)를 많이 쓴다. 묶은 장치는 <code>/dev/md0</code> 같은 이름이 된다.</li>
           </ul>
@@ -488,7 +491,7 @@ cat /sys/class/net/&lt;인터페이스&gt;/device/numa_node</pre>
       <p class="lead">Solana가 블록을 만들고, 저장하고, 질문에 답하는 방식이다. 내 Bitcoin 노드와 비교한다.</p>
       <div class="cards">
 
-        <article class="c" id="soloverview" data-added="2026-10-15" data-updated="2026-10-15" data-k="solana 솔라나 cluster 클러스터 mainnet-beta testnet devnet validator 검증자 leader 리더 rpc 노드 agave firedancer anza vote 투표 stake 지도">
+        <article class="c" id="soloverview" data-added="2026-10-15" data-updated="2026-10-16" data-k="solana 솔라나 cluster 클러스터 mainnet-beta testnet devnet validator 검증자 leader 리더 rpc 노드 agave firedancer anza vote 투표 stake 지도 identity vote account withdrawer 키">
           <div class="c-head"><h3>Solana 전체 지도: cluster, validator, RPC 노드</h3></div>
           <p class="why"><b>왜 알아야 하나</b>Solana의 단어는 Bitcoin과 겹치지만 뜻이 다르다. 누가 블록을 만들고, 누가 확인하고, 누가 사용자에게 답하는지 먼저 나눠야 한다.</p>
           <figure class="fig"><div class="sc"><svg viewBox="0 0 720 228" role="img" aria-label="사용자와 앱은 RPC 노드에 묻고, RPC 노드는 cluster에서 블록을 받는다. cluster 안에서는 이번 slot의 leader가 블록을 만들고 validator들이 투표한다" style="min-width:600px;max-width:720px"><rect class="bx" x="10" y="90" width="130" height="50" rx="5"/><text class="tb" x="75" y="112" text-anchor="middle">사용자 · 앱</text><text class="ts" x="75" y="130" text-anchor="middle">지갑, 탐색기</text><path class="la" d="M142,105 H186" marker-end="url(#aa)"/><text class="ts ta" x="164" y="98" text-anchor="middle">질문</text><path class="ln" d="M188,125 H144" marker-end="url(#am)"/><text class="ts" x="164" y="142" text-anchor="middle">답</text><rect class="hl" x="190" y="80" width="160" height="70" rx="5"/><text class="tb" x="270" y="104" text-anchor="middle">RPC 노드</text><text class="ts" x="270" y="122" text-anchor="middle">투표하지 않는다</text><text class="ts" x="270" y="140" text-anchor="middle">질문에 답한다</text><text class="ts" x="270" y="176" text-anchor="middle">validator와 같은 프로그램.</text><text class="ts" x="270" y="194" text-anchor="middle">역할만 다르다.</text><path class="ln" d="M428,115 H354" marker-end="url(#am)"/><text class="ts" x="390" y="106" text-anchor="middle">블록을 받는다</text><rect class="bg" x="430" y="10" width="280" height="210" rx="5"/><text class="tb" x="446" y="32" text-anchor="start">cluster (예: mainnet-beta)</text><rect class="wr" x="446" y="46" width="248" height="44" rx="5"/><text class="tb" x="570" y="66" text-anchor="middle">이번 slot의 leader</text><text class="ts" x="570" y="83" text-anchor="middle">블록을 만든다</text><rect class="bx" x="446" y="124" width="80" height="44" rx="5"/><text x="486" y="143" text-anchor="middle">validator</text><text class="ts" x="486" y="160" text-anchor="middle">투표한다</text><path class="ln" d="M570,92 L486,122" marker-end="url(#am)"/><rect class="bx" x="530" y="124" width="80" height="44" rx="5"/><text x="570" y="143" text-anchor="middle">validator</text><text class="ts" x="570" y="160" text-anchor="middle">투표한다</text><path class="ln" d="M570,92 L570,122" marker-end="url(#am)"/><rect class="bx" x="614" y="124" width="80" height="44" rx="5"/><text x="654" y="143" text-anchor="middle">validator</text><text class="ts" x="654" y="160" text-anchor="middle">투표한다</text><path class="ln" d="M570,92 L654,122" marker-end="url(#am)"/><text class="ts" x="570" y="196" text-anchor="middle">투표가 모이면 블록이 확정된다</text></svg></div><figcaption>leader는 돌아가며 맡는다. RPC 노드도 블록을 받아 검증하고 저장한다. 투표만 하지 않는다.</figcaption></figure>
@@ -498,13 +501,14 @@ cat /sys/class/net/&lt;인터페이스&gt;/device/numa_node</pre>
             <li><b>leader</b>: 정해진 시간 칸(slot)에 블록을 만드는 validator다. 순서는 미리 정해져 있다. 돌아가며 맡는다.</li>
             <li><b>RPC 노드</b>: 같은 프로그램으로 블록을 받아 검증하고 저장한다. 하지만 투표하지 않는다. 사용자와 앱의 질문에 답하는 것이 주된 일이다.</li>
             <li>노드 프로그램(client)은 여러 개 있다. 많이 쓰는 것은 Anza의 <b>Agave</b>다. Jump Crypto의 <b>Firedancer</b>도 있다.</li>
+            <li>validator는 키를 셋 쓴다: identity, vote account, withdrawer. 투표하지 않는 RPC 노드에는 vote account가 없다. 자세한 것은 <a href="#keypair">keypair</a> 카드에 있다.</li>
           </ul>
           <div class="warn"><b>자주 하는 오해</b>"RPC 노드"는 특별한 다른 프로그램이 아니다. validator와 같은 프로그램을 다른 역할로 실행한 것이다.</div>
           <div class="mine"><b>내 Bitcoin 노드와 비교</b>Bitcoin에는 정해진 leader가 없다. 채굴자가 작업증명(PoW)으로 경쟁해서 먼저 찾은 쪽이 블록을 만든다. 내 bitcoind는 블록을 검증하고 저장하지만 채굴하지 않는다. 이 점에서 Solana의 RPC 노드와 역할이 비슷하다. Signet은 시험용 네트워크라는 점에서 devnet, testnet과 비슷하다.</div>
           <p class="rel">연결: <a href="#slot">slot과 epoch</a><a href="#solrpc">Solana RPC</a><a href="#ledger">ledger</a><a href="#fullnode">풀 노드 (Bitcoin 탭)</a><a href="#signet">Signet (Bitcoin 탭)</a></p>
         </article>
 
-        <article class="c" id="slot" data-added="2026-10-15" data-updated="2026-10-15" data-k="slot 슬롯 block 블록 epoch 에포크 leader schedule 리더 순서 skipped 건너뛴 block height 블록 높이 400ms 432000">
+        <article class="c" id="slot" data-added="2026-10-15" data-updated="2026-10-16" data-k="slot 슬롯 block 블록 epoch 에포크 leader schedule 리더 순서 skipped 건너뛴 block height 블록 높이 400ms 432000 getslot getblockheight 빈 slot">
           <div class="c-head"><h3>slot, 블록 높이, epoch</h3></div>
           <p class="why"><b>왜 알아야 하나</b>Solana의 시간은 slot으로 센다. slot 번호와 블록 높이는 다른 숫자다. 둘을 섞으면 "이 slot에는 블록이 없다"는 응답을 오류로 잘못 읽는다.</p>
           <figure class="fig"><div class="sc"><svg viewBox="0 0 720 174" role="img" aria-label="slot 100부터 111까지 12칸. leader 한 명이 4칸씩 맡는다. slot 106은 건너뛰어서 블록이 없고, 그래서 블록 높이는 slot 번호보다 천천히 는다" style="min-width:600px;max-width:720px"><text class="ts" x="10" y="18" text-anchor="start">slot = 약 400ms의 시간 칸. 칸마다 정해진 leader가 한 명 있다.</text><text class="ts" x="123" y="42" text-anchor="middle">leader A (4칸 연속)</text><text class="ts" x="355" y="42" text-anchor="middle">leader B (4칸 연속)</text><text class="ts" x="587" y="42" text-anchor="middle">leader C (4칸 연속)</text><rect class="hl" x="10" y="50" width="52" height="40" rx="5"/><text class="mono" x="36" y="75" text-anchor="middle">100</text><text class="ts" x="36" y="110" text-anchor="middle">높이 50</text><rect class="hl" x="68" y="50" width="52" height="40" rx="5"/><text class="mono" x="94" y="75" text-anchor="middle">101</text><text class="ts" x="94" y="110" text-anchor="middle">높이 51</text><rect class="hl" x="126" y="50" width="52" height="40" rx="5"/><text class="mono" x="152" y="75" text-anchor="middle">102</text><text class="ts" x="152" y="110" text-anchor="middle">높이 52</text><rect class="hl" x="184" y="50" width="52" height="40" rx="5"/><text class="mono" x="210" y="75" text-anchor="middle">103</text><text class="ts" x="210" y="110" text-anchor="middle">높이 53</text><rect class="bx" x="242" y="50" width="52" height="40" rx="5"/><text class="mono" x="268" y="75" text-anchor="middle">104</text><text class="ts" x="268" y="110" text-anchor="middle">높이 54</text><rect class="bx" x="300" y="50" width="52" height="40" rx="5"/><text class="mono" x="326" y="75" text-anchor="middle">105</text><text class="ts" x="326" y="110" text-anchor="middle">높이 55</text><rect class="wr" x="358" y="50" width="52" height="40" rx="5"/><text class="mono tw" x="384" y="75" text-anchor="middle">106</text><text class="ts tw" x="384" y="110" text-anchor="middle">블록 없음</text><rect class="bx" x="416" y="50" width="52" height="40" rx="5"/><text class="mono" x="442" y="75" text-anchor="middle">107</text><text class="ts" x="442" y="110" text-anchor="middle">높이 56</text><rect class="hl" x="474" y="50" width="52" height="40" rx="5"/><text class="mono" x="500" y="75" text-anchor="middle">108</text><text class="ts" x="500" y="110" text-anchor="middle">높이 57</text><rect class="hl" x="532" y="50" width="52" height="40" rx="5"/><text class="mono" x="558" y="75" text-anchor="middle">109</text><text class="ts" x="558" y="110" text-anchor="middle">높이 58</text><rect class="hl" x="590" y="50" width="52" height="40" rx="5"/><text class="mono" x="616" y="75" text-anchor="middle">110</text><text class="ts" x="616" y="110" text-anchor="middle">높이 59</text><rect class="hl" x="648" y="50" width="52" height="40" rx="5"/><text class="mono" x="674" y="75" text-anchor="middle">111</text><text class="ts" x="674" y="110" text-anchor="middle">높이 60</text><text class="ts" x="10" y="142" text-anchor="start">위 숫자: slot 번호. 시간이 가면 늘 는다. 아래 숫자: 블록 높이. 블록이 있을 때만 는다.</text><text class="ts" x="10" y="164" text-anchor="start">epoch = slot 432,000개 (mainnet-beta, 약 2일 이상). epoch마다 leader 순서표를 정한다.</text></svg></div><figcaption>예시 숫자다. 실제 cluster에서는 slot 번호와 블록 높이의 차이가 훨씬 크다. 건너뛴 slot이 그동안 쌓였기 때문이다.</figcaption></figure>
@@ -514,6 +518,8 @@ cat /sys/class/net/&lt;인터페이스&gt;/device/numa_node</pre>
             <li>leader가 블록을 못 만들거나 그 블록이 받아들여지지 않으면 그 slot은 <b>건너뛴 slot</b>(skipped)이 된다. 그 slot에는 블록이 없다.</li>
             <li>그래서 slot 번호는 시간에 따라 늘고, <b>블록 높이</b>(block height)는 블록이 있을 때만 는다. 블록 높이는 slot 번호보다 작다.</li>
             <li><b>epoch</b>: slot 432,000개다(mainnet-beta 기준, 약 2일 이상). epoch마다 stake를 보고 leader 순서표(leader schedule)를 정한다.</li>
+            <li>Solana는 거의 모든 것을 slot 번호로 부른다. <code>getBlock</code>도 블록 높이가 아니라 slot 번호를 받는다. snapshot 파일 이름에도 slot이 들어간다. 빈 slot에는 블록이 없으므로 그 slot의 snapshot도 없다.</li>
+            <li><code>getSlot</code>은 지금의 slot 번호를 준다. <code>getBlockHeight</code>는 지금까지의 블록 수를 준다. 두 메서드가 따로 있는 이유가 이것이다.</li>
           </ul>
           <div class="mine"><b>내 Bitcoin 노드와 비교</b>Bitcoin은 블록 사이가 평균 10분이다. 정해진 시간 칸이 없다. 그래서 Bitcoin에는 "높이"만 있다. Solana에는 시간 칸(slot)과 높이가 따로 있다.</div>
           <details class="try"><summary>직접 확인 (공개 devnet에 묻기)</summary>
@@ -540,7 +546,7 @@ cat /sys/class/net/&lt;인터페이스&gt;/device/numa_node</pre>
           <p class="rel">연결: <a href="#accounts">account</a><a href="#slot">slot</a><a href="#solrpc">Solana RPC</a><a href="#dbcache">UTXO와 dbcache (Bitcoin 탭)</a></p>
         </article>
 
-        <article class="c" id="ledger" data-added="2026-10-15" data-updated="2026-10-15" data-k="ledger 원장 blockstore rocksdb shred 조각 turbine erasure 복구 genesis genesis.bin 제네시스 genesis hash 기록">
+        <article class="c" id="ledger" data-added="2026-10-15" data-updated="2026-10-16" data-k="ledger 원장 blockstore rocksdb shred 조각 turbine erasure 복구 genesis genesis.bin 제네시스 genesis hash 기록 getgenesishash 신분증 signet">
           <div class="c-head"><h3>ledger, blockstore, shred, genesis</h3></div>
           <p class="why"><b>왜 알아야 하나</b>노드의 디스크에는 "기록"과 "상태"가 따로 쌓인다. ledger는 기록 쪽이다. 둘을 구분해야 snapshot과 디스크 사용량을 이해할 수 있다.</p>
           <figure class="fig"><div class="sc"><svg viewBox="0 0 720 188" role="img" aria-label="leader는 블록을 데이터 shred와 복구용 shred로 잘라 UDP로 보낸다. 받는 노드는 잃은 조각을 복구용 조각으로 다시 만들고 blockstore에 저장한다" style="min-width:600px;max-width:720px"><rect class="bx" x="10" y="60" width="110" height="50" rx="5"/><text class="tb" x="65" y="82" text-anchor="middle">블록</text><text class="ts" x="65" y="100" text-anchor="middle">(leader가 만듦)</text><path class="ln" d="M122,85 H150" marker-end="url(#am)"/><text class="ts" x="216" y="60" text-anchor="middle">데이터 shred</text><text class="ts" x="355" y="60" text-anchor="middle">복구용 shred</text><rect class="hl" x="156" y="70" width="34" height="30" rx="5"/><text class="mono" x="173" y="90" text-anchor="middle">D1</text><rect class="hl" x="196" y="70" width="34" height="30" rx="5"/><text class="mono" x="213" y="90" text-anchor="middle">D2</text><rect class="hl" x="236" y="70" width="34" height="30" rx="5"/><text class="mono" x="253" y="90" text-anchor="middle">D3</text><rect class="hl" x="276" y="70" width="34" height="30" rx="5"/><text class="mono" x="293" y="90" text-anchor="middle">D4</text><rect class="wr" x="316" y="70" width="34" height="30" rx="5"/><text class="mono" x="333" y="90" text-anchor="middle">C1</text><rect class="wr" x="356" y="70" width="34" height="30" rx="5"/><text class="mono" x="373" y="90" text-anchor="middle">C2</text><path class="la" d="M394,85 H452" marker-end="url(#aa)"/><text class="ts mono" x="423" y="104" text-anchor="middle">UDP</text><rect class="bg" x="456" y="30" width="254" height="150" rx="5"/><text class="tb" x="472" y="50" text-anchor="start">받는 노드</text><rect class="hl" x="472" y="62" width="30" height="28" rx="5"/><text class="mono" x="487" y="81" text-anchor="middle">D1</text><rect class="bx" x="506" y="62" width="30" height="28" rx="5" stroke-dasharray="4 3"/><text class="tb tw" x="521" y="81" text-anchor="middle">✕</text><rect class="hl" x="540" y="62" width="30" height="28" rx="5"/><text class="mono" x="555" y="81" text-anchor="middle">D3</text><rect class="hl" x="574" y="62" width="30" height="28" rx="5"/><text class="mono" x="589" y="81" text-anchor="middle">D4</text><rect class="wr" x="608" y="62" width="30" height="28" rx="5"/><text class="mono" x="623" y="81" text-anchor="middle">C1</text><rect class="wr" x="642" y="62" width="30" height="28" rx="5"/><text class="mono" x="657" y="81" text-anchor="middle">C2</text><text class="ts ta" x="583" y="110" text-anchor="middle">D2를 잃어도 C로 다시 만든다</text><rect class="hl" x="472" y="124" width="222" height="44" rx="5"/><text class="tb" x="583" y="142" text-anchor="middle">blockstore (RocksDB)</text><text class="ts" x="583" y="160" text-anchor="middle">ledger 디렉터리 안</text><text class="ts" x="10" y="152" text-anchor="start">genesis.bin = slot 0의 설정.</text><text class="ts" x="10" y="172" text-anchor="start">처음 계정과 규칙이 있다.</text></svg></div><figcaption>조각은 나무 모양으로 퍼진다(Turbine). 받은 노드가 다음 노드들에게 넘긴다.</figcaption></figure>
@@ -550,9 +556,16 @@ cat /sys/class/net/&lt;인터페이스&gt;/device/numa_node</pre>
             <li>조각은 두 종류다: 데이터 shred와 복구용 shred(coding shred). 데이터 조각 일부를 잃어도 복구용 조각으로 다시 만든다(erasure coding).</li>
             <li>조각은 나무 모양으로 퍼진다(<b>Turbine</b>). leader가 모든 노드에 직접 보내지 않는다. 받은 노드가 다음 노드들에게 넘긴다.</li>
             <li><b>genesis</b>: slot 0의 설정이다. 처음 계정들과 규칙(예: epoch 길이)이 들어 있다. 파일 이름은 <code>genesis.bin</code>이다. genesis의 해시로 cluster를 구분한다.</li>
+            <li>genesis 해시가 다르면 다른 cluster다. 그래서 genesis 해시는 cluster의 신분증 번호와 같다. <code>getGenesisHash</code>로 물을 수 있다.</li>
           </ul>
           <div class="warn"><b>자주 하는 오해</b>ledger와 계정 상태는 다르다. ledger는 "무슨 일이 있었나"(기록)다. 계정 상태는 "지금 얼마인가"(결과)다. 상태는 <a href="#accounts">accounts DB</a>에 따로 있다.</div>
-          <div class="mine"><b>내 Bitcoin 노드와 비교</b>bitcoind는 블록을 <code>blocks/blk*.dat</code> 파일에 쌓고, 블록의 위치를 LevelDB 인덱스에 둔다. Bitcoin의 genesis 블록은 프로그램 코드 안에 들어 있다. Solana는 genesis를 파일로 받는다.</div>
+          <div class="mine"><b>내 Bitcoin 노드와 비교</b>bitcoind는 블록을 <code>blocks/blk*.dat</code> 파일에 쌓고, 블록의 위치를 LevelDB 인덱스에 둔다. Bitcoin의 genesis 블록은 프로그램 코드 안에 들어 있다. Solana는 genesis를 파일로 받는다. Signet도 mainnet과 genesis 블록이 다르다. 그래서 같은 bitcoind 프로그램이라도 두 네트워크의 블록은 섞이지 않는다.</div>
+          <details class="try"><summary>직접 확인 (공개 cluster에 묻기)</summary>
+<pre>for u in https://api.devnet.solana.com https://api.testnet.solana.com; do
+  curl -s $u -X POST -H 'Content-Type: application/json' \
+    -d '{"jsonrpc":"2.0","id":1,"method":"getGenesisHash"}'; echo
+done   <span class="cm"># cluster마다 genesis 해시가 다르다</span></pre>
+          </details>
           <p class="rel">연결: <a href="#snapshot">snapshot</a><a href="#accounts">account</a><a href="#slot">slot</a><a href="#datadir">데이터 디렉터리 (Bitcoin 탭)</a></p>
         </article>
 
@@ -589,7 +602,32 @@ cat /sys/class/net/&lt;인터페이스&gt;/device/numa_node</pre>
           <p class="rel">연결: <a href="#ledger">ledger</a><a href="#snapshot">snapshot</a><a href="#soltx">트랜잭션</a><a href="#dbcache">UTXO와 dbcache (Bitcoin 탭)</a><a href="#memory">메모리 (Bitcoin 탭)</a></p>
         </article>
 
-        <article class="c" id="solrpc" data-added="2026-10-15" data-updated="2026-10-15" data-k="rpc json-rpc jsonrpc http post websocket ws pubsub subscribe 구독 getblock gettransaction getslot getbalance commitment processed confirmed finalized">
+        <article class="c" id="statehist" data-added="2026-10-16" data-updated="2026-10-16" data-k="상태 기록 state history 역산 거꾸로 snapshot blockstore 과거 이력 repair 보관 pruned prune 잔고 요약 getfirstavailableblock">
+          <div class="c-head"><h3>상태와 기록: 지금에서 과거로 갈 수 없다</h3></div>
+          <p class="why"><b>왜 알아야 하나</b>노드에는 "지금 얼마인가"(상태)와 "무슨 일이 있었나"(기록)가 따로 있다. 하나로 다른 하나를 대신할 수 없다. 이것을 알아야 새 노드가 어떤 질문에 답하지 못하는지 안다.</p>
+          <figure class="fig"><div class="sc"><svg viewBox="0 0 720 208" role="img" aria-label="서로 다른 세 과거가 모두 잔고 100만 원이라는 같은 지금을 만든다. 지금 상태에서는 어느 과거였는지 알 수 없다. 상태는 accounts와 snapshot, 기록은 블록과 blockstore다" style="min-width:600px;max-width:720px"><text class="tb" x="10" y="22" text-anchor="start">여러 과거가 같은 지금을 만든다</text><rect class="bx" x="10" y="40" width="262" height="40" rx="5"/><text class="ts" x="141" y="65" text-anchor="middle">과거 1: 100만 원이 한 번 들어옴</text><path class="ln" d="M274,60 L318,91" marker-end="url(#am)"/><rect class="bx" x="10" y="92" width="262" height="40" rx="5"/><text class="ts" x="141" y="117" text-anchor="middle">과거 2: 200만 들어옴, 100만 나감</text><path class="ln" d="M274,112 L318,112" marker-end="url(#am)"/><rect class="bx" x="10" y="144" width="262" height="40" rx="5"/><text class="ts" x="141" y="169" text-anchor="middle">과거 3: 1만 원씩 100번 들어옴</text><path class="ln" d="M274,164 L318,133" marker-end="url(#am)"/><rect class="hl" x="322" y="88" width="120" height="48" rx="5"/><text class="tb" x="382" y="109" text-anchor="middle">지금 상태</text><text class="ts" x="382" y="127" text-anchor="middle">잔고 100만 원</text><text class="ts tw" x="382" y="160" text-anchor="middle">지금에서 과거로:</text><text class="ts tw" x="382" y="178" text-anchor="middle">어느 과거인지 모른다</text><rect class="bx" x="470" y="30" width="240" height="78" rx="5"/><text class="tb" x="486" y="54" text-anchor="start">상태: 지금 얼마인가</text><text class="ts" x="486" y="76" text-anchor="start">Solana: accounts</text><text class="ts" x="486" y="96" text-anchor="start">저장본: snapshot</text><rect class="bx" x="470" y="120" width="240" height="78" rx="5"/><text class="tb" x="486" y="144" text-anchor="start">기록: 무슨 일이 있었나</text><text class="ts" x="486" y="166" text-anchor="start">Solana: 블록과 트랜잭션</text><text class="ts" x="486" y="186" text-anchor="start">저장: blockstore</text></svg></div><figcaption>상태는 결과의 요약이다. 요약에서는 과정이 사라진다. 그래서 상태로 기록을 대신할 수 없다.</figcaption></figure>
+          <ul>
+            <li><b>상태</b>는 결과의 요약이다. Solana에서는 계정 집합(accounts)이다. <a href="#snapshot">snapshot</a>은 어느 slot의 상태를 파일로 저장한 것이다.</li>
+            <li><b>기록</b>은 과정이다. 블록과 트랜잭션이다. 노드는 이것을 blockstore에 쌓는다.</li>
+            <li>요약에서는 과정이 사라진다. 잔고가 100만 원인 통장을 생각한다. 그 잔고를 만든 과거는 여러 가지일 수 있다. 그래서 지금에서 과거를 거꾸로 계산할 수 없다. 해시를 거꾸로 풀 수 없는 것과 비슷하다.</li>
+            <li>새 노드는 snapshot에서 시작한다. 그래서 그 slot부터 앞으로 오는 블록만 자기 디스크에 쌓는다. 그 이전의 블록은 없다.</li>
+            <li>새 블록을 검증하는 데는 상태만 있으면 된다. 과거 블록은 필요 없다. 그래서 운영자는 기록을 얼마나 오래 둘지 고를 수 있다. 오래 둘수록 디스크를 많이 쓴다.</li>
+            <li>노드끼리 빠진 조각을 요청하는 기능이 있다(<b>repair</b>). 이것은 지금 따라잡는 데 필요한 최근 조각을 채운다. 오래된 기록을 통째로 받는 기능이 아니다.</li>
+          </ul>
+          <div class="warn"><b>자주 하는 오해</b>"그때의 snapshot이 있으면 그때 일을 안다"는 반만 맞다. 그때의 잔액(과거 상태)은 안다. 하지만 누가 누구에게 보냈는지(과거 기록)는 모른다. snapshot에는 거래 내역이 없다.</div>
+          <div class="mine"><b>내 Bitcoin 노드와 비교</b>bitcoind의 상태는 UTXO 집합(chainstate)이다. 기록은 <code>blocks/</code>의 블록 파일이다. <code>-prune</code>을 쓰면 오래된 블록 파일을 지운다. 그래도 UTXO 집합은 전부 남는다. 그래서 pruned 노드도 새 블록을 검증한다. 하지만 지운 블록을 묻는 <code>getblock</code>에는 답하지 못한다. Solana 노드가 기록을 얼마나 둘지 정하는 것도 같은 성격이다.</div>
+          <p class="ask"><b>생각해 볼 질문</b>Bitcoin의 pruned 노드와 snapshot에서 막 시작한 Solana 노드는 어떤 질문에 똑같이 답하지 못할까? 둘 다 답할 수 있는 질문은 무엇일까?</p>
+          <details class="try"><summary>직접 확인</summary>
+<pre>curl -s https://api.devnet.solana.com -X POST -H 'Content-Type: application/json' \
+  -d '{"jsonrpc":"2.0","id":1,"method":"getFirstAvailableBlock"}'
+<span class="cm"># 이 노드가 아직 가진 가장 오래된 블록의 slot. getSlot의 값과 비교한다</span>
+kubectl -n bitcoin-lab exec bitcoin-node-0 -- \
+  bitcoin-cli -signet -datadir=/home/bitcoin/.bitcoin getblockchaininfo | grep -E '"(pruned|blocks)"'</pre>
+          </details>
+          <p class="rel">연결: <a href="#snapshot">snapshot</a><a href="#ledger">ledger</a><a href="#accounts">account</a><a href="#txmeta">transaction과 meta</a><a href="#prune">-prune (Bitcoin 탭)</a><a href="#dbcache">UTXO와 dbcache (Bitcoin 탭)</a></p>
+        </article>
+
+        <article class="c" id="solrpc" data-added="2026-10-15" data-updated="2026-10-16" data-k="rpc json-rpc jsonrpc http post websocket ws pubsub subscribe 구독 getblock gettransaction getslot getbalance commitment processed confirmed finalized unsubscribe accountsubscribe programsubscribe signaturesubscribe logssubscribe slotsubscribe slotsupdatessubscribe gethealth getprogramaccounts 무거운 요청">
           <div class="c-head"><h3>Solana RPC: HTTP와 WebSocket</h3></div>
           <p class="why"><b>왜 알아야 하나</b>앱은 노드 안을 직접 보지 않는다. RPC로 묻는다. 묻는 방법은 두 가지(HTTP, WebSocket)다. 답이 얼마나 확정된 것인지(commitment)도 고를 수 있다.</p>
           <figure class="fig"><div class="sc"><svg viewBox="0 0 720 232" role="img" aria-label="HTTP는 요청 하나에 답 하나다. WebSocket은 연결을 열어 두고 한 번 구독하면 노드가 바뀔 때마다 알림을 보낸다" style="min-width:600px;max-width:720px"><text class="tb" x="10" y="20" text-anchor="start">HTTP: 한 번 묻고 한 번 답한다</text><rect class="bx" x="10" y="32" width="100" height="56" rx="5"/><text class="tb" x="60" y="65" text-anchor="middle">앱</text><rect class="hl" x="610" y="32" width="100" height="56" rx="5"/><text class="tb" x="660" y="65" text-anchor="middle">RPC 노드</text><text class="ts mono ta" x="360" y="44" text-anchor="middle">POST {"method":"getSlot"}</text><path class="la" d="M112,52 H606" marker-end="url(#aa)"/><path class="ln" d="M606,72 H114" marker-end="url(#am)"/><text class="ts mono" x="360" y="88" text-anchor="middle">{"result": 지금 slot 번호}</text><text class="tb" x="10" y="124" text-anchor="start">WebSocket: 연결 하나를 열어 두고, 바뀔 때마다 받는다</text><rect class="bx" x="10" y="136" width="100" height="70" rx="5"/><text class="tb" x="60" y="176" text-anchor="middle">앱</text><rect class="hl" x="610" y="136" width="100" height="70" rx="5"/><text class="tb" x="660" y="176" text-anchor="middle">RPC 노드</text><text class="ts mono ta" x="360" y="146" text-anchor="middle">slotSubscribe (한 번)</text><path class="la" d="M112,154 H606" marker-end="url(#aa)"/><path class="ln" d="M606,170 H114" marker-end="url(#am)"/><path class="ln" d="M606,184 H114" marker-end="url(#am)"/><path class="ln" d="M606,198 H114" marker-end="url(#am)"/><text class="ts" x="360" y="224" text-anchor="middle">알림, 알림, 알림 … (slot이 바뀔 때마다 노드가 먼저 보낸다)</text></svg></div><figcaption>둘 다 JSON-RPC 2.0 형식의 메시지를 쓴다. 다른 것은 전달 방법이다.</figcaption></figure>
@@ -598,6 +636,9 @@ cat /sys/class/net/&lt;인터페이스&gt;/device/numa_node</pre>
             <li><b>HTTP</b>: POST 요청 하나에 답 하나다. 예: <code>getSlot</code>(지금 slot), <code>getBalance</code>(잔액), <code>getBlock</code>(slot 번호로 블록 하나), <code>getTransaction</code>(서명으로 트랜잭션 하나).</li>
             <li><b>WebSocket</b>: 연결을 열어 두고 구독(subscribe)한다. 그 뒤 값이 바뀔 때마다 노드가 먼저 보낸다. 예: <code>slotSubscribe</code>, <code>accountSubscribe</code>, <code>signatureSubscribe</code>.</li>
             <li><b>commitment</b>: 답의 확정 정도다. <code>processed</code>(이 노드가 처리함. 뒤집힐 수 있다) → <code>confirmed</code>(stake의 3분의 2 이상이 투표함) → <code>finalized</code>(그 위에 블록이 충분히 쌓여 되돌릴 수 없음).</li>
+            <li>WebSocket 구독은 짝으로 쓴다. 예: <code>accountSubscribe</code>와 <code>accountUnsubscribe</code>. <code>programSubscribe</code>, <code>signatureSubscribe</code>, <code>logsSubscribe</code>, <code>slotSubscribe</code>, <code>slotsUpdatesSubscribe</code>에도 각각 Unsubscribe가 있다. 구독하면 번호를 받는다. 취소할 때 그 번호를 준다.</li>
+            <li>누가 구독하나: 지갑 앱은 내 계정을 구독해서 잔액을 바로 바꾼다. 거래소는 입금 트랜잭션의 서명을 구독해서 확정되는 순간 처리한다. 모니터링 도구는 slot을 구독해서 체인이 멈추지 않았는지 본다.</li>
+            <li>메서드마다 무게가 다르다. <code>getHealth</code>는 "정상인가"만 묻는다. <code>getProgramAccounts</code>는 한 프로그램이 가진 계정을 모두 뒤진다. 무거운 요청이 몰리면 노드가 새 블록을 따라가는 일도 느려질 수 있다. 그래서 RPC는 보통 아무에게나 열지 않는다.</li>
           </ul>
           <div class="warn"><b>자주 하는 오해</b>JSON-RPC의 "RPC"와 노드 종류의 "RPC 노드"는 같은 말에서 왔지만 다른 것이다. validator도 RPC 요청에 답할 수 있다. RPC 노드는 그 일을 주로 하는 노드다.</div>
           <div class="mine"><b>내 Bitcoin 노드와 비교</b><code>bitcoin-cli getblockcount</code>도 JSON-RPC 요청이다. HTTP POST로 bitcoind에 묻는다. bitcoind의 RPC는 쿠키나 비밀번호로 인증한다. Bitcoin의 "확정"은 블록 위에 쌓인 블록 수(confirmations)로 센다.</div>
@@ -606,7 +647,105 @@ cat /sys/class/net/&lt;인터페이스&gt;/device/numa_node</pre>
   -d '{"jsonrpc":"2.0","id":1,"method":"getSlot","params":[{"commitment":"finalized"}]}'
 <span class="cm"># commitment를 processed로 바꿔서 다시 묻는다. 숫자가 왜 다른지 생각해 본다</span></pre>
           </details>
-          <p class="rel">연결: <a href="#soltx">트랜잭션</a><a href="#slot">slot</a><a href="#rpccookie">RPC와 쿠키 (Bitcoin 탭)</a><a href="#bindaddr">리슨 주소 (Bitcoin 탭)</a></p>
+          <p class="rel">연결: <a href="#soltx">트랜잭션</a><a href="#slot">slot</a><a href="#rpccookie">RPC와 쿠키 (Bitcoin 탭)</a><a href="#bindaddr">리슨 주소 (Bitcoin 탭)</a><a href="#rpclayers">RPC의 층</a><a href="#txmeta">transaction과 meta</a></p>
+        </article>
+
+        <article class="c" id="rpclayers" data-added="2026-10-16" data-updated="2026-10-16" data-k="tcp http json json-rpc websocket 웹소켓 upgrade 101 switching protocols 층 레이어 grpc protobuf procedure 함수 메서드 method udp zmq">
+          <div class="c-head"><h3>RPC의 층: TCP, HTTP, JSON-RPC, WebSocket</h3></div>
+          <p class="why"><b>왜 알아야 하나</b>RPC 문서에는 TCP, HTTP, JSON-RPC, WebSocket이 함께 나온다. 이 말들은 서로 다른 층을 가리킨다. 층을 나눠야 "어느 포트가 무엇에 쓰이나"와 "왜 연결이 끊기나"를 읽을 수 있다.</p>
+          <figure class="fig"><div class="sc"><svg viewBox="0 0 720 216" role="img" aria-label="왼쪽: TCP 위에 HTTP와 WebSocket이 있고, 그 위에 JSON-RPC 양식이 있다. 오른쪽: 같은 TCP 연결에서 HTTP 요청으로 WebSocket으로 바꾼 뒤, 노드가 알림을 계속 보낸다" style="min-width:600px;max-width:720px"><text class="tb" x="10" y="22" text-anchor="start">층: 아래 층이 위 층을 나른다</text><rect class="hl" x="10" y="36" width="330" height="48" rx="5"/><text class="tb" x="175" y="57" text-anchor="middle">JSON-RPC (편지 양식)</text><text class="ts" x="175" y="75" text-anchor="middle">method, params, id를 JSON으로 쓴다</text><rect class="bx" x="10" y="94" width="160" height="56" rx="5"/><text class="tb" x="90" y="116" text-anchor="middle">HTTP</text><text class="ts" x="90" y="136" text-anchor="middle">요청 하나, 답 하나</text><rect class="bx" x="180" y="94" width="160" height="56" rx="5"/><text class="tb" x="260" y="116" text-anchor="middle">WebSocket</text><text class="ts" x="260" y="136" text-anchor="middle">열어 두고 양쪽이 말함</text><rect class="bg" x="10" y="160" width="330" height="44" rx="5"/><text class="tb" x="175" y="180" text-anchor="middle">TCP (도로와 트럭)</text><text class="ts" x="175" y="197" text-anchor="middle">빠짐없이, 순서대로 나른다. 포트를 쓴다</text><text class="tb" x="420" y="30" text-anchor="middle">클라이언트</text><text class="tb" x="650" y="30" text-anchor="middle">노드</text><path class="ln" d="M420,38 V208" stroke-dasharray="3 4"/><path class="ln" d="M650,38 V208" stroke-dasharray="3 4"/><path class="ln" d="M424,62 H646" marker-end="url(#am)"/><text class="ts" x="535" y="56" text-anchor="middle">1. TCP 연결</text><path class="ln" d="M424,94 H646" marker-end="url(#am)"/><text class="ts" x="535" y="88" text-anchor="middle">2. HTTP 요청: Upgrade: websocket</text><path class="ln" d="M646,126 H424" marker-end="url(#am)"/><text class="ts" x="535" y="120" text-anchor="middle">3. 101 Switching Protocols</text><path class="la" d="M424,158 H646" marker-end="url(#aa)"/><text class="ts" x="535" y="152" text-anchor="middle">4. 구독 요청 (JSON-RPC)</text><path class="la" d="M646,190 H424" marker-end="url(#aa)"/><text class="ts" x="535" y="184" text-anchor="middle">5. 알림, 알림, … (값이 바뀔 때마다)</text></svg></div><figcaption>양식(JSON-RPC)은 같고 배달 방식만 다르다. WebSocket은 HTTP로 시작해서 같은 TCP 연결을 계속 쓴다.</figcaption></figure>
+          <ul>
+            <li><b>TCP</b>: 도로와 트럭이다. 바이트를 빠짐없이, 순서대로 나른다. 포트 번호는 이 층에서 쓰인다.</li>
+            <li><b>HTTP</b>: 우체국 규칙이다. 요청 하나를 보내면 답 하나가 온다. 서버가 먼저 말을 걸 수 없다. 그래서 새 소식을 알려면 계속 다시 물어야 한다.</li>
+            <li><b>WebSocket</b>: 전화다. 처음에 HTTP 요청으로 "WebSocket으로 바꾸자(<code>Upgrade</code>)"고 한다. 서버가 <code>101</code>로 답하면 같은 TCP 연결을 계속 열어 둔다. 그 뒤로는 양쪽이 아무 때나 말한다. 그래서 HTTP와 WebSocket은 둘 다 TCP 포트를 쓴다.</li>
+            <li><b>JSON-RPC</b>: 편지 양식이다. <code>method</code>에 부를 함수 이름, <code>params</code>에 인자, <code>id</code>에 편지 번호를 쓴다. HTTP로 보내든 WebSocket으로 보내든 양식은 같다.</li>
+            <li>RPC의 P(procedure)는 함수다. 데몬은 식당이고, 메서드는 메뉴 하나다. 요청의 <code>"method":"getBalance"</code>는 노드 코드 안의 함수 하나로 이어진다. 그래서 "원격에서 함수를 부른다"는 말이 그대로 맞다.</li>
+            <li>JSON은 글자 형식이다. 언어와 관계없다. 그래서 Rust로 만든 노드와 JavaScript로 만든 지갑이 대화할 수 있다. gRPC는 다른 선택이다. 사람이 읽을 수 없는 이진 형식(protobuf)을 쓴다. 대신 작고 빠르다. 양쪽이 같은 설계도(<code>.proto</code> 파일)를 먼저 나눠 가져야 한다. gRPC는 Google이 만들었고, Go 전용이 아니다.</li>
+            <li>노드끼리의 통신(gossip, 블록 조각 전달, repair)은 주로 UDP다. 앱과 노드 사이의 RPC는 TCP다. 한 노드 프로그램 안에 둘이 섞여 있다.</li>
+          </ul>
+          <div class="warn"><b>자주 하는 오해</b>RPC와 WebSocket은 블록체인만의 기술이 아니다. 회사 안의 서비스끼리 gRPC로 대화한다. VS Code는 언어 서버와 JSON-RPC로 대화한다. 채팅, 실시간 시세, 게임 알림은 WebSocket을 쓴다. 노드는 이미 있는 기술을 가져다 쓴 것이다.</div>
+          <div class="mine"><b>내 Bitcoin 노드와 비교</b>bitcoind의 RPC도 HTTP 위의 JSON-RPC다. <code>bitcoin-cli</code>는 HTTP POST로 JSON을 보낸다. bitcoind에는 WebSocket이 없다. 새 블록을 바로 알고 싶으면 ZMQ 알림(<code>-zmqpubhashblock</code>)을 쓴다. "서버가 먼저 알린다"는 목적은 같다.</div>
+          <p class="ask"><b>생각해 볼 질문</b>새 블록이 생길 때마다 바로 알고 싶다. HTTP로 1초마다 묻는 방법과 WebSocket으로 구독하는 방법은 노드에게 각각 어떤 부담을 줄까?</p>
+          <details class="try"><summary>직접 확인 (층을 눈으로 보기)</summary>
+<pre>curl -sv https://api.devnet.solana.com -X POST -H 'Content-Type: application/json' \
+  -d '{"jsonrpc":"2.0","id":1,"method":"getHealth"}' 2&gt;&amp;1 | grep -E '^[&lt;&gt;] (POST|HTTP|[Cc]ontent-[Tt]ype)|jsonrpc'
+<span class="cm"># &gt; 줄은 HTTP 요청, &lt; 줄은 HTTP 응답, 마지막 줄은 JSON-RPC 본문</span></pre>
+          </details>
+          <p class="rel">연결: <a href="#solrpc">Solana RPC</a><a href="#gossip">gossip</a><a href="#ports">포트 번호</a><a href="#rpccookie">RPC와 쿠키 (Bitcoin 탭)</a><a href="#ipport">IP와 포트 (Bitcoin 탭)</a></p>
+        </article>
+
+        <article class="c" id="txmeta" data-added="2026-10-16" data-updated="2026-10-16" data-k="meta 메타 transaction getblock gettransaction 응답 fee 수수료 err 로그 logmessages innerinstructions prebalances postbalances 결정적 deterministic 영수증 주문서 compute unit 계산량 undo">
+          <div class="c-head"><h3>응답의 두 부분: transaction과 meta</h3></div>
+          <p class="why"><b>왜 알아야 하나</b>getBlock과 getTransaction의 응답은 두 부분으로 되어 있다. 한 부분은 사용자가 보낸 것이다. 다른 부분은 노드가 실행해서 만든 것이다. 두 응답이 다르면, 어느 부분이 왜 다른지 나눠서 봐야 한다.</p>
+          <figure class="fig"><div class="sc"><svg viewBox="0 0 720 216" role="img" aria-label="응답은 transaction과 meta 두 부분이다. 두 노드의 실행 결과는 같지만, 한 노드는 meta를 전부 저장하고 다른 노드는 일부만 저장한다" style="min-width:600px;max-width:720px"><rect class="bg" x="10" y="10" width="330" height="196" rx="5"/><text class="tb" x="26" y="32" text-anchor="start">응답 하나 = 두 부분</text><rect class="bx" x="26" y="46" width="298" height="58" rx="5"/><text class="tb" x="40" y="68" text-anchor="start">transaction: 사용자가 보낸 원본</text><text class="ts" x="40" y="91" text-anchor="start">서명, 계정 목록, 명령 (주문서)</text><rect class="hl" x="26" y="114" width="298" height="82" rx="5"/><text class="tb" x="40" y="136" text-anchor="start">meta: 노드가 실행한 결과</text><text class="ts" x="40" y="159" text-anchor="start">수수료, 성공 여부, 전후 잔액</text><text class="ts" x="40" y="181" text-anchor="start">로그, 내부 호출, 계산량 (영수증)</text><text class="tb" x="370" y="32" text-anchor="start">실행은 같고, 저장은 다를 수 있다</text><rect class="bx" x="370" y="46" width="165" height="160" rx="5"/><text class="tb" x="452" y="68" text-anchor="middle">A 노드</text><rect class="hl" x="384" y="80" width="137" height="30" rx="5"/><text class="ts" x="452" y="100" text-anchor="middle">실행 결과: 같다</text><text class="ts" x="452" y="132" text-anchor="middle">디스크에 남긴 것</text><rect class="hl" x="384" y="142" width="30" height="26" rx="5"/><rect class="hl" x="419" y="142" width="30" height="26" rx="5"/><rect class="hl" x="454" y="142" width="30" height="26" rx="5"/><rect class="hl" x="489" y="142" width="30" height="26" rx="5"/><text class="ts ta" x="452" y="192" text-anchor="middle">저장한 meta: 전부</text><rect class="bx" x="545" y="46" width="165" height="160" rx="5"/><text class="tb" x="627" y="68" text-anchor="middle">B 노드</text><rect class="hl" x="559" y="80" width="137" height="30" rx="5"/><text class="ts" x="627" y="100" text-anchor="middle">실행 결과: 같다</text><text class="ts" x="627" y="132" text-anchor="middle">디스크에 남긴 것</text><rect class="hl" x="559" y="142" width="30" height="26" rx="5"/><rect class="hl" x="594" y="142" width="30" height="26" rx="5"/><rect class="wr" x="629" y="142" width="30" height="26" rx="5" stroke-dasharray="4 3"/><rect class="wr" x="664" y="142" width="30" height="26" rx="5" stroke-dasharray="4 3"/><text class="ts tw" x="627" y="192" text-anchor="middle">저장한 meta: 일부</text></svg></div><figcaption>저장하지 않은 부분은 나중에 다시 만들 수 없다. 다시 만들려면 그때의 상태가 필요하다.</figcaption></figure>
+          <ul>
+            <li><code>getBlock(slot)</code>은 그 slot의 블록을 준다: blockhash, 부모 slot, 시간, 트랜잭션 목록. <code>getTransaction(서명)</code>은 트랜잭션 하나를 준다.</li>
+            <li><b>transaction</b>: 사용자가 보낸 원본이다. 서명, 계정 목록, 명령이 있다. 주문서와 같다.</li>
+            <li><b>meta</b>: 실행한 결과다. 영수증과 같다. 예: 수수료(<code>fee</code>), 성공 여부(<code>err</code>), 실행 전후 잔액(<code>preBalances</code>, <code>postBalances</code>), 로그(<code>logMessages</code>), 내부 호출(<code>innerInstructions</code>), 쓴 계산량(<code>computeUnitsConsumed</code>). 전체 목록은 Solana 공식 문서의 getTransaction 설명에 있다.</li>
+            <li>실행 결과는 모든 노드에서 같아야 한다. 모든 노드가 같은 상태에서 같은 트랜잭션을 같은 순서로 실행하기 때문이다. 결과가 다르면 노드끼리 합의가 깨진다.</li>
+            <li>노드마다 다를 수 있는 것은 저장이다. 노드는 실행하면서 meta를 만들고, 그다음 디스크에 저장한다. 무엇을 얼마나 오래 저장하는지는 노드마다 다를 수 있다. 저장하지 않은 것은 나중에 다시 만들 수 없다. 다시 만들려면 그때의 상태가 필요하기 때문이다.</li>
+          </ul>
+          <div class="warn"><b>자주 하는 오해</b>"CU"라는 이름이 두 곳에서 쓰인다. Solana의 compute unit은 트랜잭션이 실행에 쓴 계산량이다(meta에 있다). RPC 서비스 회사의 가격표에 나오는 CU는 요청 한 번의 요금 단위다. 둘은 관계가 없다.</div>
+          <div class="mine"><b>내 Bitcoin 노드와 비교</b>Bitcoin 트랜잭션에도 수수료 칸이 없다. 수수료는 입력의 합에서 출력의 합을 빼서 계산한다. 그래서 이전 출력의 값을 알아야 한다. bitcoind는 블록을 검증할 때 쓴 이전 출력을 undo 파일(<code>rev*.dat</code>)에 둔다. <code>getblock</code>의 verbosity 2는 이 파일로 트랜잭션마다 <code>fee</code>를 보여 준다. undo 파일이 없는 블록에서는 이 칸이 빠진다.</div>
+          <p class="ask"><b>생각해 볼 질문</b>모든 노드의 실행 결과가 같아야 하는 이유는 무엇일까? 두 노드의 실행 결과가 다르면, 다음 블록에서 무슨 일이 생길까?</p>
+          <details class="try"><summary>직접 확인 (공개 devnet에 묻기)</summary>
+<pre>U=https://api.devnet.solana.com; H='Content-Type: application/json'
+S=$(curl -s $U -X POST -H "$H" -d '{"jsonrpc":"2.0","id":1,"method":"getSlot","params":[{"commitment":"finalized"}]}' | jq .result)
+curl -s $U -X POST -H "$H" -d "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"getBlock\",\"params\":[$S,{\"maxSupportedTransactionVersion\":0}]}" \
+  | jq '.result.transactions[0] | {transaction: (.transaction | keys), meta: (.meta | keys)}'
+<span class="cm"># 빈 slot이면 오류가 온다. 그때는 S를 1 줄여서 다시 묻는다</span></pre>
+          </details>
+          <p class="rel">연결: <a href="#soltx">트랜잭션과 서명</a><a href="#statehist">상태와 기록</a><a href="#solrpc">Solana RPC</a><a href="#prune">-prune (Bitcoin 탭)</a></p>
+        </article>
+
+        <article class="c" id="gossip" data-added="2026-10-16" data-updated="2026-10-16" data-k="gossip 가십 contactinfo 명함 entrypoint 진입점 광고 advertise 도달 reachability getclusternodes tvu tpu repair pubsub identity 공개키 dns seed externalip addr">
+          <div class="c-head"><h3>gossip과 ContactInfo: 도달과 광고</h3></div>
+          <p class="why"><b>왜 알아야 하나</b>Solana 노드는 처음에 다른 노드의 주소를 모른다. gossip으로 서로의 "명함"을 주고받아서 찾는다. 명함에 무엇이 적히는지 알아야, 다른 노드가 내 노드의 어느 문으로 무엇을 보낼지 안다.</p>
+          <figure class="fig"><div class="sc"><svg viewBox="0 0 720 256" role="img" aria-label="왼쪽: 노드의 명함 ContactInfo에는 identity 공개키와 gossip, tvu, repair, tpu, rpc, pubsub 주소가 있다. 오른쪽: 문이 열렸는지와 명함에 적혔는지에 따라 네 가지 결과가 나온다" style="min-width:600px;max-width:720px"><rect class="bx" x="10" y="10" width="300" height="236" rx="5"/><rect class="hl" x="10" y="10" width="300" height="36" rx="5"/><text class="tb" x="160" y="34" text-anchor="middle">ContactInfo: 노드의 명함</text><text class="mono" x="26" y="70" text-anchor="start">identity</text><text class="ts" x="294" y="70" text-anchor="end">노드의 공개키</text><text class="mono" x="26" y="93" text-anchor="start">gossip</text><text class="ts" x="294" y="93" text-anchor="end">소식 주고받기</text><text class="mono" x="26" y="116" text-anchor="start">tvu</text><text class="ts" x="294" y="116" text-anchor="end">블록 조각 받기</text><text class="mono" x="26" y="139" text-anchor="start">repair</text><text class="ts" x="294" y="139" text-anchor="end">빠진 조각 요청</text><text class="mono" x="26" y="162" text-anchor="start">tpu</text><text class="ts" x="294" y="162" text-anchor="end">트랜잭션 받기</text><text class="mono" x="26" y="185" text-anchor="start">rpc</text><text class="ts" x="294" y="185" text-anchor="end">주소, 또는 없음</text><text class="mono" x="26" y="208" text-anchor="start">pubsub</text><text class="ts" x="294" y="208" text-anchor="end">WebSocket 주소, 또는 없음</text><text class="ts" x="160" y="236" text-anchor="middle">주소 = IP:포트. 다른 노드는 여기로만 보낸다.</text><text class="ts" x="505" y="30" text-anchor="middle">광고 (명함에 적힘)</text><text class="tb" x="440" y="52" text-anchor="middle">적힘</text><text class="tb" x="575" y="52" text-anchor="middle">안 적힘</text><rect class="bx" x="375" y="64" width="128" height="66" rx="5"/><text class="ts" x="439" y="93" text-anchor="middle">찾아와서</text><text class="ts" x="439" y="113" text-anchor="middle">들어온다</text><rect class="bx" x="510" y="64" width="128" height="66" rx="5"/><text class="ts" x="574" y="93" text-anchor="middle">주소를 아는 쪽만</text><text class="ts" x="574" y="113" text-anchor="middle">들어온다</text><rect class="wr" x="375" y="138" width="128" height="66" rx="5"/><text class="ts tw" x="439" y="167" text-anchor="middle">찾아오지만</text><text class="ts tw" x="439" y="187" text-anchor="middle">못 들어온다</text><rect class="bg" x="510" y="138" width="128" height="66" rx="5"/><text class="ts" x="574" y="167" text-anchor="middle">찾아오지 않고</text><text class="ts" x="574" y="187" text-anchor="middle">들어오지도 못한다</text><text class="tb" x="366" y="102" text-anchor="end">열림</text><text class="tb" x="366" y="176" text-anchor="end">닫힘</text><text class="ts" x="326" y="52" text-anchor="start">도달 (문)</text><text class="ts ta" x="645" y="228" text-anchor="end">둘은 따로 정해진다</text></svg></div><figcaption>도달은 리슨 주소와 방화벽이 정한다. 광고는 명함의 내용이 정한다. 하나를 바꿔도 다른 하나는 그대로다.</figcaption></figure>
+          <ul>
+            <li><b>gossip</b>: 노드끼리 소식을 퍼뜨리는 통신이다. 받은 소식을 다른 몇 노드에게 다시 전한다. 그래서 곧 모든 노드가 같은 소식을 안다. 주로 UDP를 쓴다.</li>
+            <li><b>entrypoint</b>: 처음 연결할 노드의 주소다. 새 노드는 entrypoint에 붙어서 다른 노드들의 명함을 받는다.</li>
+            <li><b>ContactInfo</b>: 노드의 명함이다. identity 공개키와 용도별 주소(IP:포트)가 있다. 예: gossip, 블록 조각 받기(TVU), 빠진 조각 요청(repair), 트랜잭션 받기(TPU), RPC, RPC의 WebSocket(pubsub). 쓰지 않는 용도는 비어 있다.</li>
+            <li>다른 노드는 명함에 적힌 주소로만 보낸다. 적히지 않은 포트로는 먼저 찾아오지 않는다.</li>
+            <li><b>도달</b>과 <b>광고</b>는 다른 질문이다. 도달은 "그 문까지 갈 수 있나"다. 리슨 주소와 방화벽이 정한다. 광고는 "명함에 그 문이 적혀 있나"다. 문을 닫아도 명함에 적힐 수 있다. 명함에 없어도 문이 열려 있을 수 있다.</li>
+          </ul>
+          <div class="mine"><b>내 Bitcoin 노드와 비교</b>bitcoind도 자기 주소를 다른 노드에게 알린다(<code>addr</code> 메시지). 처음 피어를 찾을 때는 DNS seed에 묻는다. 이것이 entrypoint와 비슷한 역할이다. inbound를 열 때 쓰는 <code>-externalip</code>는 "명함에 이 주소를 적어라"는 설정이다. 공유기의 포트 포워딩은 "문까지 오게 하라"는 설정이다. 외부 피어가 찾아와서 들어오려면 둘 다 필요하다.</div>
+          <p class="ask"><b>생각해 볼 질문</b>명함에 적힌 주소의 문이 실제로는 닫혀 있다. 다른 노드는 어떻게 될까? 반대로 문은 열려 있는데 명함에는 없다. 누가 그 문에 올 수 있을까?</p>
+          <details class="try"><summary>직접 확인 (공개 devnet에 묻기)</summary>
+<pre>curl -s https://api.devnet.solana.com -X POST -H 'Content-Type: application/json' \
+  -d '{"jsonrpc":"2.0","id":1,"method":"getClusterNodes"}' | jq '.result[0]'
+<span class="cm"># 노드 하나의 명함: pubkey, gossip, tpu, rpc 등. 비어 있는 칸은 null</span>
+curl -s https://api.devnet.solana.com -X POST -H 'Content-Type: application/json' \
+  -d '{"jsonrpc":"2.0","id":1,"method":"getClusterNodes"}' | jq '.result | length'
+<span class="cm"># 이 노드가 gossip으로 아는 노드 수</span></pre>
+          </details>
+          <p class="rel">연결: <a href="#soloverview">Solana 전체 지도</a><a href="#keypair">keypair</a><a href="#rpclayers">RPC의 층</a><a href="#bindaddr">리슨 주소 (Bitcoin 탭)</a><a href="#nat">NAT (Bitcoin 탭)</a><a href="#listen">-listen과 피어 (Bitcoin 탭)</a></p>
+        </article>
+
+        <article class="c" id="keypair" data-added="2026-10-16" data-updated="2026-10-16" data-k="keypair 키페어 공개키 비밀키 public key secret key identity vote account withdrawer seed phrase 시드 bip39 passphrase paper wallet cold wallet 콜드 vanity grind solana-keygen ed25519 base58 spl token 토큰">
+          <div class="c-head"><h3>keypair: 노드의 이름과 도장</h3></div>
+          <p class="why"><b>왜 알아야 하나</b>Solana 노드는 keypair 파일로 자기를 증명한다. 이 파일이 새면 다른 사람이 내 노드인 척할 수 있다. 어떤 키가 무엇에 쓰이는지 알아야 무엇을 지킬지 안다.</p>
+          <figure class="fig"><div class="sc"><svg viewBox="0 0 720 216" role="img" aria-label="seed phrase에서 비밀키가, 비밀키에서 공개키가 만들어진다. 거꾸로는 계산할 수 없다. validator의 키는 identity, vote account, withdrawer 셋이다" style="min-width:600px;max-width:720px"><rect class="bx" x="10" y="30" width="190" height="56" rx="5"/><text class="tb" x="105" y="53" text-anchor="middle">seed phrase</text><text class="ts" x="105" y="73" text-anchor="middle">단어 12개 또는 24개</text><path class="ln" d="M202,58 H246" marker-end="url(#am)"/><text class="ts" x="224" y="48" text-anchor="middle">만든다</text><rect class="hl" x="250" y="30" width="190" height="56" rx="5"/><text class="tb" x="345" y="53" text-anchor="middle">비밀키</text><text class="ts" x="345" y="73" text-anchor="middle">서명(도장)을 만든다</text><path class="ln" d="M442,58 H486" marker-end="url(#am)"/><text class="ts" x="464" y="48" text-anchor="middle">만든다</text><rect class="bx" x="490" y="30" width="220" height="56" rx="5"/><text class="tb" x="600" y="53" text-anchor="middle">공개키 (base58)</text><text class="ts" x="600" y="73" text-anchor="middle">이름, 주소. 서명을 확인</text><text class="ts tw" x="360" y="108" text-anchor="middle">화살표는 한 방향이다. 공개키에서 비밀키를 계산할 수 없다.</text><text class="ts" x="360" y="132" text-anchor="middle">keypair 파일(JSON) = 숫자 64개 = 비밀 쪽 32바이트 + 공개키 32바이트</text><rect class="hl" x="10" y="150" width="226" height="56" rx="5"/><text class="tb" x="123" y="173" text-anchor="middle">identity</text><text class="ts" x="123" y="193" text-anchor="middle">모든 노드: 네트워크의 내 이름</text><rect class="bx" x="247" y="150" width="226" height="56" rx="5"/><text class="tb" x="360" y="173" text-anchor="middle">vote account</text><text class="ts" x="360" y="193" text-anchor="middle">투표하는 validator만</text><rect class="bx" x="484" y="150" width="226" height="56" rx="5"/><text class="tb" x="597" y="173" text-anchor="middle">withdrawer</text><text class="ts" x="597" y="193" text-anchor="middle">투표 계정의 돈을 꺼내는 권한</text></svg></div><figcaption>키 파일 하나가 곧 비밀키다. 그래서 파일을 지키는 것이 키를 지키는 것이다.</figcaption></figure>
+          <ul>
+            <li>keypair = 비밀키 + 공개키다. 비밀키로 서명(도장)을 만든다. 누구나 공개키로 그 서명을 확인한다. 공개키에서 비밀키를 계산할 수는 없다. Solana는 Ed25519 방식을 쓴다.</li>
+            <li>공개키는 base58 글자로 쓴다. 이것이 노드나 지갑의 이름(주소)이다. SSH 키와 같은 생각이다: 공개키는 남에게 주고, 비밀키는 내가 지킨다.</li>
+            <li>keypair 파일은 JSON 숫자 64개다. 앞 32바이트는 비밀 쪽, 뒤 32바이트는 공개키다. 그래서 이 파일 하나가 곧 비밀키다. 소유자만 읽게(<code>600</code>) 둔다.</li>
+            <li><b>seed phrase</b>: 단어 12개 또는 24개다(BIP39 규칙). 이 단어들로 같은 keypair를 다시 만들 수 있다. 그래서 단어를 아는 사람은 키를 가진 것과 같다. <b>passphrase</b>를 더하면 단어와 passphrase가 모두 있어야 같은 키가 나온다.</li>
+            <li><b>paper wallet</b>: 키나 seed phrase를 종이에만 적어 둔다. 네트워크에 붙은 컴퓨터에 없으므로 해킹으로 훔칠 수 없다. 이렇게 오프라인에 두는 것을 <b>cold wallet</b>이라고 한다.</li>
+            <li><b>vanity</b> 공개키: 앞글자를 내가 고른 공개키다. 자동차 번호판에서 원하는 번호를 고르는 것과 같다. 공개키는 계산의 결과라서 직접 고를 수 없다. 그래서 keypair를 아주 많이 만들어 보고 맞는 것을 찾는다. 이 일을 <code>solana-keygen grind</code>가 한다. 고를 글자가 하나 늘 때마다 약 58배 오래 걸린다.</li>
+            <li>validator의 키는 셋이다. <b>identity</b>: 네트워크에서 이 노드가 누구인가(모든 노드). <b>vote account</b>: 투표를 기록하는 계정(투표하는 노드). <b>withdrawer</b>: vote account의 돈을 꺼내는 권한. 서버에 두지 않고 따로 보관한다. 투표하지 않는 노드에는 vote account가 없다.</li>
+          </ul>
+          <div class="warn"><b>자주 하는 오해</b>SPL Token은 키가 아니다. Solana 위에서 토큰을 만들고 옮기는 프로그램이다. "token"이라는 단어 때문에 로그인 토큰이나 인증 키로 읽으면 안 된다.</div>
+          <div class="mine"><b>내 Bitcoin 노드와 비교</b>bitcoind 노드 자체에는 identity 키가 없다. 피어는 IP 주소로 구분한다. 키는 지갑에만 있다. seed phrase의 규칙(BIP39)은 Bitcoin 개선 제안에서 나왔다. Bitcoin Core 지갑은 이 단어 방식을 쓰지 않지만, 다른 많은 지갑이 쓴다. vanity 주소(예: 1Love…로 시작)도 같은 방법으로 찾는다: 많이 만들어 보고 고른다.</div>
+          <p class="ask"><b>생각해 볼 질문</b>노드의 identity 키 파일이 남에게 새면 무엇을 잃을까? 돈이 든 지갑의 키가 샐 때와 무엇이 다를까?</p>
+          <details class="try"><summary>직접 확인 (Solana CLI가 있을 때, 시험용 키로)</summary>
+<pre>solana-keygen new --no-bip39-passphrase -o /tmp/test-key.json   <span class="cm"># 실제 돈에 쓰지 않는다</span>
+solana-keygen pubkey /tmp/test-key.json                        <span class="cm"># 공개키 (base58)</span>
+jq length /tmp/test-key.json                                   <span class="cm"># 64</span>
+ls -l /tmp/test-key.json                                       <span class="cm"># 소유자와 권한</span>
+rm /tmp/test-key.json</pre>
+          </details>
+          <p class="rel">연결: <a href="#soloverview">Solana 전체 지도</a><a href="#soltx">트랜잭션과 서명</a><a href="#svcuser">서비스 사용자</a><a href="#gossip">gossip</a><a href="#rpccookie">RPC와 쿠키 (Bitcoin 탭)</a></p>
         </article>
       </div>
     </section>
@@ -616,67 +755,34 @@ cat /sys/class/net/&lt;인터페이스&gt;/device/numa_node</pre>
       <p class="lead">서버 프로그램을 오래, 안전하게 실행하기 위한 리눅스 기본이다. 일부는 Bitcoin 탭의 카드와 이어진다.</p>
       <div class="cards">
 
-        <article class="c" id="systemd" data-added="2026-10-15" data-updated="2026-10-15" data-k="systemd unit 유닛 service 서비스 systemctl journalctl execstart restart wantedby enable daemon-reload 부팅 자동 시작">
-          <div class="c-head"><h3>systemd unit: 프로그램을 서비스로</h3></div>
-          <p class="why"><b>왜 알아야 하나</b>서버 프로그램은 부팅할 때 시작하고, 죽으면 다시 시작해야 한다. 사람이 터미널에서 실행하면 이것을 보장할 수 없다. 리눅스에서는 systemd가 이 일을 한다.</p>
+        <article class="c" id="bashsafe" data-added="2026-10-16" data-updated="2026-10-16" data-k="bash 셸 스크립트 shell script 종료 코드 exit code $? set -e set -u set -x pipefail 파이프 변수 따옴표 quoting if test [ -f ] shebang --help default 기본값">
+          <div class="c-head"><h3>bash 스크립트: 종료 코드와 set -euo pipefail</h3></div>
+          <p class="why"><b>왜 알아야 하나</b>bash는 기본으로 명령이 실패해도 다음 줄을 계속 실행한다. 설치 스크립트가 중간에 실패한 것을 모르고 끝까지 가면, 반쯤 바뀐 서버가 남는다. 실패를 어떻게 알아채는지 알아야 안전한 스크립트를 쓸 수 있다.</p>
+          <figure class="fig"><div class="sc"><svg viewBox="0 0 720 210" role="img" aria-label="false | true 파이프의 결과: pipefail이 없으면 마지막 명령 true의 0을 써서 성공으로 보고, pipefail이 있으면 false의 실패를 써서 실패로 본다" style="min-width:600px;max-width:720px"><rect class="bg" x="10" y="10" width="340" height="190" rx="5"/><text class="tb" x="26" y="32" text-anchor="start">pipefail 없음 (bash 기본)</text><rect class="wr" x="26" y="46" width="130" height="46" rx="5"/><text class="mono" x="91" y="66" text-anchor="middle">false</text><text class="ts" x="91" y="84" text-anchor="middle">종료 코드 1</text><text class="tb" x="180" y="74" text-anchor="middle">|</text><rect class="bx" x="204" y="46" width="130" height="46" rx="5"/><text class="mono" x="269" y="66" text-anchor="middle">true</text><text class="ts" x="269" y="84" text-anchor="middle">종료 코드 0</text><path class="ln" d="M180,96 V118" marker-end="url(#am)"/><rect class="wr" x="26" y="122" width="308" height="40" rx="5"/><text class="tb" x="180" y="147" text-anchor="middle">파이프 전체: 0 → 성공으로 본다</text><text class="ts tw" x="180" y="186" text-anchor="middle">마지막 명령만 본다</text><rect class="bg" x="370" y="10" width="340" height="190" rx="5"/><text class="mono" x="386" y="32" text-anchor="start">set -o pipefail</text><rect class="wr" x="386" y="46" width="130" height="46" rx="5"/><text class="mono" x="451" y="66" text-anchor="middle">false</text><text class="ts" x="451" y="84" text-anchor="middle">종료 코드 1</text><text class="tb" x="540" y="74" text-anchor="middle">|</text><rect class="bx" x="564" y="46" width="130" height="46" rx="5"/><text class="mono" x="629" y="66" text-anchor="middle">true</text><text class="ts" x="629" y="84" text-anchor="middle">종료 코드 0</text><path class="ln" d="M540,96 V118" marker-end="url(#am)"/><rect class="hl" x="386" y="122" width="308" height="40" rx="5"/><text class="tb" x="540" y="147" text-anchor="middle">파이프 전체: 1 → 실패로 본다</text><text class="ts ta" x="540" y="186" text-anchor="middle">하나라도 실패하면 실패</text></svg></div><figcaption>실제 예: curl 주소 | sha256sum. 내려받기가 실패해도 sha256sum은 빈 입력의 해시를 내고 성공한다. pipefail이 없으면 전체가 성공으로 보인다.</figcaption></figure>
           <ul>
-            <li>systemd는 부팅 때 처음 실행되는 프로세스(PID 1)다. 다른 프로그램을 시작하고 지켜본다.</li>
-            <li><b>unit 파일</b>은 "무엇을 어떻게 실행할지" 적은 설정 파일이다. 서비스는 <code>이름.service</code>다. 직접 만드는 파일은 보통 <code>/etc/systemd/system/</code>에 둔다.</li>
-            <li><code>[Unit]</code>: 설명, 시작 순서(<code>After=</code>). <code>[Service]</code>: 실행 명령(<code>ExecStart=</code>), 실행 사용자(<code>User=</code>), 다시 시작 규칙(<code>Restart=</code>), 자원 한도(<code>LimitNOFILE=</code> 등). <code>[Install]</code>: 부팅 때 켤지(<code>WantedBy=multi-user.target</code>).</li>
-            <li>unit 파일을 고친 뒤에는 <code>systemctl daemon-reload</code>로 다시 읽게 한다.</li>
-            <li>로그는 journald가 모은다. <code>journalctl -u 이름</code>으로 본다.</li>
+            <li>모든 명령은 끝날 때 <b>종료 코드</b>(exit code)를 남긴다. 0은 성공이다. 0이 아니면 실패다. 바로 앞 명령의 코드는 <code>$?</code>에 있다.</li>
+            <li><code>set -e</code>: 명령이 실패하면 스크립트를 멈춘다. 단, <code>if</code>의 조건 안과 <code>&amp;&amp;</code>, <code>||</code> 앞의 명령은 예외다. 그 자리는 실패를 직접 다루는 자리이기 때문이다.</li>
+            <li><code>set -u</code>: 정하지 않은 변수를 쓰면 오류로 멈춘다. 변수 이름의 오타를 잡는다. 오타 난 변수는 빈 값이 된다. 경로에 쓰면 엉뚱한 곳(예: <code>/</code>)을 가리킬 수 있다.</li>
+            <li><code>set -o pipefail</code>: 파이프(<code>a | b</code>)의 결과를 정한다. bash는 기본으로 마지막 명령의 코드만 본다. 그래서 a가 실패해도 성공으로 본다. pipefail을 켜면 하나라도 실패하면 실패다.</li>
+            <li><code>set -x</code>: 실행하는 줄을 찍는다. 디버깅에 좋다. 대신 변수에 담은 비밀값도 그대로 찍힌다.</li>
+            <li>변수: <code>NAME=값</code>(= 양쪽에 공백이 없다). 쓸 때는 <code>"$NAME"</code>처럼 따옴표로 감싼다. 따옴표가 없으면 값의 공백에서 단어가 나뉘고, 빈 값은 사라진다. 바꾸지 않을 값은 대문자 이름을 쓰는 관례가 있다.</li>
+            <li>조건: <code>if [ ! -f "$FILE" ]; then … fi</code>. <code>[</code>도 명령이라서 양쪽에 공백이 꼭 있어야 한다. <code>-f</code> 일반 파일, <code>-d</code> 디렉터리, <code>-e</code> 무엇이든 있음, <code>!</code> 반대.</li>
+            <li>옵션을 모르면 <code>프로그램 --help</code>를 본다. 많은 프로그램이 옵션마다 <code>[default: 값]</code>을 적는다. 이것이 그 버전의 기본값이다. 버전이 바뀌면 바뀔 수 있다.</li>
           </ul>
-          <div class="warn"><b>자주 하는 오해</b>systemd 서비스는 <code>/etc/security/limits.conf</code>를 읽지 않는다. 그 파일은 로그인한 사용자 세션에 쓰인다. 서비스의 한도는 unit 파일의 <code>Limit…=</code>로 정한다.</div>
-          <div class="mine"><b>내 환경과 비교</b>promet의 Docker도 보통 systemd 서비스다(<code>docker.service</code>). kind 클러스터는 그 위에서 돈다. 생각은 Kubernetes와 같다: "이 상태로 유지하라"를 적어 두면 관리자가 지킨다. 다른 점: systemd는 서버 한 대 안에서만 지킨다.</div>
+          <div class="warn"><b>자주 하는 오해</b><code>set -e</code>가 모든 실패를 잡지는 않는다. if 조건, &amp;&amp;와 || 앞, pipefail이 없을 때의 파이프 앞쪽은 빠진다. 그래서 중요한 단계는 결과를 직접 확인한다.</div>
+          <div class="mine"><b>내 환경과 비교</b>inbound 실습의 <code>timeout 3 bash -c '&lt;/dev/tcp/172.18.0.2/30333' &amp;&amp; echo OPEN || echo CLOSED</code>도 종료 코드를 쓴 것이다. 연결되면 0이라서 OPEN을, 안 되면 0이 아니라서 CLOSED를 찍었다.</div>
+          <p class="ask"><b>생각해 볼 질문</b>pipefail을 켠 스크립트에서 <code>grep 없는말 파일 | wc -l</code>을 실행한다. 어떻게 될까? 찾은 줄이 0개인 것은 "실패"일까?</p>
           <details class="try"><summary>직접 확인</summary>
-<pre>systemctl list-units --type=service | grep -i docker   <span class="cm"># 정확한 서비스 이름</span>
-systemctl status docker            <span class="cm"># 상태, PID, 최근 로그</span>
-systemctl cat docker               <span class="cm"># unit 파일 내용</span>
-journalctl -u docker --since today</pre>
+<pre>false; echo $?                                           <span class="cm"># 1</span>
+bash -c 'false | true; echo $?'                          <span class="cm"># 0: 마지막 명령만 본다</span>
+bash -c 'set -o pipefail; false | true; echo $?'         <span class="cm"># 1</span>
+bash -c 'set -u; echo "$NO_SUCH_VAR"'; echo $?           <span class="cm"># 오류 메시지, 그리고 1</span>
+bash -n 내스크립트.sh                                      <span class="cm"># 실행하지 않고 문법만 검사한다</span></pre>
           </details>
-          <p class="rel">연결: <a href="#ulimit">ulimit</a><a href="#idempotent">멱등성</a><a href="#desired">desired state (Bitcoin 탭)</a><a href="#process">프로세스 (Bitcoin 탭)</a></p>
+          <p class="rel">연결: <a href="#idempotent">멱등성</a><a href="#systemd">systemd unit</a><a href="#sdeps">systemd 의존성</a><a href="#yaml">YAML (Bitcoin 탭)</a></p>
         </article>
 
-        <article class="c" id="sysctl" data-added="2026-10-15" data-updated="2026-10-15" data-k="sysctl 커널 파라미터 kernel parameter /proc/sys sysctl.d ip_forward inotify 버퍼 네트워크 vm net fs">
-          <div class="c-head"><h3>커널 파라미터: sysctl</h3></div>
-          <p class="why"><b>왜 알아야 하나</b>커널에는 실행 중에 바꿀 수 있는 설정이 아주 많다. 기본값은 보통의 컴퓨터에 맞춰져 있다. 큰 서버 프로그램은 어떤 기본값이 작아서 문제를 겪을 수 있다.</p>
-          <ul>
-            <li>sysctl 값은 <code>/proc/sys/</code> 아래의 파일로 보인다. 이름의 점(.)은 경로의 /와 같다. <code>net.ipv4.ip_forward</code> = <code>/proc/sys/net/ipv4/ip_forward</code>.</li>
-            <li>이름의 앞부분이 영역이다: <code>net.</code> 네트워크, <code>vm.</code> 메모리, <code>fs.</code> 파일, <code>kernel.</code> 그 밖.</li>
-            <li><code>sysctl -w 이름=값</code>은 지금만 바꾼다. 재부팅하면 사라진다. 계속 쓰려면 <code>/etc/sysctl.d/</code>의 <code>.conf</code> 파일에 적고 <code>sysctl --system</code>으로 읽게 한다.</li>
-            <li><code>net.</code> 값의 많은 수는 network namespace마다 따로 있다(전부는 아니다). 그래서 Pod 안의 값과 호스트의 값이 다를 수 있다.</li>
-            <li>값을 바꾸기 전에 "왜 이 값인가"를 그 프로그램의 공식 문서에서 확인한다. 어디서 본 값을 이유 없이 붙이지 않는다.</li>
-          </ul>
-          <div class="mine"><b>내 환경과 비교</b>promet이 DNAT로 패킷을 Pod 쪽으로 넘기려면 <code>net.ipv4.ip_forward</code>가 1이어야 한다(Docker가 보통 켠다). kind 문서는 Pod가 많을 때 <code>fs.inotify.max_user_watches</code>와 <code>fs.inotify.max_user_instances</code>를 늘리라고 한다. 둘 다 "기본값이 작아서" 생기는 문제의 예다.</div>
-          <details class="try"><summary>직접 확인</summary>
-<pre>sysctl net.ipv4.ip_forward
-sysctl fs.inotify.max_user_watches fs.inotify.max_user_instances
-ls /etc/sysctl.d/                  <span class="cm"># 계속 쓰는 설정 파일들</span>
-kubectl -n bitcoin-lab exec bitcoin-node-0 -- cat /proc/sys/net/core/somaxconn   <span class="cm"># Pod 안의 값</span></pre>
-          </details>
-          <p class="rel">연결: <a href="#ulimit">ulimit</a><a href="#dnat">DNAT (Bitcoin 탭)</a><a href="#namespace">리눅스 namespace (Bitcoin 탭)</a><a href="#kind">kind (Bitcoin 탭)</a></p>
-        </article>
-
-        <article class="c" id="ulimit" data-added="2026-10-15" data-updated="2026-10-15" data-k="ulimit rlimit 리소스 제한 nofile open files 파일 디스크립터 fd too many open files limitnofile limits.conf memlock nproc soft hard /proc/pid/limits">
-          <div class="c-head"><h3>리소스 한도: ulimit과 LimitNOFILE</h3></div>
-          <p class="why"><b>왜 알아야 하나</b>프로그램이 "Too many open files" 오류로 멈출 수 있다. 메모리와 CPU가 남아 있어도 생긴다. 프로세스마다 "열 수 있는 개수"의 한도가 따로 있기 때문이다.</p>
-          <ul>
-            <li>리눅스는 프로세스마다 한도(rlimit)를 둔다. 예: 열린 파일 수(<code>nofile</code>), 프로세스 수(<code>nproc</code>), 잠근 메모리(<code>memlock</code>).</li>
-            <li>리눅스에서는 소켓(네트워크 연결)도 파일로 센다. 연결이 많은 서버는 nofile을 많이 쓴다.</li>
-            <li>한도는 두 개다. <b>soft</b>는 지금 적용되는 값이다. <b>hard</b>는 soft를 올릴 수 있는 최대값이다.</li>
-            <li>정하는 곳: 셸은 <code>ulimit</code>, 로그인 세션은 <code>/etc/security/limits.conf</code>, systemd 서비스는 unit 파일의 <code>LimitNOFILE=</code> 등. 컨테이너는 컨테이너 런타임이 정한다.</li>
-          </ul>
-          <div class="warn"><b>자주 하는 오해</b>ulimit과 cgroup은 다르다. cgroup은 프로세스 묶음 전체의 양(메모리 바이트, CPU 시간)을 제한한다. ulimit은 프로세스 하나가 가질 수 있는 개수를 제한한다.</div>
-          <div class="mine"><b>내 환경과 비교</b>bitcoind도 파일과 소켓을 많이 연다: 블록 파일, LevelDB 파일, 피어 연결. bitcoind는 시작할 때 이 한도를 확인한다. 한도가 작으면 연결 수(<code>-maxconnections</code>)를 스스로 줄이고 경고를 남긴다.</div>
-          <details class="try"><summary>직접 확인</summary>
-<pre>ulimit -n; ulimit -Hn                    <span class="cm"># 지금 셸의 soft, hard nofile</span>
-grep -i 'open files' /proc/$(pidof dockerd)/limits
-kubectl -n bitcoin-lab exec bitcoin-node-0 -- cat /proc/1/limits   <span class="cm"># 컨테이너의 첫 프로세스</span></pre>
-          </details>
-          <p class="rel">연결: <a href="#systemd">systemd unit</a><a href="#sysctl">sysctl</a><a href="#cgroup">cgroup (Bitcoin 탭)</a><a href="#process">프로세스 (Bitcoin 탭)</a></p>
-        </article>
-
-        <article class="c" id="idempotent" data-added="2026-10-15" data-updated="2026-10-15" data-k="멱등성 멱등 idempotent idempotency 다시 실행 재실행 스크립트 apply create mkdir -p 안전">
+        <article class="c" id="idempotent" data-added="2026-10-15" data-updated="2026-10-16" data-k="멱등성 멱등 idempotent idempotency 다시 실행 재실행 스크립트 apply create mkdir -p 안전 heredoc eof cat > [ -f ] 있는지 확인">
           <div class="c-head"><h3>멱등성: 여러 번 실행해도 같은 결과</h3></div>
           <p class="why"><b>왜 알아야 하나</b>설치·설정 스크립트는 중간에 실패하면 다시 실행한다. 두 번 실행해서 결과가 달라지면(중복된 줄, 오류, 두 번 시작) 문제가 커진다.</p>
           <ul>
@@ -684,6 +790,8 @@ kubectl -n bitcoin-lab exec bitcoin-node-0 -- cat /proc/1/limits   <span class="
             <li>멱등이 아닌 예: <code>mkdir dir</code>(두 번째에 오류), <code>echo 줄 &gt;&gt; 파일</code>(줄이 두 번 들어간다), <code>kubectl create</code>(두 번째에 AlreadyExists 오류).</li>
             <li>멱등인 예: <code>mkdir -p dir</code>, 파일 전체를 다시 쓰기(<code>&gt;</code>), <code>kubectl apply</code>, <code>systemctl enable</code>.</li>
             <li>만드는 방법: "이것을 하라" 대신 "이 상태여야 한다"로 쓴다. 또는 바꾸기 전에 지금 상태를 확인한다.</li>
+            <li>있는지 먼저 보는 패턴: <code>[ -f "$F" ] || 만드는 명령</code>. 파일이 없을 때만 만든다. 이미 있는 파일을 다시 만들어 덮어쓰지 않는다.</li>
+            <li>설정 파일은 통째로 쓴다: <code>cat &gt; 파일 &lt;&lt;'EOF'</code> … <code>EOF</code>. 몇 번 실행해도 내용이 같다. EOF를 따옴표로 감싸면 안의 <code>$변수</code>를 바꾸지 않고 글자 그대로 쓴다.</li>
           </ul>
           <div class="warn"><b>자주 하는 오해</b>"오류 없이 끝났다"는 멱등이라는 뜻이 아니다. 오류 없이 같은 줄을 두 번 추가할 수 있다. 두 번 실행하고 결과를 비교해서 확인한다.</div>
           <div class="mine"><b>내 환경과 비교</b>실습에서 쓰는 <code>kubectl apply -f</code>가 멱등이다. 같은 YAML을 열 번 적용해도 결과는 하나다. desired state 방식이기 때문이다.</div>
@@ -693,7 +801,196 @@ for i in 1 2; do echo 'a=1' &gt;&gt; "$f"; done; cat "$f"   <span class="cm"># �
 for i in 1 2; do echo 'a=1' &gt; "$f"; done; cat "$f"    <span class="cm"># 한 줄</span>
 grep -qx 'a=1' "$f" || echo 'a=1' &gt;&gt; "$f"             <span class="cm"># 없을 때만 추가</span></pre>
           </details>
-          <p class="rel">연결: <a href="#desired">desired state (Bitcoin 탭)</a><a href="#yaml">YAML (Bitcoin 탭)</a><a href="#systemd">systemd unit</a></p>
+          <p class="rel">연결: <a href="#desired">desired state (Bitcoin 탭)</a><a href="#yaml">YAML (Bitcoin 탭)</a><a href="#systemd">systemd unit</a><a href="#bashsafe">bash 스크립트</a></p>
+        </article>
+
+        <article class="c" id="systemd" data-added="2026-10-15" data-updated="2026-10-16" data-k="systemd unit 유닛 service 서비스 systemctl journalctl execstart restart wantedby enable daemon-reload 부팅 자동 시작 /usr/lib/systemd /etc/systemd drop-in systemctl edit override preset multi-user.target.wants 링크 restartsec on-failure always startlimitburst">
+          <div class="c-head"><h3>systemd unit: 프로그램을 서비스로</h3></div>
+          <p class="why"><b>왜 알아야 하나</b>서버 프로그램은 부팅할 때 시작하고, 죽으면 다시 시작해야 한다. 사람이 터미널에서 실행하면 이것을 보장할 수 없다. 리눅스에서는 systemd가 이 일을 한다.</p>
+          <ul>
+            <li>systemd는 부팅 때 처음 실행되는 프로세스(PID 1)다. 다른 프로그램을 시작하고 지켜본다.</li>
+            <li><b>unit 파일</b>은 "무엇을 어떻게 실행할지" 적은 설정 파일이다. 서비스는 <code>이름.service</code>다. 직접 만드는 파일은 보통 <code>/etc/systemd/system/</code>에 둔다.</li>
+            <li><code>[Unit]</code>: 설명, 시작 순서(<code>After=</code>). <code>[Service]</code>: 실행 명령(<code>ExecStart=</code>), 실행 사용자(<code>User=</code>), 다시 시작 규칙(<code>Restart=</code>), 자원 한도(<code>LimitNOFILE=</code> 등). <code>[Install]</code>: 부팅 때 켤지(<code>WantedBy=multi-user.target</code>).</li>
+            <li>unit 파일을 고친 뒤에는 <code>systemctl daemon-reload</code>로 다시 읽게 한다.</li>
+            <li>로그는 journald가 모은다. <code>journalctl -u 이름</code>으로 본다.</li>
+            <li>unit 파일의 자리는 둘이다. <code>/usr/lib/systemd/system/</code>: 패키지(apt)가 놓는다. 업그레이드하면 덮어쓴다. <code>/etc/systemd/system/</code>: 관리자가 놓는다. 이름이 같으면 /etc 쪽이 이긴다. 패키지의 unit 일부만 바꾸려면 <code>systemctl edit 이름</code>으로 덧붙이는 파일(drop-in)을 만든다.</li>
+            <li><code>systemctl enable</code>은 링크 하나를 만든다. 예: <code>/etc/systemd/system/multi-user.target.wants/docker.service</code>. 부팅 중 multi-user.target을 준비할 때 이 링크의 서비스도 시작한다. <code>preset: enabled</code>는 배포판이 "설치하면 기본으로 켠다"고 정한 정책이다.</li>
+            <li><code>Restart=</code>의 값: <code>no</code>(기본, 다시 시작하지 않음), <code>on-failure</code>(실패로 끝났을 때만), <code>always</code>(정상 종료여도). <code>RestartSec=</code>는 다시 시작하기 전에 기다리는 시간이다. 짧은 시간에 너무 자주 죽으면 systemd가 다시 시작을 멈춘다(<code>StartLimitBurst=</code>, <code>StartLimitIntervalSec=</code>).</li>
+          </ul>
+          <div class="warn"><b>자주 하는 오해</b>systemd 서비스는 <code>/etc/security/limits.conf</code>를 읽지 않는다. 그 파일은 로그인한 사용자 세션에 쓰인다. 서비스의 한도는 unit 파일의 <code>Limit…=</code>로 정한다.</div>
+          <div class="mine"><b>내 환경과 비교</b>promet의 Docker도 보통 systemd 서비스다(<code>docker.service</code>). kind 클러스터는 그 위에서 돈다. 생각은 Kubernetes와 같다: "이 상태로 유지하라"를 적어 두면 관리자가 지킨다. 다른 점: systemd는 서버 한 대 안에서만 지킨다.</div>
+          <details class="try"><summary>직접 확인</summary>
+<pre>ls -l /etc/systemd/system/multi-user.target.wants/   <span class="cm"># enable이 만든 링크들</span>
+systemctl list-units --type=service | grep -i docker   <span class="cm"># 정확한 서비스 이름</span>
+systemctl status docker            <span class="cm"># 상태, PID, 최근 로그</span>
+systemctl cat docker               <span class="cm"># unit 파일 내용</span>
+journalctl -u docker --since today</pre>
+          </details>
+          <p class="rel">연결: <a href="#ulimit">ulimit</a><a href="#idempotent">멱등성</a><a href="#desired">desired state (Bitcoin 탭)</a><a href="#process">프로세스 (Bitcoin 탭)</a><a href="#sdeps">systemd 의존성</a><a href="#svcuser">서비스 사용자</a></p>
+        </article>
+
+        <article class="c" id="sdeps" data-added="2026-10-16" data-updated="2026-10-16" data-k="systemd 의존성 dependency after wants requires bindsto network.target network-online.target requiresmountsfor 순서 ordering target wantedby multi-user.target critical-chain">
+          <div class="c-head"><h3>systemd 의존성: After=, Wants=, Requires=</h3></div>
+          <p class="why"><b>왜 알아야 하나</b>systemd는 부팅 때 많은 unit을 동시에 시작한다. "이것 다음에 시작하라"와 "이것도 같이 시작하라"를 적지 않으면, 네트워크나 디스크가 준비되기 전에 프로그램이 시작할 수 있다.</p>
+          <figure class="fig"><div class="sc"><svg viewBox="0 0 720 196" role="img" aria-label="부팅 시간선: 부팅, network.target, network-online.target, 서비스 A 시작 순서다. 서비스 A는 After=와 Wants=로 network-online.target을 기다린다" style="min-width:600px;max-width:720px"><path class="ln" d="M20,60 H700" marker-end="url(#am)"/><path class="ln" d="M110,52 V68"/><text class="tb" x="110" y="40" text-anchor="middle">부팅</text><path class="ln" d="M290,52 V68"/><text class="mono" x="290" y="40" text-anchor="middle">network.target</text><text class="ts" x="290" y="88" text-anchor="middle">네트워크 설정을 시작함</text><path class="ln" d="M500,52 V68"/><text class="mono" x="500" y="40" text-anchor="middle">network-online.target</text><text class="ts" x="500" y="88" text-anchor="middle">주소를 받고 쓸 수 있음</text><path class="ln" d="M645,52 V68"/><text class="tb" x="645" y="40" text-anchor="middle">서비스 A</text><text class="ts" x="645" y="88" text-anchor="middle">이제 시작</text><text class="mono ta" x="645" y="108" text-anchor="middle">After= + Wants=</text><text class="ts" x="10" y="140" text-anchor="start">After=: "B가 있으면 B 다음에"만 뜻한다. B를 시작시키지 않는다.</text><text class="ts" x="10" y="162" text-anchor="start">Wants=: B도 같이 시작시킨다. 순서는 정하지 않는다. 그래서 둘을 같이 쓴다.</text><text class="ts tw" x="10" y="184" text-anchor="start">network-online.target은 어떤 unit이 Wants= 할 때만 부팅에 들어온다.</text></svg></div><figcaption>network.target은 "네트워크를 준비하기 시작했다"이다. "연결되었다"가 아니다.</figcaption></figure>
+          <div class="tbl"><table>
+            <thead><tr><th>줄 (A의 unit에 씀)</th><th>B를 시작시키나</th><th>순서</th><th>B가 실패하면</th></tr></thead>
+            <tbody>
+              <tr><td><code>After=B</code></td><td>아니다</td><td>B가 시작되는 경우에만 B 다음</td><td>영향 없음</td></tr>
+              <tr><td><code>Wants=B</code></td><td>시작시킨다</td><td>정하지 않는다 (동시에)</td><td>A는 그대로 시작</td></tr>
+              <tr><td><code>Requires=B</code></td><td>시작시킨다</td><td>정하지 않는다</td><td>After=B도 있으면 A는 시작하지 않는다. B를 멈추면 A도 멈춘다</td></tr>
+            </tbody>
+          </table></div>
+          <ul>
+            <li>그래서 보통 둘을 같이 쓴다: <code>After=B</code>와 <code>Wants=B</code>(또는 <code>Requires=B</code>). 하나는 순서이고, 하나는 "같이 시작"이다.</li>
+            <li><b>target</b>은 "이 단계에 도달함"을 뜻하는 이름표 unit이다. 실행하는 프로그램이 없다. 예: <code>multi-user.target</code>(보통 서버의 부팅 완료 지점).</li>
+            <li><code>network.target</code>: 네트워크 설정을 시작했다는 뜻이다. 주소를 받았다는 뜻이 아니다. <code>network-online.target</code>: 네트워크를 실제로 쓸 수 있다는 뜻이다. 이 target은 어떤 unit이 <code>Wants=</code> 할 때만 부팅에 들어온다. 기다리는 만큼 부팅이 늦어지기 때문이다.</li>
+            <li><code>RequiresMountsFor=경로</code>: 그 경로에 필요한 마운트 unit들에 Requires=와 After=를 건다. 디스크가 붙기 전에 서비스가 시작하지 않게 한다.</li>
+            <li><code>[Install]</code>의 <code>WantedBy=multi-user.target</code>은 반대 방향이다. <code>systemctl enable</code>을 하면 multi-user.target이 이 서비스를 Wants= 하게 된다.</li>
+          </ul>
+          <div class="warn"><b>자주 하는 오해</b>After=는 상대를 시작시키지 않는다. <code>After=network-online.target</code>만 쓰고 아무도 그 target을 Wants= 하지 않으면, 그 target은 부팅에 없다. 그러면 기다릴 것이 없어서 바로 시작한다.</div>
+          <div class="mine"><b>내 Bitcoin 노드와 비교</b>Bitcoin Core가 주는 unit 파일(<code>contrib/init/bitcoind.service</code>)에는 <code>After=network-online.target</code>과 <code>Wants=network-online.target</code>이 둘 다 있다. 그 위의 주석은 systemd의 NetworkTarget 문서를 가리킨다. 같은 파일에 <code>Restart=on-failure</code>, <code>TimeoutStopSec=600</code>, <code>User=bitcoin</code>도 있다. 줄마다 주석이 이유를 적어 둔, 읽어 볼 만한 unit 파일이다(2026-10-16 master에서 확인).</div>
+          <p class="ask"><b>생각해 볼 질문</b>서비스가 데이터 디스크의 경로를 쓴다. 디스크가 고장 나서 마운트가 실패했다. <code>RequiresMountsFor=</code>가 있을 때와 없을 때, 서비스는 각각 어떻게 될까?</p>
+          <details class="try"><summary>직접 확인</summary>
+<pre>systemctl cat docker | grep -E '^(After|Wants|Requires)='     <span class="cm"># Docker가 거는 의존성</span>
+systemctl list-dependencies multi-user.target | head -30      <span class="cm"># 부팅 완료 지점이 원하는 unit들</span>
+systemctl is-active network-online.target                     <span class="cm"># 이 서버의 부팅에 이 target이 있었나</span>
+systemd-analyze critical-chain docker.service                 <span class="cm"># docker가 무엇을 기다렸나</span></pre>
+          </details>
+          <p class="rel">연결: <a href="#systemd">systemd unit</a><a href="#fstab">/etc/fstab</a><a href="#svcuser">서비스 사용자</a><a href="#desired">desired state (Bitcoin 탭)</a></p>
+        </article>
+
+        <article class="c" id="fstab" data-added="2026-10-16" data-updated="2026-10-16" data-k="fstab /etc/fstab 마운트 mount 부팅 uuid nofail findmnt lsblk blkid mount -a .mount unit 루트 디스크 데이터 디스크 os 디스크 가려짐">
+          <div class="c-head"><h3>/etc/fstab: 부팅 때 디스크를 붙이는 목록</h3></div>
+          <p class="why"><b>왜 알아야 하나</b><code>mount</code> 명령으로 붙인 디스크는 재부팅하면 떨어진다. 재부팅 뒤에도 같은 자리에 붙이려면 /etc/fstab에 적는다. 디스크가 붙지 않은 채로 프로그램이 시작하면, 데이터가 엉뚱한 디스크에 쌓인다.</p>
+          <figure class="fig"><div class="sc"><svg viewBox="0 0 720 226" role="img" aria-label="부팅 때 systemd가 /etc/fstab을 읽고 줄마다 mount unit을 만들어 디스크를 붙인다. fstab 한 줄은 장치, 마운트 지점, 파일시스템, 옵션, dump, 검사 순서 여섯 칸이다. 마운트되지 않으면 그 경로는 루트 디스크의 디렉터리다" style="min-width:600px;max-width:720px"><rect class="bx" x="10" y="12" width="160" height="50" rx="5"/><text class="tb" x="90" y="33" text-anchor="middle">부팅</text><text class="ts" x="90" y="52" text-anchor="middle">systemd 시작</text><path class="ln" d="M172,37 H186" marker-end="url(#am)"/><rect class="hl" x="190" y="12" width="160" height="50" rx="5"/><text class="tb" x="270" y="33" text-anchor="middle">/etc/fstab 읽기</text><text class="ts" x="270" y="52" text-anchor="middle">한 줄 = 마운트 하나</text><path class="ln" d="M352,37 H366" marker-end="url(#am)"/><rect class="bx" x="370" y="12" width="160" height="50" rx="5"/><text class="tb" x="450" y="33" text-anchor="middle">.mount unit</text><text class="ts" x="450" y="52" text-anchor="middle">줄마다 하나 만든다</text><path class="ln" d="M532,37 H546" marker-end="url(#am)"/><rect class="bx" x="550" y="12" width="160" height="50" rx="5"/><text class="tb" x="630" y="33" text-anchor="middle">디스크 붙이기</text><text class="ts" x="630" y="52" text-anchor="middle">그다음 서비스 시작</text><rect class="bg" x="10" y="82" width="150" height="32" rx="5"/><text class="mono" x="85.0" y="103" text-anchor="middle">UUID=1a2b…</text><text class="ts" x="85.0" y="132" text-anchor="middle">장치</text><rect class="bg" x="172" y="82" width="90" height="32" rx="5"/><text class="mono" x="217.0" y="103" text-anchor="middle">/data</text><text class="ts" x="217.0" y="132" text-anchor="middle">마운트 지점</text><rect class="bg" x="274" y="82" width="76" height="32" rx="5"/><text class="mono" x="312.0" y="103" text-anchor="middle">ext4</text><text class="ts" x="312.0" y="132" text-anchor="middle">파일시스템</text><rect class="bg" x="362" y="82" width="160" height="32" rx="5"/><text class="mono" x="442.0" y="103" text-anchor="middle">defaults,nofail</text><text class="ts" x="442.0" y="132" text-anchor="middle">옵션</text><rect class="bg" x="534" y="82" width="60" height="32" rx="5"/><text class="mono" x="564.0" y="103" text-anchor="middle">0</text><text class="ts" x="564.0" y="132" text-anchor="middle">dump</text><rect class="bg" x="606" y="82" width="60" height="32" rx="5"/><text class="mono" x="636.0" y="103" text-anchor="middle">2</text><text class="ts" x="636.0" y="132" text-anchor="middle">검사 순서</text><rect class="hl" x="10" y="150" width="340" height="66" rx="5"/><text class="tb" x="26" y="172" text-anchor="start">마운트됨</text><text class="ts" x="26" y="196" text-anchor="start">/data에 쓴 파일 → 데이터 디스크</text><rect class="wr" x="370" y="150" width="340" height="66" rx="5"/><text class="tb tw" x="386" y="172" text-anchor="start">마운트 안 됨 (오류도 없다)</text><text class="ts" x="386" y="196" text-anchor="start">/data는 루트 디스크의 그냥 디렉터리</text></svg></div><figcaption>경로가 디스크를 정한다. 붙지 않은 경로에 쓴 파일은 루트 디스크에 쌓인다.</figcaption></figure>
+          <ul>
+            <li>리눅스의 디렉터리 트리는 하나다. 디스크는 그 트리의 한 디렉터리에 붙는다(<a href="#mount">마운트</a>). 그래서 경로가 디스크를 정한다.</li>
+            <li><code>mount 장치 디렉터리</code>는 지금만 붙인다. /etc/fstab은 "부팅할 때마다 이렇게 붙여라"는 목록이다. 한 줄이 마운트 하나다.</li>
+            <li>한 줄의 칸: 장치, 마운트 지점, 파일시스템, 옵션, dump(지금은 거의 0), 부팅 때 검사 순서(루트는 1, 다른 디스크는 2, 검사 안 함은 0).</li>
+            <li>장치는 <code>/dev/sdb1</code>보다 <code>UUID=…</code>로 쓴다. 디스크 이름(sdb)은 인식 순서에 따라 바뀔 수 있다. UUID는 파일시스템에 붙은 번호라서 바뀌지 않는다.</li>
+            <li>systemd는 부팅 때 fstab의 줄마다 <code>.mount</code> unit을 만든다. 예: <code>/data</code> → <code>data.mount</code>. 그래서 서비스가 "이 마운트 다음에 시작"을 걸 수 있다(<a href="#sdeps"><code>RequiresMountsFor=</code></a>).</li>
+            <li>루트 디스크(OS 디스크)와 데이터 디스크를 나누는 이유: OS 파일과 큰 데이터가 서로의 공간과 I/O를 뺏지 않게 한다. 데이터 디스크가 가득 차도 OS는 계속 돈다.</li>
+          </ul>
+          <div class="warn"><b>자주 하는 오해</b>마운트가 안 된 마운트 지점도 그냥 디렉터리다. 쓰기가 실패하지 않는다. 그 안에 쓴 파일은 루트 디스크에 쌓인다. 루트 디스크가 가득 차면 로그도 못 쓰고 서버 전체가 멈출 수 있다. 나중에 디스크를 붙이면 그 파일들은 마운트 아래에 가려져서 보이지 않는다.</div>
+          <div class="mine"><b>promet과 비교</b>promet의 루트(<code>/</code>)는 SATA SSD의 LVM이다. <code>/mnt/hdd</code>는 HDD다. <code>/mnt/hdd</code>가 재부팅 뒤에도 붙어 있다면 fstab에 줄이 있을 것이다(추정). 아래 명령으로 확인한다.</div>
+          <p class="ask"><b>생각해 볼 질문</b>fstab의 한 줄에 오타가 있다. 다음 부팅에 무슨 일이 생길까? 옵션 <code>nofail</code>은 이것을 어떻게 바꿀까?</p>
+          <details class="try"><summary>직접 확인</summary>
+<pre>cat /etc/fstab
+findmnt --verify                      <span class="cm"># fstab의 문법과 장치를 검사한다. 아무것도 바꾸지 않는다</span>
+lsblk -f                              <span class="cm"># 장치, 파일시스템, UUID</span>
+systemctl list-units --type=mount     <span class="cm"># fstab에서 만든 .mount unit들</span>
+findmnt -T /mnt/hdd                   <span class="cm"># 이 경로는 실제로 어느 장치인가</span></pre>
+          </details>
+          <p class="rel">연결: <a href="#mount">파일시스템과 마운트 (Bitcoin 탭)</a><a href="#dudf">du와 df (Bitcoin 탭)</a><a href="#sdeps">systemd 의존성</a><a href="#raid0">RAID0</a><a href="#ssdhdd">SSD와 HDD (Bitcoin 탭)</a></p>
+        </article>
+
+        <article class="c" id="svcuser" data-added="2026-10-16" data-updated="2026-10-16" data-k="서비스 사용자 service account 최소 권한 least privilege user= group= 소유자 chown chmod 600 644 root 신원 identity 리눅스 사용자 keypair nologin useradd --system 777">
+          <div class="c-head"><h3>서비스 사용자와 최소 권한</h3></div>
+          <p class="why"><b>왜 알아야 하나</b>서버 프로그램은 언젠가 버그나 공격을 겪을 수 있다. 그때 프로그램은 자기를 실행한 사용자의 권한만큼 해를 끼칠 수 있다. 그래서 서비스마다 전용 사용자를 두고, 꼭 필요한 권한만 준다.</p>
+          <figure class="fig"><div class="sc"><svg viewBox="0 0 720 210" role="img" aria-label="리눅스 사용자는 커널이 보는 신원이고, 노드 keypair는 네트워크가 보는 신원이다. 둘은 키 파일에서 만난다. 키 파일의 소유자와 권한이 누가 그 키를 읽을지 정한다" style="min-width:600px;max-width:720px"><rect class="bx" x="10" y="10" width="330" height="92" rx="5"/><text class="tb" x="26" y="34" text-anchor="start">리눅스 사용자</text><text class="ts" x="26" y="58" text-anchor="start">커널이 보는 신원 (UID)</text><text class="ts" x="26" y="82" text-anchor="start">→ 어떤 파일을 읽고 쓸 수 있나</text><rect class="bx" x="380" y="10" width="330" height="92" rx="5"/><text class="tb" x="396" y="34" text-anchor="start">노드 keypair</text><text class="ts" x="396" y="58" text-anchor="start">네트워크가 보는 신원 (공개키)</text><text class="ts" x="396" y="82" text-anchor="start">→ 다른 노드가 이 노드를 누구로 아나</text><path class="ln" d="M175,104 L290,136" marker-end="url(#am)"/><path class="ln" d="M545,104 L430,136" marker-end="url(#am)"/><rect class="hl" x="195" y="140" width="330" height="60" rx="5"/><text class="tb" x="360" y="164" text-anchor="middle">키 파일 (예: identity.json)</text><text class="ts" x="360" y="188" text-anchor="middle">소유자: 서비스 사용자 · 권한 600</text></svg></div><figcaption>키 파일도 리눅스 파일이다. 그래서 파일 권한이 두 신원을 잇는다.</figcaption></figure>
+          <ul>
+            <li>노드에는 신원이 둘 있다. <b>리눅스 사용자</b>는 커널이 보는 신원이다(UID). 프로세스가 어떤 파일을 읽고 쓸지 정한다. <b>노드 keypair</b>는 네트워크가 보는 신원이다. 다른 노드가 이 노드를 누구로 아는지 정한다.</li>
+            <li>둘은 키 파일에서 만난다. 키 파일도 리눅스 파일이다. 그래서 "어느 리눅스 사용자가 이 키를 읽을 수 있나"는 파일의 소유자와 권한이 정한다.</li>
+            <li>프로세스는 자기를 실행한 사용자로 돈다. systemd 서비스는 <code>User=</code>와 <code>Group=</code>으로 정한다. 적지 않으면 root로 돈다.</li>
+            <li>서비스 전용 사용자는 로그인할 일이 없다. 그래서 보통 시스템 사용자로 만들고 셸을 막는다(<code>useradd --system --shell /usr/sbin/nologin 이름</code>).</li>
+            <li>설치 단계(디렉터리 만들기, unit 파일 쓰기)에는 root 권한이 필요하다. 실행 단계(프로세스가 도는 동안)에는 보통 필요 없다. 둘을 나눠서 생각한다.</li>
+          </ul>
+          <div class="tbl"><table>
+            <thead><tr><th>무엇</th><th>소유자</th><th>권한</th><th>이유</th></tr></thead>
+            <tbody>
+              <tr><td>데이터 디렉터리</td><td>서비스 사용자</td><td>쓰기 가능</td><td>프로그램이 데이터를 써야 한다</td></tr>
+              <tr><td>키 파일</td><td>서비스 사용자</td><td><code>600</code></td><td>주인만 읽는다</td></tr>
+              <tr><td>설정 파일, unit 파일</td><td>root</td><td><code>644</code></td><td>서비스는 읽기만 한다. 공격을 받아도 자기 설정과 실행 방법을 바꾸지 못한다</td></tr>
+            </tbody>
+          </table></div>
+          <div class="warn"><b>자주 하는 오해</b>"Permission denied는 <code>chmod 777</code>로 푼다"는 오해다. 777은 모든 사용자가 쓰게 해서 문제를 숨길 뿐이다. 원인은 보통 소유자가 맞지 않는 것이다. 소유자를 맞춘다(<code>chown</code>).</div>
+          <div class="mine"><b>내 Bitcoin 노드와 비교</b>Bitcoin Core의 unit 파일은 <code>User=bitcoin</code>으로 bitcoind를 돌린다. 데이터(<code>StateDirectory=bitcoind</code>)와 설정(<code>ConfigurationDirectory=bitcoin</code>) 디렉터리는 systemd가 <code>0710</code> 권한으로 만든다. 내 Pod의 bitcoind가 컨테이너 안에서 어느 사용자로 도는지는 아래 명령으로 본다.</div>
+          <p class="ask"><b>생각해 볼 질문</b>노드 프로세스가 공격을 받아, 그 사용자의 권한으로 아무 명령이나 실행된다고 하자. 데이터 디렉터리, 키 파일, 설정 파일, unit 파일 중 무엇을 바꿀 수 있을까?</p>
+          <details class="try"><summary>직접 확인</summary>
+<pre>ps -o user,pid,cmd -C dockerd                          <span class="cm"># 이 데몬은 어느 사용자로 도나</span>
+stat -c '%U:%G %a %n' /etc/passwd /etc/shadow          <span class="cm"># 소유자와 권한 숫자</span>
+kubectl -n bitcoin-lab exec bitcoin-node-0 -- id       <span class="cm"># Pod 안의 bitcoind 사용자</span>
+getent passwd | awk -F: '$7 ~ /nologin/ {print $1}' | head   <span class="cm"># 로그인할 수 없는 시스템 사용자들</span></pre>
+          </details>
+          <p class="rel">연결: <a href="#process">프로세스와 권한 (Bitcoin 탭)</a><a href="#keypair">keypair</a><a href="#systemd">systemd unit</a><a href="#dockergroup">docker 그룹 (Bitcoin 탭)</a></p>
+        </article>
+
+        <article class="c" id="sysctl" data-added="2026-10-15" data-updated="2026-10-16" data-k="sysctl 커널 파라미터 kernel parameter /proc/sys sysctl.d ip_forward inotify 버퍼 네트워크 vm net fs rmem_max wmem_max udp 버퍼 max_map_count mmap nr_open sysctl -p rcvbuferrors rlimit cgroup 비교">
+          <div class="c-head"><h3>커널 파라미터: sysctl</h3></div>
+          <p class="why"><b>왜 알아야 하나</b>커널에는 실행 중에 바꿀 수 있는 설정이 아주 많다. 기본값은 보통의 컴퓨터에 맞춰져 있다. 큰 서버 프로그램은 어떤 기본값이 작아서 문제를 겪을 수 있다.</p>
+          <ul>
+            <li>sysctl 값은 <code>/proc/sys/</code> 아래의 파일로 보인다. 이름의 점(.)은 경로의 /와 같다. <code>net.ipv4.ip_forward</code> = <code>/proc/sys/net/ipv4/ip_forward</code>.</li>
+            <li>이름의 앞부분이 영역이다: <code>net.</code> 네트워크, <code>vm.</code> 메모리, <code>fs.</code> 파일, <code>kernel.</code> 그 밖.</li>
+            <li><code>sysctl -w 이름=값</code>은 지금만 바꾼다. 재부팅하면 사라진다. 계속 쓰려면 <code>/etc/sysctl.d/</code>의 <code>.conf</code> 파일에 적고 <code>sysctl --system</code>으로 읽게 한다.</li>
+            <li><code>net.</code> 값의 많은 수는 network namespace마다 따로 있다(전부는 아니다). 그래서 Pod 안의 값과 호스트의 값이 다를 수 있다.</li>
+            <li>값을 바꾸기 전에 "왜 이 값인가"를 그 프로그램의 공식 문서에서 확인한다. 어디서 본 값을 이유 없이 붙이지 않는다.</li>
+            <li>뜻의 예(값은 그 프로그램의 공식 문서에서 찾는다). <code>net.core.rmem_max</code>와 <code>net.core.wmem_max</code>: 프로그램이 소켓 하나에 요청할 수 있는 받기·보내기 버퍼의 최대 크기다. UDP 패킷이 몰릴 때 받기 버퍼가 작으면 넘친 패킷은 버려진다. <code>vm.max_map_count</code>: 프로세스 하나가 가질 수 있는 메모리 매핑 영역의 수다. 파일을 많이 mmap하는 프로그램은 이것이 모자랄 수 있다. <code>fs.nr_open</code>: 프로세스 하나가 열 수 있는 파일 수의 커널 상한이다.</li>
+            <li><code>sysctl -p 파일</code>은 그 파일의 값을 지금 바로 적용한다. 설정 파일에 적고 이 명령을 실행하면, 재부팅 없이 바로 바뀌고 재부팅 뒤에도 남는다.</li>
+          </ul>
+          <div class="tbl"><table>
+            <thead><tr><th></th><th>적용 범위</th><th>무엇을 정하나</th><th>어디서 정하나</th></tr></thead>
+            <tbody>
+              <tr><td>sysctl</td><td>커널 전체 (일부는 namespace마다)</td><td>커널의 규칙과 상한</td><td><code>/etc/sysctl.d/*.conf</code></td></tr>
+              <tr><td><a href="#ulimit">rlimit</a></td><td>프로세스 하나</td><td>가질 수 있는 개수와 크기</td><td>unit의 <code>Limit…=</code>, <code>ulimit</code></td></tr>
+              <tr><td><a href="#cgroup">cgroup</a></td><td>프로세스 묶음</td><td>쓰는 양 (메모리, CPU)</td><td>systemd slice, Kubernetes limits</td></tr>
+            </tbody>
+          </table></div>
+          <div class="mine"><b>내 환경과 비교</b>promet이 DNAT로 패킷을 Pod 쪽으로 넘기려면 <code>net.ipv4.ip_forward</code>가 1이어야 한다(Docker가 보통 켠다). kind 문서는 Pod가 많을 때 <code>fs.inotify.max_user_watches</code>와 <code>fs.inotify.max_user_instances</code>를 늘리라고 한다. 둘 다 "기본값이 작아서" 생기는 문제의 예다.</div>
+          <details class="try"><summary>직접 확인</summary>
+<pre>sysctl net.ipv4.ip_forward
+sysctl fs.inotify.max_user_watches fs.inotify.max_user_instances
+nstat -az UdpRcvbufErrors          <span class="cm"># UDP 받기 버퍼가 넘쳐서 버린 패킷 수 (누적)</span>
+ls /etc/sysctl.d/                  <span class="cm"># 계속 쓰는 설정 파일들</span>
+kubectl -n bitcoin-lab exec bitcoin-node-0 -- cat /proc/sys/net/core/somaxconn   <span class="cm"># Pod 안의 값</span></pre>
+          </details>
+          <p class="rel">연결: <a href="#ulimit">ulimit</a><a href="#dnat">DNAT (Bitcoin 탭)</a><a href="#namespace">리눅스 namespace (Bitcoin 탭)</a><a href="#kind">kind (Bitcoin 탭)</a></p>
+        </article>
+
+        <article class="c" id="ulimit" data-added="2026-10-15" data-updated="2026-10-16" data-k="ulimit rlimit 리소스 제한 nofile open files 파일 디스크립터 fd too many open files limitnofile limits.conf memlock nproc soft hard /proc/pid/limits nr_open defaultlimitnofile system.conf manager">
+          <div class="c-head"><h3>리소스 한도: ulimit과 LimitNOFILE</h3></div>
+          <p class="why"><b>왜 알아야 하나</b>프로그램이 "Too many open files" 오류로 멈출 수 있다. 메모리와 CPU가 남아 있어도 생긴다. 프로세스마다 "열 수 있는 개수"의 한도가 따로 있기 때문이다.</p>
+          <ul>
+            <li>리눅스는 프로세스마다 한도(rlimit)를 둔다. 예: 열린 파일 수(<code>nofile</code>), 프로세스 수(<code>nproc</code>), 잠근 메모리(<code>memlock</code>).</li>
+            <li>리눅스에서는 소켓(네트워크 연결)도 파일로 센다. 연결이 많은 서버는 nofile을 많이 쓴다.</li>
+            <li>한도는 두 개다. <b>soft</b>는 지금 적용되는 값이다. <b>hard</b>는 soft를 올릴 수 있는 최대값이다.</li>
+            <li>정하는 곳: 셸은 <code>ulimit</code>, 로그인 세션은 <code>/etc/security/limits.conf</code>, systemd 서비스는 unit 파일의 <code>LimitNOFILE=</code> 등. 컨테이너는 컨테이너 런타임이 정한다.</li>
+            <li>nofile 한도는 커널 상한 <code>fs.nr_open</code>을 넘을 수 없다. 그래서 두 값은 함께 본다.</li>
+            <li>systemd에서 모든 서비스의 기본값은 <code>/etc/systemd/system.conf</code>의 <code>[Manager]</code> 아래 <code>DefaultLimitNOFILE=</code>다. 서비스 하나의 값은 그 unit의 <code>[Service]</code> 아래 <code>LimitNOFILE=</code>다. unit의 값이 기본값보다 우선한다.</li>
+          </ul>
+          <div class="warn"><b>자주 하는 오해</b>ulimit과 cgroup은 다르다. cgroup은 프로세스 묶음 전체의 양(메모리 바이트, CPU 시간)을 제한한다. ulimit은 프로세스 하나가 가질 수 있는 개수를 제한한다.</div>
+          <div class="mine"><b>내 환경과 비교</b>bitcoind도 파일과 소켓을 많이 연다: 블록 파일, LevelDB 파일, 피어 연결. bitcoind는 시작할 때 이 한도를 확인한다. 한도가 작으면 연결 수(<code>-maxconnections</code>)를 스스로 줄이고 경고를 남긴다.</div>
+          <details class="try"><summary>직접 확인</summary>
+<pre>ulimit -n; ulimit -Hn                    <span class="cm"># 지금 셸의 soft, hard nofile</span>
+cat /proc/sys/fs/nr_open                 <span class="cm"># 커널 상한</span>
+systemctl show docker -p LimitNOFILE      <span class="cm"># 서비스 하나에 적용된 값</span>
+grep -i 'open files' /proc/$(pidof dockerd)/limits
+kubectl -n bitcoin-lab exec bitcoin-node-0 -- cat /proc/1/limits   <span class="cm"># 컨테이너의 첫 프로세스</span></pre>
+          </details>
+          <p class="rel">연결: <a href="#systemd">systemd unit</a><a href="#sysctl">sysctl</a><a href="#cgroup">cgroup (Bitcoin 탭)</a><a href="#process">프로세스 (Bitcoin 탭)</a></p>
+        </article>
+
+        <article class="c" id="ports" data-added="2026-10-16" data-updated="2026-10-16" data-k="포트 port 범위 range 0-1023 well-known 잘 알려진 특권 privileged root cap_net_bind_service ephemeral 임시 포트 ip_local_port_range nodeport tcp udp 반열린 구간 half-open 닫힌 구간">
+          <div class="c-head"><h3>포트 번호: 구역과 범위 표기</h3></div>
+          <p class="why"><b>왜 알아야 하나</b>포트 번호에는 구역이 있다. 어떤 구역은 root만 쓸 수 있다. 어떤 구역은 커널이 나가는 연결에 자동으로 쓴다. 프로그램에 포트나 범위를 줄 때 구역과 표기법을 모르면 충돌이 나거나 개수를 틀린다.</p>
+          <figure class="fig"><div class="sc"><svg viewBox="0 0 720 226" role="img" aria-label="포트 0부터 1023은 root만 리슨할 수 있는 잘 알려진 포트, 1024부터 49151은 등록 포트, 49152부터 65535는 동적 포트다. 리눅스의 임시 포트와 Kubernetes NodePort 범위도 표시한다. 아래는 반열린 구간과 닫힌 구간의 개수 차이다" style="min-width:600px;max-width:720px"><text class="tb" x="10" y="20" text-anchor="start">포트 번호의 구역 (길이는 비율이 아니다)</text><rect class="wr" x="20" y="34" width="130" height="30" rx="5"/><text class="mono" x="85.0" y="54" text-anchor="middle">0–1023</text><text class="ts" x="85.0" y="82" text-anchor="middle">잘 알려진 포트</text><rect class="bx" x="150" y="34" width="330" height="30" rx="5"/><text class="mono" x="315.0" y="54" text-anchor="middle">1024–49151</text><text class="ts" x="315.0" y="82" text-anchor="middle">등록 포트 (서비스용)</text><rect class="bg" x="480" y="34" width="220" height="30" rx="5"/><text class="mono" x="590.0" y="54" text-anchor="middle">49152–65535</text><text class="ts" x="590.0" y="82" text-anchor="middle">동적·임시</text><text class="ts tw" x="85" y="100" text-anchor="middle">root만 리슨</text><path class="la" d="M368,104 V112 H639 V104"/><text class="ts ta" x="375.6595744680851" y="130" text-anchor="start">리눅스 임시 포트 (나가는 연결용, 보통 32768–60999)</text><path class="ln" d="M349,120 V140 H368 V120"/><text class="ts" x="342.6801861702128" y="144" text-anchor="end">K8s NodePort 30000–32767</text><text class="tb" x="10" y="182" text-anchor="start">[10, 15): 반열린 구간</text><circle class="hl" cx="200" cy="177" r="11"/><text class="ts" x="200" y="182" text-anchor="middle">10</text><circle class="hl" cx="230" cy="177" r="11"/><text class="ts" x="230" y="182" text-anchor="middle">11</text><circle class="hl" cx="260" cy="177" r="11"/><text class="ts" x="260" y="182" text-anchor="middle">12</text><circle class="hl" cx="290" cy="177" r="11"/><text class="ts" x="290" y="182" text-anchor="middle">13</text><circle class="hl" cx="320" cy="177" r="11"/><text class="ts" x="320" y="182" text-anchor="middle">14</text><circle class="bx" cx="350" cy="177" r="11"/><text class="ts" x="350" y="182" text-anchor="middle">15</text><text class="ts ta" x="390" y="182" text-anchor="start">15는 빠진다 → 5개 (15 − 10)</text><text class="tb" x="10" y="214" text-anchor="start">10–15: 닫힌 구간</text><circle class="hl" cx="200" cy="209" r="11"/><text class="ts" x="200" y="214" text-anchor="middle">10</text><circle class="hl" cx="230" cy="209" r="11"/><text class="ts" x="230" y="214" text-anchor="middle">11</text><circle class="hl" cx="260" cy="209" r="11"/><text class="ts" x="260" y="214" text-anchor="middle">12</text><circle class="hl" cx="290" cy="209" r="11"/><text class="ts" x="290" y="214" text-anchor="middle">13</text><circle class="hl" cx="320" cy="209" r="11"/><text class="ts" x="320" y="214" text-anchor="middle">14</text><circle class="hl" cx="350" cy="209" r="11"/><text class="ts" x="350" y="214" text-anchor="middle">15</text><text class="ts" x="390" y="214" text-anchor="start">양 끝 포함 → 6개 (15 − 10 + 1)</text></svg></div><figcaption>"a–b"가 끝을 포함하는지는 그 문서나 소스에서 확인한다. 끝 하나 차이가 경계에서 문제가 된다.</figcaption></figure>
+          <ul>
+            <li>포트는 0–65535다. TCP와 UDP는 포트 공간이 따로다. 53/tcp와 53/udp는 다른 창구다. DNS는 둘 다 쓴다.</li>
+            <li>0–1023(잘 알려진 포트): 리눅스에서는 root만 여기서 리슨할 수 있다. 예: 22(SSH), 80(HTTP), 443(HTTPS). root가 아닌 프로그램이 쓰려면 <code>CAP_NET_BIND_SERVICE</code> 권한이 필요하다. 그래서 일반 서비스는 보통 1024 이상을 쓴다.</li>
+            <li>리눅스는 나가는 연결의 내 쪽 포트를 임시 범위에서 자동으로 고른다(<code>net.ipv4.ip_local_port_range</code>, 보통 32768–60999).</li>
+            <li>포트를 여러 개 여는 프로그램은 "이 범위 안에서 골라 써라"는 설정을 받기도 한다. 범위 안의 빈 포트를 프로그램이 고른다.</li>
+            <li>범위 표기는 두 가지다. <b>닫힌 구간</b> <code>a–b</code>, <code>[a, b]</code>: 양 끝을 포함한다. 개수 = b − a + 1. <b>반열린 구간</b> <code>[a, b)</code>: a는 포함하고 b는 빠진다. 개수 = b − a. 프로그래밍 언어의 범위(Python의 <code>range(a, b)</code>, Rust의 <code>a..b</code>)는 보통 반열린 구간이다.</li>
+          </ul>
+          <div class="warn"><b>자주 하는 오해</b>"포트가 열려 있다"에는 두 뜻이 있다. 하나는 프로그램이 그 포트에서 듣고 있다는 뜻이다(<code>ss</code>로 본다). 다른 하나는 중간의 방화벽이 그 포트를 통과시킨다는 뜻이다. 둘은 따로 확인한다.</div>
+          <div class="mine"><b>내 환경과 비교</b>NodePort는 30000–32767(닫힌 구간, 2,768개)에서 고른다. 실습의 30333이 여기 있다. Signet의 38333과 38332는 1024 이상이라서 bitcoind는 root 없이 리슨한다. promet의 Caddy가 443에서 리슨하려면 root 권한이나 <code>CAP_NET_BIND_SERVICE</code>가 있어야 한다. 어느 쪽인지는 아래 명령으로 본다.</div>
+          <p class="ask"><b>생각해 볼 질문</b>서버 프로그램의 포트를 임시 포트 범위(32768–60999) 안에 두었다. 재부팅 직후에 이 프로그램이 늦게 시작하면 어떤 일이 생길 수 있을까?</p>
+          <details class="try"><summary>직접 확인</summary>
+<pre>sysctl net.ipv4.ip_local_port_range           <span class="cm"># 나가는 연결에 쓰는 임시 포트 범위</span>
+ss -tlnp | head; ss -ulnp | head              <span class="cm"># 지금 듣는 TCP, UDP 포트</span>
+systemctl cat caddy | grep -iE 'User=|Capabilit'   <span class="cm"># Caddy가 443을 여는 방법</span>
+python3 -c 'print(len(range(30000, 32768)))'  <span class="cm"># 반열린 구간: 2768</span></pre>
+          </details>
+          <p class="rel">연결: <a href="#ipport">IP와 포트 (Bitcoin 탭)</a><a href="#nodeport">NodePort (Bitcoin 탭)</a><a href="#bindaddr">리슨 주소 (Bitcoin 탭)</a><a href="#rpclayers">RPC의 층</a><a href="#sysctl">sysctl</a></p>
         </article>
       </div>
     </section>
@@ -814,10 +1111,10 @@ kubectl get nodes -o wide</pre>
 ls -ln ~                 <span class="cm"># 이름 대신 번호로 소유자 표시</span>
 ps -o pid,uid,user,cmd -u nodelab</pre>
           </details>
-          <p class="rel">연결: <a href="#dockergroup">docker 그룹</a><a href="#namespace">namespace</a></p>
+          <p class="rel">연결: <a href="#dockergroup">docker 그룹</a><a href="#namespace">namespace</a><a href="#svcuser">서비스 사용자 (Solana 탭)</a></p>
         </article>
 
-        <article class="c" id="mount" data-added="2026-10-12" data-updated="2026-10-12" data-k="파일시스템 마운트 mount 디렉터리 트리 ext4 /mnt/hdd lvm">
+        <article class="c" id="mount" data-added="2026-10-12" data-updated="2026-10-16" data-k="파일시스템 마운트 mount 디렉터리 트리 ext4 /mnt/hdd lvm fstab 부팅">
           <div class="c-head"><h3>파일시스템과 마운트<span class="en">mount</span></h3></div>
           <p class="why"><b>왜 알아야 하나</b>리눅스에서 경로는 디스크를 알려 주지 않는다. <code>/mnt/hdd</code>는 HDD다. <code>/var/lib/docker</code>는 SSD다. 성능 실험에서 데이터가 어느 장치에 있는지 모르면 결과를 설명할 수 없다.</p>
           <figure class="fig"><div class="sc"><svg viewBox="0 0 720 212" role="img" aria-label="디렉터리 트리와 실제 장치의 연결" style="min-width:560px;max-width:720px"><rect class="bx" x="20" y="56" width="100" height="36" rx="5"/><text class="mono" x="70" y="79" text-anchor="middle">/</text><path class="ln" d="M50,92 V128 H158"/><path class="ln" d="M50,128 V182 H158"/><rect class="bx" x="160" y="110" width="170" height="36" rx="5"/><text class="mono" x="245" y="133" text-anchor="middle">/var/lib/docker</text><rect class="bx" x="160" y="164" width="170" height="36" rx="5"/><text class="mono" x="245" y="187" text-anchor="middle">/mnt/hdd</text><path class="la" d="M120,74 H468" marker-end="url(#aa)"/><text class="ts ta" x="295" y="66" text-anchor="middle">마운트</text><path class="ln" d="M330,128 H400 V92 H468" marker-end="url(#am)" stroke-dasharray="4 3"/><text class="ts" x="408" y="118" text-anchor="start">따로 마운트 없음</text><text class="ts" x="408" y="134" text-anchor="start">→ / 의 장치 (SSD)</text><path class="lw" d="M330,182 H468" marker-end="url(#aw)"/><text class="ts tw" x="400" y="174" text-anchor="middle">마운트</text><rect class="hl" x="470" y="50" width="230" height="50" rx="5"/><text class="tb" x="585" y="72" text-anchor="middle">SATA SSD (MX500)</text><text class="ts" x="585" y="90" text-anchor="middle">ext4 · LVM · 약 226 GB</text><rect class="wr" x="470" y="150" width="230" height="50" rx="5"/><text class="tb" x="585" y="172" text-anchor="middle">HDD (WD Blue 2 TB)</text><text class="ts" x="585" y="190" text-anchor="middle">SMR · 7200 RPM</text></svg></div><figcaption>경로 이름은 장치를 알려 주지 않는다. 가장 가까운 마운트 지점이 장치를 정한다. kind와 PVC 데이터는 /var/lib/docker 아래, 즉 SSD에 있다.</figcaption></figure>
@@ -826,6 +1123,7 @@ ps -o pid,uid,user,cmd -u nodelab</pre>
             <li>장치(디스크, 파티션)의 파일시스템을 트리의 한 디렉터리에 붙인다. 이것을 <b>마운트</b>라고 한다.</li>
             <li>그 디렉터리를 <b>마운트 지점</b>이라고 한다. 그 아래의 파일은 붙은 장치에 저장된다.</li>
             <li>바인드 마운트는 장치가 아니라 <b>다른 디렉터리</b>를 다른 경로에 다시 보이게 한다. 컨테이너 볼륨이 이 방법을 쓴다.</li>
+            <li>부팅할 때마다 같은 자리에 붙이는 목록은 <code>/etc/fstab</code>이다. <a href="#fstab">/etc/fstab 카드</a>(Solana 탭)에 있다.</li>
           </ul>
           <div class="mine"><b>내 환경에서</b>루트(<code>/</code>)는 SATA SSD의 ext4(LVM)다. <code>/mnt/hdd</code>는 2 TB SMR HDD다. kind 노드와 PVC 데이터는 기본적으로 Docker 저장 영역, 즉 SSD에 있다.</div>
           <details class="try"><summary>직접 확인</summary>
@@ -1419,7 +1717,7 @@ cat /proc/$(pgrep -n bitcoind)/oom_score_adj</pre>
           <p class="rel">연결: <a href="#resources">requests와 limits</a><a href="#memory">메모리</a><a href="#refault">refault</a></p>
         </article>
 
-        <article class="c" id="kind" data-added="2026-10-12" data-updated="2026-10-15" data-k="kind kubernetes in docker 노드 컨테이너 control-plane 로컬 클러스터 포트 매핑 extraportmappings 172.18.0.2 브리지">
+        <article class="c" id="kind" data-added="2026-10-12" data-updated="2026-10-16" data-k="kind kubernetes in docker 노드 컨테이너 control-plane 로컬 클러스터 포트 매핑 extraportmappings 172.18.0.2 브리지 docker stop docker start 끄기 잠시 중지 scale replicas=0 다시 켜기">
           <div class="c-head"><h3>kind 클러스터의 구조</h3></div>
           <p class="why"><b>왜 알아야 하나</b>kind는 실제 서버 클러스터와 다르게 동작하는 부분이 있다. 측정 결과에 kind 때문인 부분이 섞일 수 있다.</p>
           <ul>
@@ -1428,6 +1726,7 @@ cat /proc/$(pgrep -n bitcoind)/oom_score_adj</pre>
             <li>그래서 호스트의 <code>docker ps</code>에는 Pod가 안 보인다. kind 노드만 보인다.</li>
             <li>클러스터 네트워크는 Docker 네트워크 안에 있다. 외부에서 Pod로 들어오려면 별도 포트 매핑이 필요하다.</li>
             <li>kind의 포트 매핑(<code>extraPortMappings</code>)은 클러스터를 만들 때만 넣을 수 있다. 이미 만든 클러스터에서는 호스트의 DNAT 규칙으로 kind 상자의 NodePort에 보낸다(<a href="#dnat">포트 포워딩 = DNAT</a>).</li>
+            <li>잠시 끌 때의 순서: 먼저 Pod를 끈다(<code>kubectl -n bitcoin-lab scale statefulset bitcoin-node --replicas=0</code>, Deployment도 같게). bitcoind가 SIGTERM을 받고 정상 종료한다. 그다음 kind 상자를 멈춘다(<code>docker stop -t 60 bitcoin-lab-control-plane</code>). <code>-t 60</code>은 "60초 기다린 뒤에도 안 끝나면 강제 종료"다. 기본은 10초다. 다시 켤 때는 반대 순서다. <code>kind delete cluster</code>와 <code>docker rm</code>은 블록 데이터까지 지운다(2026-10-15).</li>
           </ul>
           <div class="mine"><b>내 환경에서</b>노드는 <code>bitcoin-lab-control-plane</code> 하나다. 모든 Pod가 이 컨테이너 안에서 같은 SSD, 같은 CPU를 나눠 쓴다. "노드 여러 개"는 Kubernetes 노드가 아니라 bitcoind Pod 여러 개다. <a href="#twonodes">"노드"의 두 뜻</a>을 본다. kind 노드 컨테이너에는 Docker 한도가 있다. 2026-10-13 확인: 메모리 4GiB(같은 날 8GiB로 늘림), CPU 3.5코어. 바꾸는 명령: <code>docker update --memory 8g --memory-swap 8g bitcoin-lab-control-plane</code>. 컨테이너는 재시작하지 않는다. 2026-10-14 확인: kind 상자는 Docker 네트워크에서 <code>172.18.0.2</code>다. promet은 이 Docker 네트워크의 브리지에 붙어 있어서 이 주소에 바로 닿는다. 실습 F 뒤 메모리는 다시 8GiB다.</div>
           <div class="warn"><b>자주 하는 오해</b>kind 안의 kubelet은 이 Docker 한도를 모른다. 그래서 <code>kubectl describe node</code>의 메모리는 상자 크기가 아니라 호스트 메모리다. 2026-10-13의 IBD가 느렸던 원인이 이 차이였다(<a href="#refault">refault</a>).</div>
@@ -1948,7 +2247,7 @@ kubectl -n bitcoin-lab logs bitcoin-node-0 | grep Bound   <span class="cm"># 실
           <p class="rel">연결: <a href="#datadir">데이터 디렉터리</a><a href="#dudf">du와 df</a></p>
         </article>
 
-        <article class="c" id="dbcache" data-added="2026-10-12" data-updated="2026-10-15" data-k="utxo dbcache chainstate 캐시 flush leveldb 메모리 동기화 속도 connectblock ccoinsviewcache fetchcoin ccoinsviewdb txdb 코드 경로">
+        <article class="c" id="dbcache" data-added="2026-10-12" data-updated="2026-10-16" data-k="utxo dbcache chainstate 캐시 flush leveldb 메모리 동기화 속도 connectblock ccoinsviewcache fetchcoin ccoinsviewdb txdb 코드 경로 sigterm sigkill 정상 종료 강제 종료 timeoutstopsec">
           <div class="c-head"><h3>UTXO 집합과 dbcache</h3></div>
           <p class="why"><b>왜 알아야 하나</b>IBD 속도에 가장 큰 영향을 주는 설정이다. 실습 F의 첫 번째 실험 변수가 될 수 있다.</p>
           <figure class="fig"><div class="sc"><svg viewBox="0 0 720 146" role="img" aria-label="블록 검증은 UTXO 캐시를 사용하고, 캐시가 차면 디스크로 flush한다" style="min-width:560px;max-width:720px"><rect class="bx" x="20" y="50" width="110" height="50" rx="5"/><text class="tb" x="75" y="80" text-anchor="middle">새 블록</text><path class="ln" d="M130,75 H158" marker-end="url(#am)"/><rect class="bx" x="160" y="50" width="120" height="50" rx="5"/><text class="tb" x="220" y="72" text-anchor="middle">검증</text><text class="ts" x="220" y="90" text-anchor="middle">CPU</text><path class="la" d="M282,75 H328" marker-end="url(#aa)" marker-start="url(#aa)"/><text class="ts" x="220" y="120" text-anchor="middle">UTXO 찾기·추가·삭제</text><rect class="none" x="318" y="28" width="204" height="92" rx="5" fill="none" stroke-dasharray="5 4" style="stroke:var(--warn)"/><rect class="hl" x="330" y="50" width="180" height="50" rx="5"/><text class="tb" x="420" y="72" text-anchor="middle">UTXO 캐시</text><text class="ts" x="420" y="90" text-anchor="middle">메모리 · -dbcache</text><text class="ts tw" x="420" y="114" text-anchor="middle">컨테이너 메모리 limits 안</text><path class="la" d="M510,64 H568" marker-end="url(#aa)"/><text class="ts ta" x="540" y="56" text-anchor="middle">flush</text><path class="lw" d="M568,88 H512" marker-end="url(#aw)" stroke-dasharray="5 4"/><text class="ts tw" x="540" y="136" text-anchor="middle">없으면 디스크 읽기</text><rect class="bx" x="570" y="50" width="130" height="50" rx="5"/><text class="mono" x="635" y="72" text-anchor="middle">chainstate/</text><text class="ts" x="635" y="90" text-anchor="middle">LevelDB · 디스크</text></svg></div><figcaption>dbcache가 크면 디스크 읽기와 flush가 줄어든다. 하지만 캐시는 컨테이너 메모리 limits 안에 있어야 한다.</figcaption></figure>
@@ -1959,6 +2258,7 @@ kubectl -n bitcoin-lab logs bitcoin-node-0 | grep Bound   <span class="cm"># 실
             <li>캐시가 차면 디스크(chainstate)에 한 번에 쓴다. 이것을 <b>flush</b>라고 한다. 이때 I/O가 몰린다.</li>
             <li>dbcache에 없는 UTXO는 <code>chainstate/</code>의 LevelDB 파일에서 읽는다. 그 파일이 page cache에 있으면 빠르고, 버려졌으면 디스크까지 간다.</li>
             <li>코드 경로: <code>ConnectBlock</code>(<code>src/validation.cpp</code>)이 입력 코인을 찾는다 → <code>CCoinsViewCache::FetchCoin</code>(<code>src/coins.cpp</code>, 크기 = dbcache) → 없으면 <code>CCoinsViewDB</code>(<code>src/txdb.cpp</code>) → LevelDB 읽기 → page cache → 디스크.</li>
+            <li>정상 종료 신호(SIGTERM)를 받으면 bitcoind는 dbcache에 남은 변경을 chainstate에 쓰고 끝난다. 강제 종료(SIGKILL)되면 이 쓰기를 못 한다. 그러면 다음 시작 때 마지막 flush 이후의 블록을 다시 처리한다. Bitcoin Core의 unit 파일이 <code>TimeoutStopSec=600</code>으로 끝날 시간을 넉넉히 주는 것도 이 때문으로 보인다(추론).</li>
           </ul>
           <div class="warn"><b>자주 하는 오해</b>dbcache를 크게 하면 항상 빠른 것은 아니다. 컨테이너 메모리 limits를 넘으면 종료된다. 페이지 캐시와도 메모리를 나눈다. 측정으로 확인한다.</div>
           <div class="mine"><b>내 환경에서</b>노드는 <code>-dbcache=512</code>다. 2026-10-13 조사에서 IBD 동안 약 1.89TB를 다시 읽었다. 다시 읽은 대상으로 가장 유력한 것은 <code>chainstate/</code>의 LevelDB 파일이다(추정). 실습 F의 <a href="#reindex">-reindex-chainstate</a>가 바로 이 부분을 다시 실행했다. 읽기 중 refault는 95%(상자 8GiB), 97.9%(4GiB)였다. 다음 질문: dbcache를 키우면 LevelDB 읽기가 줄어드는가? 그런데 dbcache도 같은 2Gi limit 안에 있다. 메모리를 dbcache와 page cache 중 어디에 주는 것이 좋은가? 이것은 코드를 읽고 측정해야 답할 수 있다.</div>
