@@ -138,7 +138,7 @@ main { padding-block: 28px 80px; min-width: 0; display: flex; flex-direction: co
 .c ul, .c ol { padding-left: 1.3em; margin: 8px 0; }
 .c li { margin: 2px 0; }
 .why { margin: 10px 0 12px; padding: 8px 12px; border-left: 3px solid var(--ink); background: var(--bg); }
-.why b, .mine b, .warn b { display: block; font-size: 12px; letter-spacing: .06em; font-weight: 700; }
+.why > b:first-child, .mine > b:first-child, .warn > b:first-child { display: block; font-size: 12px; letter-spacing: .06em; font-weight: 700; }
 .mine { margin: 14px 0 0; padding: 10px 12px; background: var(--accent-soft); border-radius: 4px; max-width: 72ch; }
 .mine b { color: var(--accent); }
 .warn { margin: 12px 0 0; padding: 10px 12px; background: var(--warn-soft); border-radius: 4px; max-width: 72ch; }
@@ -237,7 +237,7 @@ svg .mkw { fill: var(--warn); }
   <main>
     <header class="intro">
       <h1>nodelab 개념 노트</h1>
-      <p class="stamp" id="stamp">마지막 갱신 <b><time datetime="2026-10-17T07:12+09:00">2026-10-17 07:12</time></b> (한국 시간) · 매일 06:52에 학습 기록을 읽고 자동으로 갱신한다.</p>
+      <p class="stamp" id="stamp">마지막 갱신 <b><time datetime="2026-10-18T07:16+09:00">2026-10-18 07:16</time></b> (한국 시간) · 매일 06:52에 학습 기록을 읽고 자동으로 갱신한다.</p>
       <div data-track="sol">
         <p>Solana 노드를 이해하기 위한 기본 개념이다. 지금은 이 탭이 먼저 열린다. 서버 하드웨어의 단어부터 읽는다. 그다음 Solana의 기본 단어, 리눅스 운영 단어를 읽는다.</p>
         <p>카드는 같은 순서로 쓴다. 먼저 <b>왜 알아야 하는지</b> 쓴다. 그다음 핵심 내용, 그다음 <b>promet이나 내 Bitcoin 노드와 비교</b>한다. 카드는 뜻과 이유를 설명한다. 무엇을 고를지는 쓰지 않는다. 직접 생각할 거리는 <b>생각해 볼 질문</b>에 둔다.</p>
@@ -256,7 +256,7 @@ svg .mkw { fill: var(--warn); }
       </div>
       <div class="now" id="now-sol" data-track="sol">
         <h2>지금 학습 위치</h2>
-        <p>하드웨어, Solana 기본 단어, 서비스 운영의 기본을 읽었다. 지금: 설정 파일을 쓰고 서비스로 켜는 단계에서 자주 틀리는 곳이다. <a href="#helpread">도움말 읽기</a>, <a href="#linecont">줄 이어 쓰기</a>, <a href="#heredoc">heredoc과 펼침</a>, <a href="#execstart">ExecStart=는 셸이 아니다</a>, <a href="#caps">capability</a>. 같이 볼 것: <a href="#turbine">turbine</a>, <a href="#systemd">systemd unit</a>(start와 restart), <a href="#bashsafe">bash 스크립트</a>.</p>
+        <p>하드웨어, Solana 기본 단어, 서비스 운영의 기본을 읽었다. 지금: 공개 cluster에 직접 물어서 숫자를 재고, 그 숫자의 뜻을 읽는 단계다. Solana가 시간을 세는 방법: <a href="#poh">PoH</a>, <a href="#slot">slot과 epoch</a>(목표 200ms, 두 방법으로 재기). 규칙이 바뀌는 방법: <a href="#featuregate">feature gate</a>. 블록이 디스크에 남는 모양: <a href="#shredtx">shred와 트랜잭션</a>, <a href="#blockcols">blockstore의 칸</a>. 같이 볼 것: <a href="#soltx">트랜잭션</a>(버전, 투표), <a href="#txmeta">transaction과 meta</a>, <a href="#snapshot">snapshot</a>, <a href="#solrpc">RPC</a>(요청 제한), 측정 명령을 다른 컴퓨터에서 돌릴 때는 <a href="#shellport">macOS와 Linux</a>.</p>
       </div>
       <div class="now" id="now" data-track="btc">
         <h2>지금 학습 위치</h2>
@@ -268,8 +268,8 @@ svg .mkw { fill: var(--warn); }
           <thead><tr><th>단계</th><th>먼저 읽을 개념</th></tr></thead>
           <tbody>
             <tr><td>1. 서버 하드웨어</td><td><a href="#cputopo">소켓, 코어, 스레드</a>, <a href="#alu">코어와 ALU</a>, <a href="#smt">SMT</a>, <a href="#numa">NUMA</a>, <a href="#smtnuma">SMT와 NUMA의 층</a>, <a href="#nvme">NVMe</a>, <a href="#raid0">RAID0</a>, <a href="#nic">NIC와 드라이버</a></td></tr>
-            <tr><td>2. Solana 기본</td><td><a href="#soloverview">전체 지도</a>, <a href="#slot">slot과 epoch</a>, <a href="#soltx">트랜잭션과 서명</a>, <a href="#ledger">ledger와 shred</a>, <a href="#turbine">turbine</a>, <a href="#snapshot">snapshot</a>, <a href="#accounts">account</a>, <a href="#statehist">상태와 기록</a>, <a href="#solrpc">RPC</a>, <a href="#rpclayers">RPC의 층</a>, <a href="#txmeta">transaction과 meta</a>, <a href="#gossip">gossip</a>, <a href="#keypair">keypair</a></td></tr>
-            <tr><td><b>3. 리눅스 운영 (지금)</b></td><td><a href="#helpread">도움말 읽기</a>, <a href="#bashsafe">bash 스크립트</a>, <a href="#linecont">줄 이어 쓰기</a>, <a href="#heredoc">heredoc</a>, <a href="#idempotent">멱등성</a>, <a href="#systemd">systemd unit</a>, <a href="#execstart">ExecStart=</a>, <a href="#sdeps">systemd 의존성</a>, <a href="#fstab">/etc/fstab</a>, <a href="#svcuser">서비스 사용자</a>, <a href="#caps">capability</a>, <a href="#sysctl">sysctl</a>, <a href="#ulimit">ulimit</a>, <a href="#ports">포트 번호</a>, <a href="#bindaddr">리슨 주소</a>, <a href="#ipport">IP와 포트</a>, <a href="#nat">NAT</a></td></tr>
+            <tr><td><b>2. Solana 기본 (지금)</b></td><td><a href="#soloverview">전체 지도</a>, <a href="#slot">slot과 epoch</a>, <a href="#poh">PoH</a>, <a href="#featuregate">feature gate</a>, <a href="#soltx">트랜잭션과 서명</a>, <a href="#ledger">ledger와 shred</a>, <a href="#shredtx">shred와 트랜잭션</a>, <a href="#turbine">turbine</a>, <a href="#snapshot">snapshot</a>, <a href="#accounts">account</a>, <a href="#statehist">상태와 기록</a>, <a href="#solrpc">RPC</a>, <a href="#rpclayers">RPC의 층</a>, <a href="#txmeta">transaction과 meta</a>, <a href="#blockcols">blockstore의 칸</a>, <a href="#gossip">gossip</a>, <a href="#keypair">keypair</a></td></tr>
+            <tr><td>3. 리눅스 운영</td><td><a href="#helpread">도움말 읽기</a>, <a href="#bashsafe">bash 스크립트</a>, <a href="#shellport">macOS와 Linux</a>, <a href="#linecont">줄 이어 쓰기</a>, <a href="#heredoc">heredoc</a>, <a href="#idempotent">멱등성</a>, <a href="#systemd">systemd unit</a>, <a href="#execstart">ExecStart=</a>, <a href="#sdeps">systemd 의존성</a>, <a href="#fstab">/etc/fstab</a>, <a href="#svcuser">서비스 사용자</a>, <a href="#caps">capability</a>, <a href="#sysctl">sysctl</a>, <a href="#ulimit">ulimit</a>, <a href="#ports">포트 번호</a>, <a href="#bindaddr">리슨 주소</a>, <a href="#ipport">IP와 포트</a>, <a href="#nat">NAT</a></td></tr>
             <tr><td>Bitcoin 탭에서 같이 볼 것</td><td><a href="#mount">마운트</a>, <a href="#process">프로세스와 권한</a>, <a href="#ssdhdd">SSD, HDD</a>, <a href="#iometrics">IOPS와 지연</a>, <a href="#memory">메모리와 페이지 캐시</a>, <a href="#cgroup">cgroup</a>, <a href="#rpccookie">RPC와 쿠키</a>, <a href="#prune">-prune</a>, <a href="#fullnode">풀 노드</a>, <a href="#listen">-listen과 피어</a></td></tr>
           </tbody>
         </table></div>
@@ -295,6 +295,7 @@ svg .mkw { fill: var(--warn); }
       <details class="log">
         <summary>업데이트 기록</summary>
         <ul class="upd" id="changelog">
+          <li><b>2026-10-18</b> Solana 탭에 새 카드 5개. Solana 기본: PoH(해시로 만든 시계), feature gate(미리 넣고 한꺼번에 켠다), shred와 트랜잭션(뜻의 단위, 운반의 단위), blockstore의 칸(원본, 영수증, 찾아보기). 리눅스 운영: macOS와 Linux(seq, echo, sed -i). 보충: slot(목표 400ms → 200ms, epoch 길이, 두 방법으로 재기), 트랜잭션(버전, 투표), transaction과 meta, snapshot(HTTP로 받는 길), RPC(요청 제한, 오류 찍기), ExecStart=(Environment=PATH와 ExecSearchPath=), 프로세스와 권한(UID 0, sudo).</li>
           <li><b>2026-10-17</b> Solana 탭에 새 카드 6개. 리눅스 운영: 도움말(--help) 읽는 법, 줄 이어 쓰기(\), heredoc과 펼침(쓸 때와 읽을 때), ExecStart=는 셸이 아니다, capability(root의 힘을 나눈 조각). Solana 기본: turbine(블록 조각이 퍼지는 나무). 보충: systemd unit(start, restart, daemon-reload, verify), bash 스크립트(local과 export가 실패를 가림), slot(getRecentPerformanceSamples).</li>
           <li><b>2026-10-16</b> Solana 탭에 새 카드 10개. Solana 기본: 상태와 기록, transaction과 meta, RPC의 층(TCP, HTTP, JSON-RPC, WebSocket), gossip과 ContactInfo, keypair. 리눅스 운영: /etc/fstab, systemd 의존성, bash 스크립트(set -euo pipefail), 포트 번호와 범위 표기, 서비스 사용자와 최소 권한. 보충: Solana RPC(구독 짝, 무거운 요청), slot, ledger(genesis 해시), 전체 지도(validator의 키 셋), RAID0(chunk), systemd unit(/usr/lib와 /etc, enable, Restart=), sysctl(버퍼, 매핑 수, nr_open, sysctl·rlimit·cgroup 비교), ulimit, 멱등성. Bitcoin 탭 보충: UTXO와 dbcache(정상 종료), kind(잠시 끄는 순서), 마운트.</li>
           <li><b>2026-10-15 (2)</b> Solana 탭 추가. 왼쪽 위(휴대폰은 맨 위)에서 탭을 고른다. 지금은 Solana 탭이 먼저 열린다. 고른 탭은 이 브라우저에 저장된다. 새 카드 19개. 하드웨어: 소켓·코어·스레드, 코어와 ALU, SMT, NUMA, SMT와 NUMA의 층, NVMe, RAID0, NIC와 드라이버. Solana 기본: 전체 지도, slot과 epoch, 트랜잭션과 서명, ledger와 shred, snapshot, account, RPC. 리눅스 운영: systemd, sysctl, ulimit, 멱등성. 진도, 읽음, NEW 표시는 탭마다 따로 센다.</li>
@@ -506,21 +507,23 @@ cat /sys/class/net/&lt;인터페이스&gt;/device/numa_node</pre>
           </ul>
           <div class="warn"><b>자주 하는 오해</b>"RPC 노드"는 특별한 다른 프로그램이 아니다. validator와 같은 프로그램을 다른 역할로 실행한 것이다.</div>
           <div class="mine"><b>내 Bitcoin 노드와 비교</b>Bitcoin에는 정해진 leader가 없다. 채굴자가 작업증명(PoW)으로 경쟁해서 먼저 찾은 쪽이 블록을 만든다. 내 bitcoind는 블록을 검증하고 저장하지만 채굴하지 않는다. 이 점에서 Solana의 RPC 노드와 역할이 비슷하다. Signet은 시험용 네트워크라는 점에서 devnet, testnet과 비슷하다.</div>
-          <p class="rel">연결: <a href="#slot">slot과 epoch</a><a href="#solrpc">Solana RPC</a><a href="#ledger">ledger</a><a href="#fullnode">풀 노드 (Bitcoin 탭)</a><a href="#signet">Signet (Bitcoin 탭)</a><a href="#turbine">turbine</a></p>
+          <p class="rel">연결: <a href="#slot">slot과 epoch</a><a href="#solrpc">Solana RPC</a><a href="#ledger">ledger</a><a href="#fullnode">풀 노드 (Bitcoin 탭)</a><a href="#signet">Signet (Bitcoin 탭)</a><a href="#turbine">turbine</a><a href="#poh">PoH</a><a href="#featuregate">feature gate</a></p>
         </article>
 
-        <article class="c" id="slot" data-added="2026-10-15" data-updated="2026-10-17" data-k="slot 슬롯 block 블록 epoch 에포크 leader schedule 리더 순서 skipped 건너뛴 block height 블록 높이 400ms 432000 getslot getblockheight 빈 slot getrecentperformancesamples 성능 샘플 numslots">
+        <article class="c" id="slot" data-added="2026-10-15" data-updated="2026-10-18" data-k="slot 슬롯 block 블록 epoch 에포크 leader schedule 리더 순서 skipped 건너뛴 block height 블록 높이 400ms 432000 getslot getblockheight 빈 slot getrecentperformancesamples 성능 샘플 numslots poh tick feature 200ms simd-0525 getblocktime 두 방법">
           <div class="c-head"><h3>slot, 블록 높이, epoch</h3></div>
           <p class="why"><b>왜 알아야 하나</b>Solana의 시간은 slot으로 센다. slot 번호와 블록 높이는 다른 숫자다. 둘을 섞으면 "이 slot에는 블록이 없다"는 응답을 오류로 잘못 읽는다.</p>
-          <figure class="fig"><div class="sc"><svg viewBox="0 0 720 174" role="img" aria-label="slot 100부터 111까지 12칸. leader 한 명이 4칸씩 맡는다. slot 106은 건너뛰어서 블록이 없고, 그래서 블록 높이는 slot 번호보다 천천히 는다" style="min-width:600px;max-width:720px"><text class="ts" x="10" y="18" text-anchor="start">slot = 약 400ms의 시간 칸. 칸마다 정해진 leader가 한 명 있다.</text><text class="ts" x="123" y="42" text-anchor="middle">leader A (4칸 연속)</text><text class="ts" x="355" y="42" text-anchor="middle">leader B (4칸 연속)</text><text class="ts" x="587" y="42" text-anchor="middle">leader C (4칸 연속)</text><rect class="hl" x="10" y="50" width="52" height="40" rx="5"/><text class="mono" x="36" y="75" text-anchor="middle">100</text><text class="ts" x="36" y="110" text-anchor="middle">높이 50</text><rect class="hl" x="68" y="50" width="52" height="40" rx="5"/><text class="mono" x="94" y="75" text-anchor="middle">101</text><text class="ts" x="94" y="110" text-anchor="middle">높이 51</text><rect class="hl" x="126" y="50" width="52" height="40" rx="5"/><text class="mono" x="152" y="75" text-anchor="middle">102</text><text class="ts" x="152" y="110" text-anchor="middle">높이 52</text><rect class="hl" x="184" y="50" width="52" height="40" rx="5"/><text class="mono" x="210" y="75" text-anchor="middle">103</text><text class="ts" x="210" y="110" text-anchor="middle">높이 53</text><rect class="bx" x="242" y="50" width="52" height="40" rx="5"/><text class="mono" x="268" y="75" text-anchor="middle">104</text><text class="ts" x="268" y="110" text-anchor="middle">높이 54</text><rect class="bx" x="300" y="50" width="52" height="40" rx="5"/><text class="mono" x="326" y="75" text-anchor="middle">105</text><text class="ts" x="326" y="110" text-anchor="middle">높이 55</text><rect class="wr" x="358" y="50" width="52" height="40" rx="5"/><text class="mono tw" x="384" y="75" text-anchor="middle">106</text><text class="ts tw" x="384" y="110" text-anchor="middle">블록 없음</text><rect class="bx" x="416" y="50" width="52" height="40" rx="5"/><text class="mono" x="442" y="75" text-anchor="middle">107</text><text class="ts" x="442" y="110" text-anchor="middle">높이 56</text><rect class="hl" x="474" y="50" width="52" height="40" rx="5"/><text class="mono" x="500" y="75" text-anchor="middle">108</text><text class="ts" x="500" y="110" text-anchor="middle">높이 57</text><rect class="hl" x="532" y="50" width="52" height="40" rx="5"/><text class="mono" x="558" y="75" text-anchor="middle">109</text><text class="ts" x="558" y="110" text-anchor="middle">높이 58</text><rect class="hl" x="590" y="50" width="52" height="40" rx="5"/><text class="mono" x="616" y="75" text-anchor="middle">110</text><text class="ts" x="616" y="110" text-anchor="middle">높이 59</text><rect class="hl" x="648" y="50" width="52" height="40" rx="5"/><text class="mono" x="674" y="75" text-anchor="middle">111</text><text class="ts" x="674" y="110" text-anchor="middle">높이 60</text><text class="ts" x="10" y="142" text-anchor="start">위 숫자: slot 번호. 시간이 가면 늘 는다. 아래 숫자: 블록 높이. 블록이 있을 때만 는다.</text><text class="ts" x="10" y="164" text-anchor="start">epoch = slot 432,000개 (mainnet-beta, 약 2일 이상). epoch마다 leader 순서표를 정한다.</text></svg></div><figcaption>예시 숫자다. 실제 cluster에서는 slot 번호와 블록 높이의 차이가 훨씬 크다. 건너뛴 slot이 그동안 쌓였기 때문이다.</figcaption></figure>
+          <figure class="fig"><div class="sc"><svg viewBox="0 0 720 174" role="img" aria-label="slot 100부터 111까지 12칸. leader 한 명이 4칸씩 맡는다. slot 106은 건너뛰어서 블록이 없고, 그래서 블록 높이는 slot 번호보다 천천히 는다" style="min-width:600px;max-width:720px"><text class="ts" x="10" y="18" text-anchor="start">slot = 짧은 시간 칸(지금 목표 200ms). 칸마다 정해진 leader가 한 명 있다.</text><text class="ts" x="123" y="42" text-anchor="middle">leader A (4칸 연속)</text><text class="ts" x="355" y="42" text-anchor="middle">leader B (4칸 연속)</text><text class="ts" x="587" y="42" text-anchor="middle">leader C (4칸 연속)</text><rect class="hl" x="10" y="50" width="52" height="40" rx="5"/><text class="mono" x="36" y="75" text-anchor="middle">100</text><text class="ts" x="36" y="110" text-anchor="middle">높이 50</text><rect class="hl" x="68" y="50" width="52" height="40" rx="5"/><text class="mono" x="94" y="75" text-anchor="middle">101</text><text class="ts" x="94" y="110" text-anchor="middle">높이 51</text><rect class="hl" x="126" y="50" width="52" height="40" rx="5"/><text class="mono" x="152" y="75" text-anchor="middle">102</text><text class="ts" x="152" y="110" text-anchor="middle">높이 52</text><rect class="hl" x="184" y="50" width="52" height="40" rx="5"/><text class="mono" x="210" y="75" text-anchor="middle">103</text><text class="ts" x="210" y="110" text-anchor="middle">높이 53</text><rect class="bx" x="242" y="50" width="52" height="40" rx="5"/><text class="mono" x="268" y="75" text-anchor="middle">104</text><text class="ts" x="268" y="110" text-anchor="middle">높이 54</text><rect class="bx" x="300" y="50" width="52" height="40" rx="5"/><text class="mono" x="326" y="75" text-anchor="middle">105</text><text class="ts" x="326" y="110" text-anchor="middle">높이 55</text><rect class="wr" x="358" y="50" width="52" height="40" rx="5"/><text class="mono tw" x="384" y="75" text-anchor="middle">106</text><text class="ts tw" x="384" y="110" text-anchor="middle">블록 없음</text><rect class="bx" x="416" y="50" width="52" height="40" rx="5"/><text class="mono" x="442" y="75" text-anchor="middle">107</text><text class="ts" x="442" y="110" text-anchor="middle">높이 56</text><rect class="hl" x="474" y="50" width="52" height="40" rx="5"/><text class="mono" x="500" y="75" text-anchor="middle">108</text><text class="ts" x="500" y="110" text-anchor="middle">높이 57</text><rect class="hl" x="532" y="50" width="52" height="40" rx="5"/><text class="mono" x="558" y="75" text-anchor="middle">109</text><text class="ts" x="558" y="110" text-anchor="middle">높이 58</text><rect class="hl" x="590" y="50" width="52" height="40" rx="5"/><text class="mono" x="616" y="75" text-anchor="middle">110</text><text class="ts" x="616" y="110" text-anchor="middle">높이 59</text><rect class="hl" x="648" y="50" width="52" height="40" rx="5"/><text class="mono" x="674" y="75" text-anchor="middle">111</text><text class="ts" x="674" y="110" text-anchor="middle">높이 60</text><text class="ts" x="10" y="142" text-anchor="start">위 숫자: slot 번호. 시간이 가면 늘 는다. 아래 숫자: 블록 높이. 블록이 있을 때만 는다.</text><text class="ts" x="10" y="164" text-anchor="start">epoch = slot 432,000개 (mainnet-beta, 200ms면 약 1일). epoch마다 leader 순서표를 정한다.</text></svg></div><figcaption>예시 숫자다. 실제 cluster에서는 slot 번호와 블록 높이의 차이가 훨씬 크다. 건너뛴 slot이 그동안 쌓였기 때문이다.</figcaption></figure>
           <ul>
-            <li><b>slot</b>: leader 한 명이 블록 하나를 만들 수 있는 시간 칸이다. 목표 길이는 약 400ms다.</li>
+            <li><b>slot</b>: leader 한 명이 블록 하나를 만들 수 있는 시간 칸이다. 목표 길이는 처음에 400ms였다. 지금은 200ms다. 2026년에 <a href="#featuregate">feature</a> 네 개로 나누어 줄였다. 길이를 정하는 것은 <a href="#poh">PoH</a>의 해시 개수다.</li>
             <li>leader는 slot 4개를 연속으로 맡는다. 그다음 다른 leader로 넘어간다.</li>
             <li>leader가 블록을 못 만들거나 그 블록이 받아들여지지 않으면 그 slot은 <b>건너뛴 slot</b>(skipped)이 된다. 그 slot에는 블록이 없다.</li>
             <li>그래서 slot 번호는 시간에 따라 늘고, <b>블록 높이</b>(block height)는 블록이 있을 때만 는다. 블록 높이는 slot 번호보다 작다.</li>
-            <li><b>epoch</b>: slot 432,000개다(mainnet-beta 기준, 약 2일 이상). epoch마다 stake를 보고 leader 순서표(leader schedule)를 정한다.</li>
+            <li><b>epoch</b>: slot 432,000개다(mainnet-beta 기준). slot이 400ms면 약 2일, 200ms면 약 1일이다. epoch마다 stake를 보고 leader 순서표(leader schedule)를 정한다.</li>
             <li>Solana는 거의 모든 것을 slot 번호로 부른다. <code>getBlock</code>도 블록 높이가 아니라 slot 번호를 받는다. snapshot 파일 이름에도 slot이 들어간다. 빈 slot에는 블록이 없으므로 그 slot의 snapshot도 없다.</li>
             <li><code>getSlot</code>은 지금의 slot 번호를 준다. <code>getBlockHeight</code>는 지금까지의 블록 수를 준다. 두 메서드가 따로 있는 이유가 이것이다.</li>
+            <li>slot을 줄이면서 블록 하나의 한도(계산량 등)도 같은 비율로 줄였다. 그래서 1초에 처리할 수 있는 양은 그대로다. 블록이 더 자주, 더 작게 나온다.</li>
+            <li>실제 slot 길이는 목표보다 조금 길 수 있다. 그래서 목표 값을 그대로 믿지 않고 잰다. 아래 "직접 확인"에 두 방법이 있다. 서로 다른 두 방법의 값이 맞으면 믿을 만하다.</li>
           </ul>
           <div class="mine"><b>내 Bitcoin 노드와 비교</b>Bitcoin은 블록 사이가 평균 10분이다. 정해진 시간 칸이 없다. 그래서 Bitcoin에는 "높이"만 있다. Solana에는 시간 칸(slot)과 높이가 따로 있다.</div>
           <details class="try"><summary>직접 확인 (공개 devnet에 묻기)</summary>
@@ -529,12 +532,76 @@ cat /sys/class/net/&lt;인터페이스&gt;/device/numa_node</pre>
 <span class="cm"># absoluteSlot(slot 번호)과 blockHeight(블록 높이)를 비교한다</span>
 curl -s https://api.devnet.solana.com -X POST -H 'Content-Type: application/json' \
   -d '{"jsonrpc":"2.0","id":1,"method":"getRecentPerformanceSamples","params":[3]}' | jq
-<span class="cm"># 60초마다의 기록: numSlots(지나간 slot 수), numTransactions. samplePeriodSecs(보통 60)를 numSlots로 나누면 slot 하나의 실제 길이(초)다</span></pre>
+<span class="cm"># 60초마다의 기록: numSlots(지나간 slot 수), numTransactions. samplePeriodSecs(보통 60)를 numSlots로 나누면 slot 하나의 실제 길이(초)다</span>
+U=https://api.devnet.solana.com; H='Content-Type: application/json'
+S=$(curl -s $U -X POST -H "$H" -d '{"jsonrpc":"2.0","id":1,"method":"getSlot","params":[{"commitment":"finalized"}]}' | jq .result)
+for X in $((S-100000)) $S; do
+  curl -s $U -X POST -H "$H" -d "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"getBlockTime\",\"params\":[$X]}" | jq .result
+done
+<span class="cm"># 둘째 방법: 두 시각(초)의 차이 ÷ 100000 = 그 구간의 slot 평균 길이. 첫째 방법과 같은가? null이면 빈 slot이다. 번호를 1 바꾼다</span></pre>
           </details>
-          <p class="rel">연결: <a href="#soloverview">Solana 전체 지도</a><a href="#ledger">ledger</a><a href="#soltx">트랜잭션</a><a href="#solrpc">Solana RPC</a><a href="#turbine">turbine</a></p>
+          <p class="rel">연결: <a href="#soloverview">Solana 전체 지도</a><a href="#ledger">ledger</a><a href="#soltx">트랜잭션</a><a href="#solrpc">Solana RPC</a><a href="#turbine">turbine</a><a href="#poh">PoH</a><a href="#featuregate">feature gate</a></p>
         </article>
 
-        <article class="c" id="soltx" data-added="2026-10-15" data-updated="2026-10-15" data-k="transaction 트랜잭션 tx signature 서명 txid base58 recent blockhash instruction 명령 account 계정 fee 수수료 compute unit cu 1232">
+        <article class="c" id="poh" data-added="2026-10-18" data-updated="2026-10-18" data-k="poh proof of history 역사 증명 시계 clock 해시 hash sha-256 sha256 사슬 chain tick 틱 slot entry 순서 검증 verify 병렬 hashes per tick 62500 31250 200ms 400ms 난이도 difficulty">
+          <div class="c-head"><h3>PoH: 해시로 만든 시계</h3></div>
+          <p class="why"><b>왜 알아야 하나</b>Solana 노드들은 서로의 시계를 믿지 않는다. 대신 "해시를 몇 번 계산했나"를 시계로 쓴다. 이것을 알아야 slot의 길이가 왜 일정한지, slot 길이를 어떻게 바꾸는지 이해한다.</p>
+          <figure class="fig"><div class="sc"><svg viewBox="0 0 720 262" role="img" aria-label="위: 해시 사슬. h1은 h0의 해시, h2는 h1의 해시다. h3에는 트랜잭션을 섞어 넣는다. 아래: 해시를 정해진 개수만큼 하면 tick 하나, tick 64개가 slot 하나, slot 432,000개가 epoch 하나다" style="min-width:600px;max-width:720px"><text class="tb" x="10" y="20" text-anchor="start">해시 사슬: 앞의 결과가 다음 계산의 입력이다</text><rect class="bx" x="10" y="34" width="110" height="44" rx="5"/><text class="mono" x="65.0" y="61" text-anchor="middle">h0</text><path class="ln" d="M122,56 H142" marker-end="url(#am)"/><rect class="bx" x="146" y="34" width="120" height="44" rx="5"/><text class="mono" x="206.0" y="61" text-anchor="middle">h1 = H(h0)</text><path class="ln" d="M268,56 H288" marker-end="url(#am)"/><rect class="bx" x="292" y="34" width="120" height="44" rx="5"/><text class="mono" x="352.0" y="61" text-anchor="middle">h2 = H(h1)</text><path class="ln" d="M414,56 H434" marker-end="url(#am)"/><rect class="hl" x="438" y="34" width="140" height="44" rx="5"/><text class="mono" x="508.0" y="61" text-anchor="middle">h3 = H(h2, tx)</text><path class="ln" d="M580,56 H600" marker-end="url(#am)"/><rect class="bx" x="604" y="34" width="106" height="44" rx="5"/><text class="mono" x="657.0" y="61" text-anchor="middle">h4 = H(h3)</text><text class="ts" x="10" y="98" text-anchor="start">H = SHA-256</text><text class="ts ta" x="508" y="98" text-anchor="middle">트랜잭션을 섞어 넣음</text><text class="ts" x="10" y="118" text-anchor="start">h2를 계산하려면 h1이 먼저 있어야 한다. 그래서 코어를 늘려도 사슬을 빨리 만들 수 없다.</text><rect class="bg" x="10" y="134" width="210" height="92" rx="5"/><text class="tb" x="115" y="156" text-anchor="middle">tick</text><text class="ts" x="115" y="178" text-anchor="middle">해시를 정해진 개수만큼 하면 표시 하나</text><text class="ts" x="115" y="198" text-anchor="middle">200ms 목표: tick당 31,250개</text><text class="ts" x="115" y="216" text-anchor="middle">(400ms일 때: 62,500개)</text><path class="ln" d="M222,180 H251" marker-end="url(#am)"/><rect class="hl" x="255" y="134" width="210" height="92" rx="5"/><text class="tb" x="360" y="156" text-anchor="middle">slot</text><text class="ts" x="360" y="178" text-anchor="middle">tick 64개</text><text class="ts" x="360" y="198" text-anchor="middle">트랜잭션 수와 관계없다</text><text class="ts" x="360" y="216" text-anchor="middle">해시 개수가 길이를 정한다</text><path class="ln" d="M467,180 H496" marker-end="url(#am)"/><rect class="bg" x="500" y="134" width="210" height="92" rx="5"/><text class="tb" x="605" y="156" text-anchor="middle">epoch</text><text class="ts" x="605" y="178" text-anchor="middle">slot 432,000개</text><text class="ts" x="605" y="198" text-anchor="middle">mainnet-beta 기준</text><text class="ts" x="605" y="216" text-anchor="middle">epoch마다 leader 순서를 정한다</text><text class="ts" x="10" y="250" text-anchor="start">검증은 나눌 수 있다: 구간마다 시작과 끝 해시가 있어서, 구간들을 여러 코어가 따로 다시 계산한다.</text></svg></div><figcaption>tick과 slot의 길이는 해시 개수로 정한다. 트랜잭션이 많아도 slot이 길어지지 않는다. 그래서 slot 번호가 시간처럼 일정하게 는다.</figcaption></figure>
+          <ul>
+            <li><b>PoH</b>(Proof of History): SHA-256 해시를 쉬지 않고 이어서 계산한 사슬이다. 다음 해시의 입력은 앞 해시의 결과다.</li>
+            <li>그래서 사슬은 나눠서 만들 수 없다. 코어가 많아도 한 줄로 계산한다. 사슬이 길다는 것은 그만큼 시간이 지났다는 뜻이다. 이것이 "시계"다.</li>
+            <li>leader는 트랜잭션을 받으면 그 해시를 사슬에 섞어 넣는다. 그러면 "이 트랜잭션은 사슬의 이 지점 뒤에 있었다"는 증거가 된다. 그래서 블록 안 트랜잭션의 순서를 누구나 확인할 수 있다.</li>
+            <li><b>tick</b>: 해시를 정해진 개수만큼 계산할 때마다 남기는 표시다. 트랜잭션이 없는 entry다.</li>
+            <li><b>slot = tick 64개</b>다. 그래서 slot의 길이는 해시 개수가 정한다. 트랜잭션이 많아도 slot은 길어지지 않는다. slot 번호가 시간처럼 일정하게 느는 이유가 이것이다.</li>
+            <li>목표 해시 속도는 초당 1,000만 번으로 잡혀 있다. 400ms slot이면 tick당 해시 62,500개, 200ms slot이면 31,250개다. slot을 짧게 하려면 tick당 해시 개수를 줄인다(2026-10-18 소스에서 확인).</li>
+            <li>검증은 나눌 수 있다. 사슬의 구간마다 시작 해시와 끝 해시가 기록된다. 그래서 여러 코어가 구간을 따로 다시 계산해서 맞는지 본다. 만들기는 한 줄, 검증은 여러 줄이다.</li>
+          </ul>
+          <div class="warn"><b>자주 하는 오해</b>"PoH가 합의다"는 오해다. PoH는 시간과 순서의 증거다. 어느 블록을 받아들일지는 validator들의 투표로 정한다.</div>
+          <div class="mine"><b>내 Bitcoin 노드와 비교</b>Bitcoin의 블록 간격은 채굴 난이도가 맞춘다. 2016블록마다 걸린 시간을 보고 난이도를 고친다. 그래서 간격은 평균 10분이지만 매번 다르다(확률). Solana의 slot은 해시 개수로 정한 칸이라서 거의 일정하다.</div>
+          <p class="ask"><b>생각해 볼 질문</b>트랜잭션이 아주 많은 날, slot 하나의 길이는 어떻게 될까? 하루에 지나가는 slot 수는 어떻게 될까?</p>
+          <details class="try"><summary>직접 확인 (공개 devnet에 묻기)</summary>
+<pre>curl -s https://api.devnet.solana.com -X POST -H 'Content-Type: application/json' \
+  -d '{"jsonrpc":"2.0","id":1,"method":"getEpochSchedule"}'
+<span class="cm"># slotsPerEpoch: epoch 하나의 slot 수</span>
+curl -s https://api.devnet.solana.com -X POST -H 'Content-Type: application/json' \
+  -d '{"jsonrpc":"2.0","id":1,"method":"getRecentPerformanceSamples","params":[5]}' \
+  | jq -c '.result[] | {numSlots, numTransactions}'
+<span class="cm"># 분마다 트랜잭션 수는 달라도 numSlots는 거의 같다</span></pre>
+          </details>
+          <p class="rel">연결: <a href="#slot">slot과 epoch</a><a href="#featuregate">feature gate</a><a href="#shredtx">shred와 트랜잭션</a><a href="#soltx">트랜잭션</a><a href="#soloverview">Solana 전체 지도</a></p>
+        </article>
+
+        <article class="c" id="featuregate" data-added="2026-10-18" data-updated="2026-10-18" data-k="feature gate 기능 스위치 활성화 activation epoch 경계 계정 account feature id simd 업그레이드 upgrade soft fork 소프트 포크 bip9 buried getdeploymentinfo getaccountinfo 350ms 300ms 250ms 200ms alpenglow">
+          <div class="c-head"><h3>feature gate: 미리 넣고, 한꺼번에 켠다</h3></div>
+          <p class="why"><b>왜 알아야 하나</b>Solana의 규칙은 소프트웨어를 업그레이드한 날 바뀌지 않는다. 새 규칙은 꺼진 채로 코드에 먼저 들어가고, 나중에 네트워크 전체가 한 순간에 켠다. 이것을 알아야 "같은 버전인데 동작이 바뀌었다"를 이해한다.</p>
+          <figure class="fig"><div class="sc"><svg viewBox="0 0 720 240" role="img" aria-label="시간선. 1: 새 버전에 기능을 꺼진 채로 넣는다. 2: feature 계정을 만들어 켜기를 요청한다. 3: 다음 epoch의 첫 slot에서 모든 노드가 같이 켜고 계정에 그 slot을 적는다. slot 길이 feature는 그다음 epoch부터 적용된다. 아래: 계정의 값은 9 bytes. 첫 byte 0은 꺼짐, 1은 켜짐, 다음 8 bytes는 켜진 slot" style="min-width:600px;max-width:720px"><text class="ts" x="10" y="20" text-anchor="start">시간</text><path class="ln" d="M44,16 H706" marker-end="url(#am)"/><path class="ln" d="M345,50 V134" stroke-dasharray="4 4"/><text class="ts ta" x="345" y="42" text-anchor="middle">epoch E 첫 slot</text><path class="ln" d="M545,50 V134" stroke-dasharray="4 4"/><text class="ts" x="545" y="42" text-anchor="middle">epoch E+1 첫 slot</text><rect class="bx" x="10" y="56" width="150" height="70" rx="5"/><text class="tb" x="85.0" y="78" text-anchor="middle">1. 코드에 넣는다</text><text class="ts" x="85.0" y="98" text-anchor="middle">새 버전, 꺼진 채</text><text class="ts" x="85.0" y="116" text-anchor="middle">노드가 각자 업그레이드</text><rect class="bx" x="175" y="56" width="155" height="70" rx="5"/><text class="tb" x="252.5" y="78" text-anchor="middle">2. 켜기 요청</text><text class="ts" x="252.5" y="98" text-anchor="middle">feature 계정을 만든다</text><text class="ts" x="252.5" y="116" text-anchor="middle">값: 아직 꺼짐</text><rect class="hl" x="355" y="56" width="180" height="70" rx="5"/><text class="tb" x="445.0" y="78" text-anchor="middle">3. 모든 노드가 켠다</text><text class="ts" x="445.0" y="98" text-anchor="middle">같은 slot에서 같이</text><text class="ts" x="445.0" y="116" text-anchor="middle">계정에 켜진 slot을 적는다</text><rect class="bx" x="555" y="56" width="155" height="70" rx="5"/><text class="tb" x="632.5" y="78" text-anchor="middle">slot 길이 feature</text><text class="ts" x="632.5" y="98" text-anchor="middle">여기서부터 적용</text><text class="ts" x="632.5" y="116" text-anchor="middle">(한 epoch 미리 알림)</text><path class="ln" d="M160,91 H171" marker-end="url(#am)"/><path class="ln" d="M330,91 H351" marker-end="url(#am)"/><path class="ln" d="M535,91 H551" marker-end="url(#am)"/><text class="tb" x="10" y="162" text-anchor="start">feature 계정의 값 (9 bytes)</text><rect class="bx" x="10" y="174" width="44" height="28" rx="5"/><text class="mono" x="32" y="193" text-anchor="middle">0</text><text class="ts" x="64" y="193" text-anchor="start">요청만 됨, 아직 꺼짐</text><rect class="hl" x="260" y="174" width="44" height="28" rx="5"/><text class="mono" x="282" y="193" text-anchor="middle">1</text><rect class="hl" x="308" y="174" width="200" height="28" rx="5"/><text class="ts" x="408" y="193" text-anchor="middle">켜진 slot 번호 (8 bytes)</text><text class="ts" x="518" y="193" text-anchor="start">켜짐</text><text class="ts" x="10" y="228" text-anchor="start">계정이 없으면, 그 cluster에서는 아직 아무도 켜기를 요청하지 않았다.</text></svg></div><figcaption>노드가 업그레이드하는 때는 운영자마다 다르다. 그래서 코드를 먼저 퍼뜨리고, 켜는 때는 epoch 경계 하나로 맞춘다.</figcaption></figure>
+          <ul>
+            <li><b>feature</b>: 코드 안의 스위치다. feature마다 계정 주소(ID)가 하나 있다. 이름에는 보통 제안서 번호(<b>SIMD</b>, Solana의 규칙 변경 제안서)가 붙는다.</li>
+            <li>이유: 운영자마다 업그레이드하는 때가 다르다. 일부 노드만 새 규칙으로 실행하면 노드끼리 결과가 달라진다. 그래서 충분히 많은 노드가 새 버전을 쓸 때까지 꺼 둔다(feature 코드의 설명, 2026-10-18 확인).</li>
+            <li>켜는 순서: (1) feature의 관리 키를 가진 쪽이 그 feature의 계정을 만든다. 이것이 켜기 요청이다. (2) 다음 epoch의 첫 slot에서 모든 노드가 같이 켠다. 그리고 계정에 그 slot 번호를 적는다.</li>
+            <li>그래서 켜진 slot은 항상 epoch의 첫 slot이다. mainnet-beta에서는 432,000으로 나누어 떨어진다.</li>
+            <li>계정의 값은 9 bytes다. 첫 byte가 0이면 요청만 된 것이고, 1이면 켜진 것이다. 다음 8 bytes가 켜진 slot이다. 계정이 없으면 아직 요청이 없는 것이다.</li>
+            <li>예: <a href="#slot">slot</a> 길이를 400ms에서 200ms로 줄이는 일도 feature 네 개로 나누어 했다(350, 300, 250, 200ms, SIMD-0525). 이 네 feature는 켜진 epoch의 <b>다음</b> epoch부터 새 길이를 적용한다. shred를 검사하는 쪽에 한 epoch 동안 미리 알리기 위해서다. 그래서 "켜진 때"와 "적용된 때"가 다를 수 있다.</li>
+            <li>합의 방식을 바꾸는 큰 변경(Alpenglow, SIMD-0326)도 feature로 코드에 미리 들어 있다.</li>
+          </ul>
+          <div class="warn"><b>자주 하는 오해</b>"새 버전을 깔면 새 규칙이 바로 켜진다"는 오해다. 새 버전은 스위치를 가져올 뿐이다. 켜는 때는 따로 정해진다. 반대로, 아주 오래된 버전은 켜진 feature의 규칙을 모른다. 그래서 다른 노드와 같은 결과를 내지 못한다.</div>
+          <div class="mine"><b>내 Bitcoin 노드와 비교</b>Bitcoin의 soft fork도 같은 생각이다. 새 규칙을 코드에 먼저 넣고, 켜는 때를 따로 정한다. 채굴자가 블록에 신호를 넣어 켤 때를 정하기도 했다(BIP9). 오래전에 켜진 규칙(예: segwit)은 켜진 높이를 코드에 고정해 두었다(buried). 내 bitcoind가 아는 규칙과 그 상태는 <code>getdeploymentinfo</code>로 본다.</div>
+          <p class="ask"><b>생각해 볼 질문</b>노드의 3분의 1이 아직 옛 버전일 때 feature를 켜면 무슨 일이 생길까? 그래서 켜기 전에 무엇을 확인해야 할까?</p>
+          <details class="try"><summary>직접 확인 (공개 devnet과 내 bitcoind에 묻기)</summary>
+<pre>curl -s https://api.devnet.solana.com -X POST -H 'Content-Type: application/json' \
+  -d '{"jsonrpc":"2.0","id":1,"method":"getAccountInfo","params":["iBRLjhJnkmDZgNoZRDMW11d8ZV7HvsL3vAyRjZB5npW",{"encoding":"base64"}]}' \
+  | jq -r '.result.value.data[0]' | base64 --decode > feature.bin
+<span class="cm"># slot 200ms feature의 계정. null이면 이 cluster에는 요청이 없다</span>
+od -An -tu1 -N1 feature.bin       <span class="cm"># 1이면 켜짐</span>
+od -An -tu8 -j1 -N8 feature.bin   <span class="cm"># 켜진 slot. getEpochSchedule의 slotsPerEpoch로 나누어 본다</span>
+kubectl -n bitcoin-lab exec bitcoin-node-0 -- \
+  bitcoin-cli -signet -datadir=/home/bitcoin/.bitcoin getdeploymentinfo | jq '.deployments | map_values(.active)'
+<span class="cm"># 내 bitcoind가 아는 규칙과 켜짐 여부</span></pre>
+          </details>
+          <p class="rel">연결: <a href="#slot">slot과 epoch</a><a href="#poh">PoH</a><a href="#soloverview">Solana 전체 지도</a><a href="#fullnode">풀 노드 (Bitcoin 탭)</a></p>
+        </article>
+
+        <article class="c" id="soltx" data-added="2026-10-15" data-updated="2026-10-18" data-k="transaction 트랜잭션 tx signature 서명 txid base58 recent blockhash instruction 명령 account 계정 fee 수수료 compute unit cu 1232 version 버전 legacy v0 v1 maxsupportedtransactionversion address lookup table 주소 목록 표 vote 투표 numnonvotetransactions">
           <div class="c-head"><h3>트랜잭션과 서명</h3></div>
           <p class="why"><b>왜 알아야 하나</b>Solana에서 트랜잭션을 찾는 열쇠는 서명이다. 트랜잭션의 구조를 알아야 "서명으로 트랜잭션을 찾는다"는 말이 이해된다.</p>
           <figure class="fig"><div class="sc"><svg viewBox="0 0 720 226" role="img" aria-label="트랜잭션은 서명들과 메시지로 되어 있다. 메시지에는 계정 목록, recent blockhash, instruction들이 있다. 첫 번째 서명이 트랜잭션의 ID다" style="min-width:600px;max-width:720px"><rect class="bg" x="10" y="10" width="700" height="184" rx="5"/><text class="tb" x="26" y="30" text-anchor="start">트랜잭션 1개</text><rect class="wr" x="26" y="40" width="200" height="138" rx="5"/><text class="tb" x="126" y="62" text-anchor="middle">서명들</text><text class="ts tw" x="126" y="92" text-anchor="middle">서명 1 = 트랜잭션 ID</text><text class="ts" x="126" y="114" text-anchor="middle">서명 2, 3 … (필요하면)</text><text class="ts" x="126" y="146" text-anchor="middle">64바이트씩</text><text class="ts" x="126" y="164" text-anchor="middle">사람에게는 base58 글자</text><rect class="hl" x="246" y="40" width="448" height="138" rx="5"/><text class="tb" x="470" y="62" text-anchor="middle">메시지 (서명하는 내용)</text><rect class="bx" x="262" y="74" width="416" height="28" rx="5"/><text class="ts" x="470" y="93" text-anchor="middle">계정 목록: 읽거나 쓸 계정의 주소</text><rect class="bx" x="262" y="108" width="416" height="28" rx="5"/><text class="ts" x="470" y="127" text-anchor="middle">recent blockhash: 최근 블록의 해시 (유효 기간 역할)</text><rect class="bx" x="262" y="142" width="416" height="28" rx="5"/><text class="ts" x="470" y="161" text-anchor="middle">instruction들: 어느 프로그램에게 무엇을 시킬지</text><text class="ts" x="360" y="216" text-anchor="middle">크기 한도 1232바이트: UDP 패킷 하나에 들어가야 한다.</text></svg></div><figcaption>서명은 메시지 전체에 대해 만든다. 그래서 메시지를 한 글자라도 바꾸면 서명이 맞지 않는다.</figcaption></figure>
@@ -544,10 +611,19 @@ curl -s https://api.devnet.solana.com -X POST -H 'Content-Type: application/json
             <li><b>첫 번째 서명이 트랜잭션의 ID</b>다. 64바이트이고, 사람이 읽을 때는 base58 글자(약 88자)로 쓴다.</li>
             <li>recent blockhash는 약 150블록 동안만 유효하다(대략 1분 남짓). 그래서 오래된 트랜잭션을 다시 보내도 처리되지 않는다.</li>
             <li><b>Compute Unit(CU)</b>: 트랜잭션이 쓰는 계산량의 단위다. 트랜잭션마다 한도가 있고, 블록 전체에도 한도가 있다.</li>
+            <li><b>버전</b>: 트랜잭션 형식에는 버전이 있다. legacy(처음 형식), v0(주소 목록 표, address lookup table을 쓸 수 있다), 그리고 새 v1이다. 형식이 바뀌면 옛 프로그램은 새 트랜잭션을 잘못 읽는다.</li>
+            <li>그래서 RPC로 블록이나 트랜잭션을 물을 때 <code>maxSupportedTransactionVersion</code>으로 "나는 이 버전까지 읽는다"고 알린다. 더 새 버전이 들어 있으면 노드는 잘못 읽힐 답 대신 오류를 준다: <code>Transaction version (1) is not supported by the requesting client</code>.</li>
+            <li>validator의 투표도 트랜잭션이다. 그래서 블록 안 트랜잭션의 많은 수가 투표다. 사용자 트랜잭션만 보려면 투표를 빼고 센다.</li>
           </ul>
           <div class="warn"><b>자주 하는 오해</b>"서명"과 "해시"는 다르다. 해시는 누구나 계산할 수 있다. 서명은 비밀키를 가진 사람만 만들 수 있다.</div>
           <div class="mine"><b>내 Bitcoin 노드와 비교</b>Bitcoin의 txid는 트랜잭션 내용의 해시다(SHA-256 두 번). Solana의 ID는 해시가 아니라 서명이다. 또 Bitcoin은 UTXO를 쓰고 없앤다. Solana는 계정(account)의 값을 바꾼다.</div>
-          <p class="rel">연결: <a href="#accounts">account</a><a href="#slot">slot</a><a href="#solrpc">Solana RPC</a><a href="#dbcache">UTXO와 dbcache (Bitcoin 탭)</a></p>
+          <details class="try"><summary>직접 확인 (공개 devnet에 묻기)</summary>
+<pre>curl -s https://api.devnet.solana.com -X POST -H 'Content-Type: application/json' \
+  -d '{"jsonrpc":"2.0","id":1,"method":"getRecentPerformanceSamples","params":[3]}' \
+  | jq -c '.result[] | {numTransactions, numNonVoteTransactions}'
+<span class="cm"># 1분 동안의 전체 트랜잭션 수와 투표가 아닌 트랜잭션 수. 차이가 투표다</span></pre>
+          </details>
+          <p class="rel">연결: <a href="#accounts">account</a><a href="#slot">slot</a><a href="#solrpc">Solana RPC</a><a href="#dbcache">UTXO와 dbcache (Bitcoin 탭)</a><a href="#shredtx">shred와 트랜잭션</a><a href="#poh">PoH</a></p>
         </article>
 
         <article class="c" id="ledger" data-added="2026-10-15" data-updated="2026-10-16" data-k="ledger 원장 blockstore rocksdb shred 조각 turbine erasure 복구 genesis genesis.bin 제네시스 genesis hash 기록 getgenesishash 신분증 signet">
@@ -570,7 +646,26 @@ curl -s https://api.devnet.solana.com -X POST -H 'Content-Type: application/json
     -d '{"jsonrpc":"2.0","id":1,"method":"getGenesisHash"}'; echo
 done   <span class="cm"># cluster마다 genesis 해시가 다르다</span></pre>
           </details>
-          <p class="rel">연결: <a href="#snapshot">snapshot</a><a href="#accounts">account</a><a href="#slot">slot</a><a href="#datadir">데이터 디렉터리 (Bitcoin 탭)</a><a href="#turbine">turbine</a></p>
+          <p class="rel">연결: <a href="#snapshot">snapshot</a><a href="#accounts">account</a><a href="#slot">slot</a><a href="#datadir">데이터 디렉터리 (Bitcoin 탭)</a><a href="#turbine">turbine</a><a href="#shredtx">shred와 트랜잭션</a><a href="#blockcols">blockstore의 칸</a></p>
+        </article>
+
+        <article class="c" id="shredtx" data-added="2026-10-18" data-updated="2026-10-18" data-k="shred 조각 transaction 트랜잭션 entry 엔트리 tick 바이트 bytes 자르기 경계 boundary fec erasure coding 복구 data shred coding shred 32 udp 패킷 packet 1.2kb index meta compact block">
+          <div class="c-head"><h3>shred와 트랜잭션: 뜻의 단위, 운반의 단위</h3></div>
+          <p class="why"><b>왜 알아야 하나</b>트랜잭션과 shred는 둘 다 "블록의 작은 부분"처럼 보인다. 하지만 나누는 기준이 다르다. 트랜잭션은 뜻으로 나눈 것이고, shred는 크기로 자른 것이다. 이 차이를 알아야 트랜잭션 수와 shred 수가 왜 비례하지 않는지 안다.</p>
+          <figure class="fig"><div class="sc"><svg viewBox="0 0 720 246" role="img" aria-label="위: 블록은 tick과 트랜잭션 묶음(entry)을 이어 붙인 바이트 흐름이다. 트랜잭션 tx1부터 tx5의 크기는 제각각이다. 가운데: 같은 흐름을 같은 크기로 잘라 데이터 shred d1부터 d6을 만든다. 자르는 선은 트랜잭션 경계를 보지 않아서 tx3은 d3과 d4에 걸친다. 아래: 데이터 32개마다 복구용 32개를 더 만든다" style="min-width:600px;max-width:720px"><text class="tb" x="10" y="20" text-anchor="start">1. 블록 = entry를 차례로 이어 붙인 바이트 흐름</text><rect class="bg" x="10" y="30" width="50" height="32" rx="5"/><text class="mono" x="35.0" y="51" text-anchor="middle">tick</text><rect class="bx" x="60" y="30" width="120" height="32" rx="5"/><text class="mono" x="120.0" y="51" text-anchor="middle">tx1</text><rect class="bx" x="180" y="30" width="80" height="32" rx="5"/><text class="mono" x="220.0" y="51" text-anchor="middle">tx2</text><rect class="hl" x="260" y="30" width="170" height="32" rx="5"/><text class="mono" x="345.0" y="51" text-anchor="middle">tx3 (큰 트랜잭션)</text><rect class="bx" x="430" y="30" width="70" height="32" rx="5"/><text class="mono" x="465.0" y="51" text-anchor="middle">tx4</text><rect class="bx" x="500" y="30" width="140" height="32" rx="5"/><text class="mono" x="570.0" y="51" text-anchor="middle">tx5</text><rect class="bg" x="640" y="30" width="50" height="32" rx="5"/><text class="mono" x="665.0" y="51" text-anchor="middle">tick</text><rect class="bx" x="690" y="30" width="20" height="32" rx="5"/><text class="ts" x="700.0" y="51" text-anchor="middle">…</text><rect class="bg" x="10" y="116" width="50" height="32" rx="5"/><rect class="bx" x="60" y="116" width="120" height="32" rx="5"/><rect class="bx" x="180" y="116" width="80" height="32" rx="5"/><rect class="hl" x="260" y="116" width="170" height="32" rx="5"/><rect class="bx" x="430" y="116" width="70" height="32" rx="5"/><rect class="bx" x="500" y="116" width="140" height="32" rx="5"/><rect class="bg" x="640" y="116" width="50" height="32" rx="5"/><rect class="bx" x="690" y="116" width="20" height="32" rx="5"/><text class="ts" x="10" y="82" text-anchor="start">트랜잭션의 크기는 제각각이다. tick은 트랜잭션이 없는 entry다.</text><text class="tb" x="10" y="106" text-anchor="start">2. 같은 크기로 자른다 = 데이터 shred (한 조각 = UDP 패킷 하나)</text><path class="lw" d="M127,112 V152" stroke-dasharray="3 3"/><path class="lw" d="M244,112 V152" stroke-dasharray="3 3"/><path class="lw" d="M361,112 V152" stroke-dasharray="3 3"/><path class="lw" d="M478,112 V152" stroke-dasharray="3 3"/><path class="lw" d="M595,112 V152" stroke-dasharray="3 3"/><text class="mono" x="68.5" y="166" text-anchor="middle">d1</text><text class="mono" x="185.5" y="166" text-anchor="middle">d2</text><text class="mono" x="302.5" y="166" text-anchor="middle">d3</text><text class="mono" x="419.5" y="166" text-anchor="middle">d4</text><text class="mono" x="536.5" y="166" text-anchor="middle">d5</text><text class="mono" x="652.5" y="166" text-anchor="middle">d6</text><text class="ts tw" x="10" y="186" text-anchor="start">자르는 선은 트랜잭션의 경계를 보지 않는다. tx3은 d3과 d4에 걸친다.</text><text class="tb" x="10" y="212" text-anchor="start">3. 데이터 shred 32개마다 복구용 shred 32개를 더 만든다 (erasure coding).</text><text class="ts" x="10" y="234" text-anchor="start">64개 중 아무 32개만 받아도 데이터 32개를 다시 만든다. 그래서 패킷 몇 개를 잃어도 된다.</text></svg></div><figcaption>트랜잭션은 뜻의 단위다. 서명으로 찾는다. shred는 운반과 저장의 단위다. slot과 번호로 찾는다.</figcaption></figure>
+          <ul>
+            <li><b>트랜잭션</b>: 사용자가 보낸 요청 하나다. 서명이 있고, 전부 성공하거나 전부 취소된다. 서명으로 찾는다.</li>
+            <li><b>entry</b>: leader가 트랜잭션 몇 개를 묶어 <a href="#poh">PoH</a> 사슬에 넣은 단위다. 트랜잭션이 없는 entry가 tick이다. 블록은 entry를 차례로 이어 붙인 바이트 흐름이다.</li>
+            <li><b>shred</b>: 그 바이트 흐름을 같은 크기로 자른 조각이다. 조각 하나는 UDP 패킷 하나에 들어간다(약 1.2KB). 자르는 선은 트랜잭션의 경계를 보지 않는다. 그래서 큰 트랜잭션 하나가 shred 여러 개에 걸치고, 작은 트랜잭션 여러 개가 shred 하나에 들어간다.</li>
+            <li>그래서 shred 수는 트랜잭션 수가 아니라 블록의 바이트 수를 따라간다.</li>
+            <li>데이터 shred 32개마다 복구용 shred(coding shred) 32개를 더 만든다. 64개가 한 묶음이다. 64개 중 아무 32개만 받아도 데이터 32개를 모두 다시 만든다. UDP는 잃은 패킷을 다시 보내 주지 않기 때문이다.</li>
+            <li>slot 하나에는 블록이 0개(건너뛴 slot)나 1개 있다. 블록 하나는 shred 여러 개가 된다. shred는 slot 번호와 그 안의 번호(index)로 찾는다.</li>
+            <li>실행 결과(meta)는 shred 안에 없다. 받은 노드가 블록을 실행해서 만들고, 따로 저장한다(<a href="#blockcols">blockstore의 칸</a>).</li>
+          </ul>
+          <div class="warn"><b>자주 하는 오해</b>"shred 하나 = 트랜잭션 하나"는 오해다. shred는 크기로 자른 조각이라서 트랜잭션과 짝이 맞지 않는다. 또 shred에는 실행 결과(meta)가 없다.</div>
+          <div class="mine"><b>내 Bitcoin 노드와 비교</b>bitcoind는 블록을 조각으로 자르지 않는다. 블록 전체나 compact block을 TCP로 보낸다. 순서 맞추기와 재전송은 TCP가 한다. Solana는 UDP로 보내고, 잃은 조각은 복구용 shred로 채운다.</div>
+          <p class="ask"><b>생각해 볼 질문</b>트랜잭션 수가 같은 두 블록이 있다. 두 블록의 shred 수는 같을까? 무엇이 다르면 달라질까?</p>
+          <p class="rel">연결: <a href="#ledger">ledger와 shred</a><a href="#turbine">turbine</a><a href="#soltx">트랜잭션</a><a href="#poh">PoH</a><a href="#blockcols">blockstore의 칸</a></p>
         </article>
 
         <article class="c" id="turbine" data-added="2026-10-17" data-updated="2026-10-17" data-k="turbine 터빈 shred 조각 leader 리더 retransmit 다시 보내기 전파 propagation fanout 200 나무 tree layer 층 뿌리 root stake 가중 weighted shuffle 섞기 업로드 대역폭 bandwidth erasure repair getclusternodes getvoteaccounts getnettotals compact block bip152">
@@ -600,10 +695,10 @@ kubectl -n bitcoin-lab exec bitcoin-node-0 -- \
   bitcoin-cli -signet -datadir=/home/bitcoin/.bitcoin getnettotals | jq '{totalbytesrecv, totalbytessent}'
 <span class="cm"># 내 bitcoind가 받은 양과 보낸 양</span></pre>
           </details>
-          <p class="rel">연결: <a href="#ledger">ledger와 shred</a><a href="#slot">slot과 leader</a><a href="#gossip">gossip</a><a href="#statehist">repair</a><a href="#soloverview">Solana 전체 지도</a><a href="#listen">-listen과 피어 (Bitcoin 탭)</a></p>
+          <p class="rel">연결: <a href="#ledger">ledger와 shred</a><a href="#slot">slot과 leader</a><a href="#gossip">gossip</a><a href="#statehist">repair</a><a href="#soloverview">Solana 전체 지도</a><a href="#listen">-listen과 피어 (Bitcoin 탭)</a><a href="#shredtx">shred와 트랜잭션</a></p>
         </article>
 
-        <article class="c" id="snapshot" data-added="2026-10-15" data-updated="2026-10-15" data-k="snapshot 스냅샷 full incremental 증분 상태 state tar zst 내려받기 시작 부트스트랩 assumeutxo ibd">
+        <article class="c" id="snapshot" data-added="2026-10-15" data-updated="2026-10-18" data-k="snapshot 스냅샷 full incremental 증분 상태 state tar zst 내려받기 시작 부트스트랩 assumeutxo ibd http redirect 303 404 curl -i content-length 크기 snapshot.tar.bz2">
           <div class="c-head"><h3>snapshot: full과 incremental</h3></div>
           <p class="why"><b>왜 알아야 하나</b>새 노드는 처음 블록부터 모두 다시 실행하지 않는다. 다른 노드가 만든 상태의 사진(snapshot)에서 시작한다. snapshot에 무엇이 있고 무엇이 없는지 알아야 한다.</p>
           <figure class="fig"><div class="sc"><svg viewBox="0 0 720 190" role="img" aria-label="slot 축 위에 genesis, full snapshot S, 그 뒤의 incremental snapshot 두 개가 있다. 새 노드는 S와 가장 새 incremental로 상태를 만들고 그 뒤 블록만 실행한다. S 이전의 블록 기록은 없다" style="min-width:600px;max-width:720px"><path class="ln" d="M30,70 H700" marker-end="url(#am)"/><text class="ts" x="700" y="58" text-anchor="end">slot</text><rect class="bx" x="30" y="60" width="20" height="20" rx="5"/><text class="ts mono" x="40" y="98" text-anchor="middle">genesis</text><rect class="hl" x="344" y="52" width="32" height="36" rx="5"/><text class="tb" x="360" y="76" text-anchor="middle">F</text><text class="ts" x="360" y="104" text-anchor="middle">full (slot S)</text><rect class="bx" x="458" y="56" width="24" height="28" rx="5"/><text class="tb" x="470" y="75" text-anchor="middle">I</text><rect class="bx" x="568" y="56" width="24" height="28" rx="5"/><text class="tb" x="580" y="75" text-anchor="middle">I</text><path class="la" d="M366,50 Q418,18 466,54" marker-end="url(#aa)"/><path class="la" d="M372,50 Q480,-4 576,54" marker-end="url(#aa)"/><text class="ts" x="525" y="104" text-anchor="middle">incremental: S 이후 바뀐 것만</text><text class="tb" x="650" y="98" text-anchor="middle">지금</text><rect class="wr" x="40" y="120" width="300" height="30" rx="5"/><text class="ts tw" x="190" y="140" text-anchor="middle">S 이전의 블록 기록: 이 노드에 없다</text><rect class="hl" x="344" y="120" width="306" height="30" rx="5"/><text class="ts ta" x="497" y="140" text-anchor="middle">S 이후: F와 I로 만들고, 이어서 블록을 실행</text><text class="ts" x="360" y="180" text-anchor="middle">새 노드 = full S + 같은 S 기준의 가장 새 incremental. 이 둘로 그 시점의 상태를 만든다.</text></svg></div><figcaption>snapshot은 상태의 사진이다. 기록(블록, 트랜잭션)은 들어 있지 않다.</figcaption></figure>
@@ -614,9 +709,16 @@ kubectl -n bitcoin-lab exec bitcoin-node-0 -- \
             <li>새 노드는 full 하나와, 같은 base의 가장 새 incremental 하나를 내려받는다. 그 시점의 상태를 만들고, 그 뒤의 블록을 받아 실행해서 따라잡는다.</li>
             <li>노드는 실행 중에도 자기 snapshot을 주기적으로 만든다. 다시 시작할 때 쓴다.</li>
             <li>파일 이름에 slot 번호가 있다: <code>snapshot-&lt;slot&gt;-&lt;해시&gt;.tar.zst</code>, <code>incremental-snapshot-&lt;base slot&gt;-&lt;slot&gt;-&lt;해시&gt;.tar.zst</code>.</li>
+            <li>RPC 노드는 자기의 가장 새 snapshot을 HTTP로 내준다. 주소는 <code>/snapshot.tar.bz2</code>(full)와 <code>/incremental-snapshot.tar.bz2</code>다. 이 주소는 진짜 파일 이름으로 보내는 안내(redirect)다. 새 노드는 이 길로 snapshot을 받는다.</li>
+            <li>주소 끝은 <code>.tar.bz2</code>지만 진짜 파일은 <code>.tar.zst</code>일 수 있다. 옛 주소 이름을 그대로 둔 것이다. 내줄 snapshot이 없는 노드는 404를 준다.</li>
           </ul>
           <div class="warn"><b>자주 하는 오해</b>snapshot은 노드 데이터 전체의 백업이 아니다. 상태만 있다. snapshot에서 시작한 노드는 그 이전 slot의 블록을 자기 디스크에 갖고 있지 않다.</div>
           <div class="mine"><b>내 Bitcoin 노드와 비교</b>내 bitcoind는 IBD에서 genesis부터 모든 블록을 검증했다. Bitcoin Core에도 비슷한 방법(assumeutxo: UTXO 집합의 사진에서 시작)이 있다. 하지만 Bitcoin Core는 그 뒤에 처음부터 다시 검증하는 일을 뒤에서 한다. Solana 노드는 snapshot의 해시를 확인하고 그 시점부터 시작한다.</div>
+          <details class="try"><summary>직접 확인 (크기만 보기)</summary>
+<pre>curl -sIL https://api.devnet.solana.com/snapshot.tar.bz2 | grep -iE '^(HTTP|location|content-length)'
+<span class="cm"># -I: 머리(header)만 받는다. 파일은 내려받지 않는다. -L: 안내를 따라간다</span>
+<span class="cm"># location의 파일 이름에 slot이 있다. 마지막 content-length가 파일 크기(bytes)다</span></pre>
+          </details>
           <p class="rel">연결: <a href="#ledger">ledger</a><a href="#accounts">account</a><a href="#slot">slot</a><a href="#reindex">-reindex-chainstate (Bitcoin 탭)</a><a href="#fullnode">풀 노드 (Bitcoin 탭)</a></p>
         </article>
 
@@ -658,10 +760,10 @@ kubectl -n bitcoin-lab exec bitcoin-node-0 -- \
 kubectl -n bitcoin-lab exec bitcoin-node-0 -- \
   bitcoin-cli -signet -datadir=/home/bitcoin/.bitcoin getblockchaininfo | grep -E '"(pruned|blocks)"'</pre>
           </details>
-          <p class="rel">연결: <a href="#snapshot">snapshot</a><a href="#ledger">ledger</a><a href="#accounts">account</a><a href="#txmeta">transaction과 meta</a><a href="#prune">-prune (Bitcoin 탭)</a><a href="#dbcache">UTXO와 dbcache (Bitcoin 탭)</a></p>
+          <p class="rel">연결: <a href="#snapshot">snapshot</a><a href="#ledger">ledger</a><a href="#accounts">account</a><a href="#txmeta">transaction과 meta</a><a href="#prune">-prune (Bitcoin 탭)</a><a href="#dbcache">UTXO와 dbcache (Bitcoin 탭)</a><a href="#blockcols">blockstore의 칸</a></p>
         </article>
 
-        <article class="c" id="solrpc" data-added="2026-10-15" data-updated="2026-10-16" data-k="rpc json-rpc jsonrpc http post websocket ws pubsub subscribe 구독 getblock gettransaction getslot getbalance commitment processed confirmed finalized unsubscribe accountsubscribe programsubscribe signaturesubscribe logssubscribe slotsubscribe slotsupdatessubscribe gethealth getprogramaccounts 무거운 요청">
+        <article class="c" id="solrpc" data-added="2026-10-15" data-updated="2026-10-18" data-k="rpc json-rpc jsonrpc http post websocket ws pubsub subscribe 구독 getblock gettransaction getslot getbalance commitment processed confirmed finalized unsubscribe accountsubscribe programsubscribe signaturesubscribe logssubscribe slotsubscribe slotsupdatessubscribe gethealth getprogramaccounts 무거운 요청 too many requests 요청 제한 rate limit sleep error.message 오류">
           <div class="c-head"><h3>Solana RPC: HTTP와 WebSocket</h3></div>
           <p class="why"><b>왜 알아야 하나</b>앱은 노드 안을 직접 보지 않는다. RPC로 묻는다. 묻는 방법은 두 가지(HTTP, WebSocket)다. 답이 얼마나 확정된 것인지(commitment)도 고를 수 있다.</p>
           <figure class="fig"><div class="sc"><svg viewBox="0 0 720 232" role="img" aria-label="HTTP는 요청 하나에 답 하나다. WebSocket은 연결을 열어 두고 한 번 구독하면 노드가 바뀔 때마다 알림을 보낸다" style="min-width:600px;max-width:720px"><text class="tb" x="10" y="20" text-anchor="start">HTTP: 한 번 묻고 한 번 답한다</text><rect class="bx" x="10" y="32" width="100" height="56" rx="5"/><text class="tb" x="60" y="65" text-anchor="middle">앱</text><rect class="hl" x="610" y="32" width="100" height="56" rx="5"/><text class="tb" x="660" y="65" text-anchor="middle">RPC 노드</text><text class="ts mono ta" x="360" y="44" text-anchor="middle">POST {"method":"getSlot"}</text><path class="la" d="M112,52 H606" marker-end="url(#aa)"/><path class="ln" d="M606,72 H114" marker-end="url(#am)"/><text class="ts mono" x="360" y="88" text-anchor="middle">{"result": 지금 slot 번호}</text><text class="tb" x="10" y="124" text-anchor="start">WebSocket: 연결 하나를 열어 두고, 바뀔 때마다 받는다</text><rect class="bx" x="10" y="136" width="100" height="70" rx="5"/><text class="tb" x="60" y="176" text-anchor="middle">앱</text><rect class="hl" x="610" y="136" width="100" height="70" rx="5"/><text class="tb" x="660" y="176" text-anchor="middle">RPC 노드</text><text class="ts mono ta" x="360" y="146" text-anchor="middle">slotSubscribe (한 번)</text><path class="la" d="M112,154 H606" marker-end="url(#aa)"/><path class="ln" d="M606,170 H114" marker-end="url(#am)"/><path class="ln" d="M606,184 H114" marker-end="url(#am)"/><path class="ln" d="M606,198 H114" marker-end="url(#am)"/><text class="ts" x="360" y="224" text-anchor="middle">알림, 알림, 알림 … (slot이 바뀔 때마다 노드가 먼저 보낸다)</text></svg></div><figcaption>둘 다 JSON-RPC 2.0 형식의 메시지를 쓴다. 다른 것은 전달 방법이다.</figcaption></figure>
@@ -673,6 +775,8 @@ kubectl -n bitcoin-lab exec bitcoin-node-0 -- \
             <li>WebSocket 구독은 짝으로 쓴다. 예: <code>accountSubscribe</code>와 <code>accountUnsubscribe</code>. <code>programSubscribe</code>, <code>signatureSubscribe</code>, <code>logsSubscribe</code>, <code>slotSubscribe</code>, <code>slotsUpdatesSubscribe</code>에도 각각 Unsubscribe가 있다. 구독하면 번호를 받는다. 취소할 때 그 번호를 준다.</li>
             <li>누가 구독하나: 지갑 앱은 내 계정을 구독해서 잔액을 바로 바꾼다. 거래소는 입금 트랜잭션의 서명을 구독해서 확정되는 순간 처리한다. 모니터링 도구는 slot을 구독해서 체인이 멈추지 않았는지 본다.</li>
             <li>메서드마다 무게가 다르다. <code>getHealth</code>는 "정상인가"만 묻는다. <code>getProgramAccounts</code>는 한 프로그램이 가진 계정을 모두 뒤진다. 무거운 요청이 몰리면 노드가 새 블록을 따라가는 일도 느려질 수 있다. 그래서 RPC는 보통 아무에게나 열지 않는다.</li>
+            <li>공개 RPC는 요청 수를 제한한다. 너무 빨리 보내면 <code>Too many requests</code> 오류가 온다. 그래서 여러 번 묻는 스크립트는 요청 사이에 쉰다(<code>sleep</code>).</li>
+            <li>스크립트가 결과만 찍고 오류는 버리면, 빈 slot과 요청 제한과 형식 오류가 모두 같은 "빈 결과"로 보인다. 그래서 실패할 때는 <code>error.message</code>도 같이 찍는다.</li>
           </ul>
           <div class="warn"><b>자주 하는 오해</b>JSON-RPC의 "RPC"와 노드 종류의 "RPC 노드"는 같은 말에서 왔지만 다른 것이다. validator도 RPC 요청에 답할 수 있다. RPC 노드는 그 일을 주로 하는 노드다.</div>
           <div class="mine"><b>내 Bitcoin 노드와 비교</b><code>bitcoin-cli getblockcount</code>도 JSON-RPC 요청이다. HTTP POST로 bitcoind에 묻는다. bitcoind의 RPC는 쿠키나 비밀번호로 인증한다. Bitcoin의 "확정"은 블록 위에 쌓인 블록 수(confirmations)로 센다.</div>
@@ -708,7 +812,7 @@ kubectl -n bitcoin-lab exec bitcoin-node-0 -- \
           <p class="rel">연결: <a href="#solrpc">Solana RPC</a><a href="#gossip">gossip</a><a href="#ports">포트 번호</a><a href="#rpccookie">RPC와 쿠키 (Bitcoin 탭)</a><a href="#ipport">IP와 포트 (Bitcoin 탭)</a></p>
         </article>
 
-        <article class="c" id="txmeta" data-added="2026-10-16" data-updated="2026-10-16" data-k="meta 메타 transaction getblock gettransaction 응답 fee 수수료 err 로그 logmessages innerinstructions prebalances postbalances 결정적 deterministic 영수증 주문서 compute unit 계산량 undo">
+        <article class="c" id="txmeta" data-added="2026-10-16" data-updated="2026-10-18" data-k="meta 메타 transaction getblock gettransaction 응답 fee 수수료 err 로그 logmessages innerinstructions prebalances postbalances 결정적 deterministic 영수증 주문서 compute unit 계산량 undo blockstore 칸 저장">
           <div class="c-head"><h3>응답의 두 부분: transaction과 meta</h3></div>
           <p class="why"><b>왜 알아야 하나</b>getBlock과 getTransaction의 응답은 두 부분으로 되어 있다. 한 부분은 사용자가 보낸 것이다. 다른 부분은 노드가 실행해서 만든 것이다. 두 응답이 다르면, 어느 부분이 왜 다른지 나눠서 봐야 한다.</p>
           <figure class="fig"><div class="sc"><svg viewBox="0 0 720 216" role="img" aria-label="응답은 transaction과 meta 두 부분이다. 두 노드의 실행 결과는 같지만, 한 노드는 meta를 전부 저장하고 다른 노드는 일부만 저장한다" style="min-width:600px;max-width:720px"><rect class="bg" x="10" y="10" width="330" height="196" rx="5"/><text class="tb" x="26" y="32" text-anchor="start">응답 하나 = 두 부분</text><rect class="bx" x="26" y="46" width="298" height="58" rx="5"/><text class="tb" x="40" y="68" text-anchor="start">transaction: 사용자가 보낸 원본</text><text class="ts" x="40" y="91" text-anchor="start">서명, 계정 목록, 명령 (주문서)</text><rect class="hl" x="26" y="114" width="298" height="82" rx="5"/><text class="tb" x="40" y="136" text-anchor="start">meta: 노드가 실행한 결과</text><text class="ts" x="40" y="159" text-anchor="start">수수료, 성공 여부, 전후 잔액</text><text class="ts" x="40" y="181" text-anchor="start">로그, 내부 호출, 계산량 (영수증)</text><text class="tb" x="370" y="32" text-anchor="start">실행은 같고, 저장은 다를 수 있다</text><rect class="bx" x="370" y="46" width="165" height="160" rx="5"/><text class="tb" x="452" y="68" text-anchor="middle">A 노드</text><rect class="hl" x="384" y="80" width="137" height="30" rx="5"/><text class="ts" x="452" y="100" text-anchor="middle">실행 결과: 같다</text><text class="ts" x="452" y="132" text-anchor="middle">디스크에 남긴 것</text><rect class="hl" x="384" y="142" width="30" height="26" rx="5"/><rect class="hl" x="419" y="142" width="30" height="26" rx="5"/><rect class="hl" x="454" y="142" width="30" height="26" rx="5"/><rect class="hl" x="489" y="142" width="30" height="26" rx="5"/><text class="ts ta" x="452" y="192" text-anchor="middle">저장한 meta: 전부</text><rect class="bx" x="545" y="46" width="165" height="160" rx="5"/><text class="tb" x="627" y="68" text-anchor="middle">B 노드</text><rect class="hl" x="559" y="80" width="137" height="30" rx="5"/><text class="ts" x="627" y="100" text-anchor="middle">실행 결과: 같다</text><text class="ts" x="627" y="132" text-anchor="middle">디스크에 남긴 것</text><rect class="hl" x="559" y="142" width="30" height="26" rx="5"/><rect class="hl" x="594" y="142" width="30" height="26" rx="5"/><rect class="wr" x="629" y="142" width="30" height="26" rx="5" stroke-dasharray="4 3"/><rect class="wr" x="664" y="142" width="30" height="26" rx="5" stroke-dasharray="4 3"/><text class="ts tw" x="627" y="192" text-anchor="middle">저장한 meta: 일부</text></svg></div><figcaption>저장하지 않은 부분은 나중에 다시 만들 수 없다. 다시 만들려면 그때의 상태가 필요하다.</figcaption></figure>
@@ -718,6 +822,7 @@ kubectl -n bitcoin-lab exec bitcoin-node-0 -- \
             <li><b>meta</b>: 실행한 결과다. 영수증과 같다. 예: 수수료(<code>fee</code>), 성공 여부(<code>err</code>), 실행 전후 잔액(<code>preBalances</code>, <code>postBalances</code>), 로그(<code>logMessages</code>), 내부 호출(<code>innerInstructions</code>), 쓴 계산량(<code>computeUnitsConsumed</code>). 전체 목록은 Solana 공식 문서의 getTransaction 설명에 있다.</li>
             <li>실행 결과는 모든 노드에서 같아야 한다. 모든 노드가 같은 상태에서 같은 트랜잭션을 같은 순서로 실행하기 때문이다. 결과가 다르면 노드끼리 합의가 깨진다.</li>
             <li>노드마다 다를 수 있는 것은 저장이다. 노드는 실행하면서 meta를 만들고, 그다음 디스크에 저장한다. 무엇을 얼마나 오래 저장하는지는 노드마다 다를 수 있다. 저장하지 않은 것은 나중에 다시 만들 수 없다. 다시 만들려면 그때의 상태가 필요하기 때문이다.</li>
+            <li>노드는 meta를 blockstore의 meta 칸에 저장한다. 블록 원본(shred)과는 다른 칸이다(<a href="#blockcols">blockstore의 칸</a>).</li>
           </ul>
           <div class="warn"><b>자주 하는 오해</b>"CU"라는 이름이 두 곳에서 쓰인다. Solana의 compute unit은 트랜잭션이 실행에 쓴 계산량이다(meta에 있다). RPC 서비스 회사의 가격표에 나오는 CU는 요청 한 번의 요금 단위다. 둘은 관계가 없다.</div>
           <div class="mine"><b>내 Bitcoin 노드와 비교</b>Bitcoin 트랜잭션에도 수수료 칸이 없다. 수수료는 입력의 합에서 출력의 합을 빼서 계산한다. 그래서 이전 출력의 값을 알아야 한다. bitcoind는 블록을 검증할 때 쓴 이전 출력을 undo 파일(<code>rev*.dat</code>)에 둔다. <code>getblock</code>의 verbosity 2는 이 파일로 트랜잭션마다 <code>fee</code>를 보여 준다. undo 파일이 없는 블록에서는 이 칸이 빠진다.</div>
@@ -725,11 +830,37 @@ kubectl -n bitcoin-lab exec bitcoin-node-0 -- \
           <details class="try"><summary>직접 확인 (공개 devnet에 묻기)</summary>
 <pre>U=https://api.devnet.solana.com; H='Content-Type: application/json'
 S=$(curl -s $U -X POST -H "$H" -d '{"jsonrpc":"2.0","id":1,"method":"getSlot","params":[{"commitment":"finalized"}]}' | jq .result)
-curl -s $U -X POST -H "$H" -d "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"getBlock\",\"params\":[$S,{\"maxSupportedTransactionVersion\":0}]}" \
+curl -s $U -X POST -H "$H" -d "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"getBlock\",\"params\":[$S,{\"maxSupportedTransactionVersion\":1}]}" \
   | jq '.result.transactions[0] | {transaction: (.transaction | keys), meta: (.meta | keys)}'
-<span class="cm"># 빈 slot이면 오류가 온다. 그때는 S를 1 줄여서 다시 묻는다</span></pre>
+<span class="cm"># 빈 slot이면 오류가 온다. 그때는 S를 1 줄여서 다시 묻는다. maxSupportedTransactionVersion은 트랜잭션 카드를 본다</span></pre>
           </details>
-          <p class="rel">연결: <a href="#soltx">트랜잭션과 서명</a><a href="#statehist">상태와 기록</a><a href="#solrpc">Solana RPC</a><a href="#prune">-prune (Bitcoin 탭)</a></p>
+          <p class="rel">연결: <a href="#soltx">트랜잭션과 서명</a><a href="#statehist">상태와 기록</a><a href="#solrpc">Solana RPC</a><a href="#prune">-prune (Bitcoin 탭)</a><a href="#blockcols">blockstore의 칸</a></p>
+        </article>
+
+        <article class="c" id="blockcols" data-added="2026-10-18" data-updated="2026-10-18" data-k="blockstore rocksdb column family 칸 열쇠 key shreddata shredcode transactionstatus addresssignatures meta 메타 영수증 색인 index 찾아보기 주소 address getsignaturesforaddress protobuf json 크기 compaction 컴팩션 지우기 purge txindex getindexinfo">
+          <div class="c-head"><h3>blockstore의 칸: 원본, 영수증, 찾아보기</h3></div>
+          <p class="why"><b>왜 알아야 하나</b>기록을 저장하는 노드의 디스크에는 블록 원본만 있지 않다. 실행 결과(meta)와, 빨리 찾기 위한 색인도 있다. 셋은 다른 것이다. 섞어서 생각하면 "무엇이 디스크를 쓰는가"를 잘못 센다.</p>
+          <figure class="fig"><div class="sc"><svg viewBox="0 0 720 262" role="img" aria-label="왼쪽: slot 100의 트랜잭션 A, 서명 S, 계정 P, Q, R. 오른쪽: blockstore의 세 칸. 원본 shred 칸은 slot과 번호로 찾는다. meta 칸은 서명과 slot으로 찾고 트랜잭션마다 한 줄이다. 주소 색인 칸은 주소, slot, 번호, 서명으로 찾고 계정마다 한 줄이라서 A는 세 줄이다" style="min-width:600px;max-width:720px"><text class="tb" x="10" y="20" text-anchor="start">트랜잭션 하나가 blockstore에 남기는 것 (기록을 저장하는 노드)</text><rect class="bx" x="10" y="40" width="170" height="150" rx="5"/><text class="tb" x="95" y="62" text-anchor="middle">트랜잭션 A</text><text class="ts" x="95" y="84" text-anchor="middle">slot 100, 블록 안 번호 7</text><text class="mono" x="95" y="106" text-anchor="middle">서명 S</text><text class="ts" x="95" y="130" text-anchor="middle">쓴 계정 3개</text><text class="mono" x="95" y="150" text-anchor="middle">P, Q, R</text><text class="ts" x="95" y="174" text-anchor="middle">로그, 잔액 변화…</text><rect class="bx" x="230" y="34" width="480" height="52" rx="5"/><text class="tb" x="246" y="54" text-anchor="start">원본: shred 칸 (ShredData, ShredCode)</text><text class="ts" x="246" y="74" text-anchor="start">열쇠: (slot, 번호). 블록 바이트의 조각. A도 조각 속에 있다.</text><rect class="hl" x="230" y="96" width="480" height="52" rx="5"/><text class="tb" x="246" y="116" text-anchor="start">영수증: meta 칸 (TransactionStatus)</text><text class="ts" x="246" y="136" text-anchor="start">열쇠: (서명, slot). 트랜잭션 하나에 한 줄. 이진 형식(protobuf).</text><rect class="bx" x="230" y="158" width="480" height="96" rx="5"/><text class="tb" x="246" y="178" text-anchor="start">찾아보기: 주소 색인 칸 (AddressSignatures)</text><text class="ts" x="246" y="198" text-anchor="start">열쇠: (주소, slot, 번호, 서명). 계정마다 한 줄. 그래서 A는 3줄.</text><rect class="bg" x="246" y="208" width="142" height="24" rx="5"/><text class="mono" x="317" y="224" text-anchor="middle">P · 100 · 7 · S</text><rect class="bg" x="398" y="208" width="142" height="24" rx="5"/><text class="mono" x="469" y="224" text-anchor="middle">Q · 100 · 7 · S</text><rect class="bg" x="550" y="208" width="142" height="24" rx="5"/><text class="mono" x="621" y="224" text-anchor="middle">R · 100 · 7 · S</text><text class="ts" x="246" y="248" text-anchor="start">getSignaturesForAddress(주소)가 이 칸을 읽는다.</text><path class="ln" d="M180,70 C204,70 204,60 226,60" marker-end="url(#am)"/><path class="ln" d="M180,118 H226" marker-end="url(#am)"/><path class="ln" d="M180,166 C204,166 204,190 226,190" marker-end="url(#am)"/></svg></div><figcaption>세 칸 모두 slot 번호를 가진다. 그래서 오래된 slot을 지울 때 세 칸에서 같이 지운다. 칸마다 크기가 자라는 방식은 다르다.</figcaption></figure>
+          <ul>
+            <li>blockstore(RocksDB)는 여러 <b>칸</b>(column family)으로 나뉜다. 칸마다 열쇠(key)의 모양이 다르다. 열쇠의 모양이 "무엇으로 찾는가"를 정한다.</li>
+            <li><b>원본</b>: shred 칸이다. slot과 번호로 찾는다. 모든 노드가 쓴다. 블록을 다시 실행하거나, 빠진 조각을 다른 노드에게 줄 때 쓴다.</li>
+            <li><b>영수증</b>: meta 칸이다. 서명으로 찾는다. 트랜잭션 하나에 한 줄이다. 크기는 로그와 내부 호출의 양에 따라 다르다. <code>getTransaction</code>과 <code>getBlock</code>의 meta 부분이 여기서 나온다.</li>
+            <li><b>찾아보기</b>: 주소 색인 칸이다. "이 주소가 나온 트랜잭션"을 빨리 찾으려고 둔다. 트랜잭션에 나오는 계정마다 한 줄을 쓴다. 그래서 계정이 많은 트랜잭션일수록 줄이 많다. <code>getSignaturesForAddress</code>가 이 칸을 읽는다.</li>
+            <li>Agave에서는 meta 한 줄을 쓰는 함수가 같은 자리에서 주소 색인 줄도 쓴다(<code>write_transaction_status</code>, 2026-10-18 확인). 그래서 영수증을 저장하는 노드에는 찾아보기도 생긴다.</li>
+            <li>지울 때: 오래된 slot을 지우면 세 칸에서 그 slot의 줄이 같이 빠진다. 조회에서는 바로 사라진다. 그러나 디스크 자리는 RocksDB가 뒤에서 파일을 다시 쓸 때(<b>compaction</b>) 돌아온다. 그래서 지운 직후에는 디스크 사용량이 바로 줄지 않는다.</li>
+          </ul>
+          <div class="warn"><b>자주 하는 오해</b>"RPC 응답의 JSON 크기 = 디스크에 쓰는 크기"는 오해다. 노드는 meta를 이진 형식(protobuf)으로 저장한다. JSON은 칸 이름을 줄마다 글자로 쓰고, 숫자도 글자로 쓴다. 예: <code>{"fee":5000}</code>은 JSON으로 12 bytes다. protobuf로는 칸 번호 1 byte와 숫자 2 bytes, 모두 3 bytes다. 반대로, 디스크에는 응답에 없는 것(색인 줄, RocksDB의 관리 정보)도 있다.</div>
+          <div class="mine"><b>내 Bitcoin 노드와 비교</b>Bitcoin Core에도 고를 수 있는 색인이 있다. <code>-txindex</code>는 "txid → 블록 안의 위치" 색인이다. 켜면 디스크를 더 쓰고, 아무 트랜잭션이나 txid로 찾을 수 있다. 주소 색인은 Bitcoin Core에 없다. 그래서 지갑 서버(예: Electrum 서버)는 주소 색인을 따로 만든다. bitcoind의 chainstate도 LevelDB라서, 지운 자리가 compaction 때 돌아온다.</div>
+          <p class="ask"><b>생각해 볼 질문</b>책 뒤의 찾아보기는 단어가 많이 나오는 책일수록 길다. 주소 색인 칸의 크기는 무엇을 따라 커질까? 트랜잭션 수일까, 다른 것일까?</p>
+          <details class="try"><summary>직접 확인 (공개 devnet과 내 bitcoind에 묻기)</summary>
+<pre>curl -s https://api.devnet.solana.com -X POST -H 'Content-Type: application/json' \
+  -d '{"jsonrpc":"2.0","id":1,"method":"getSignaturesForAddress","params":["TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",{"limit":3}]}' | jq
+<span class="cm"># 주소 색인 칸으로 답하는 메서드. 받은 서명으로 getTransaction을 물으면 meta 칸의 내용이 온다</span>
+kubectl -n bitcoin-lab exec bitcoin-node-0 -- \
+  bitcoin-cli -signet -datadir=/home/bitcoin/.bitcoin getindexinfo
+<span class="cm"># 내 bitcoind가 켠 색인 목록. 하나도 없으면 {}</span></pre>
+          </details>
+          <p class="rel">연결: <a href="#txmeta">transaction과 meta</a><a href="#ledger">ledger</a><a href="#shredtx">shred와 트랜잭션</a><a href="#statehist">상태와 기록</a><a href="#solrpc">Solana RPC</a><a href="#datadir">데이터 디렉터리 (Bitcoin 탭)</a></p>
         </article>
 
         <article class="c" id="gossip" data-added="2026-10-16" data-updated="2026-10-16" data-k="gossip 가십 contactinfo 명함 entrypoint 진입점 광고 advertise 도달 reachability getclusternodes tvu tpu repair pubsub identity 공개키 dns seed externalip addr">
@@ -844,7 +975,40 @@ bash -c 'set -u; echo "$NO_SUCH_VAR"'; echo $?           <span class="cm"># 오�
 bash -c 'set -e; f(){ local v=$(false); echo 숨음; }; f'   <span class="cm"># 숨음: local이 실패를 가린다</span>
 bash -n 내스크립트.sh                                      <span class="cm"># 실행하지 않고 문법만 검사한다</span></pre>
           </details>
-          <p class="rel">연결: <a href="#idempotent">멱등성</a><a href="#systemd">systemd unit</a><a href="#sdeps">systemd 의존성</a><a href="#yaml">YAML (Bitcoin 탭)</a><a href="#helpread">도움말 읽기</a><a href="#linecont">줄 이어 쓰기</a><a href="#heredoc">heredoc</a></p>
+          <p class="rel">연결: <a href="#idempotent">멱등성</a><a href="#systemd">systemd unit</a><a href="#sdeps">systemd 의존성</a><a href="#yaml">YAML (Bitcoin 탭)</a><a href="#helpread">도움말 읽기</a><a href="#linecont">줄 이어 쓰기</a><a href="#heredoc">heredoc</a><a href="#shellport">macOS와 Linux</a></p>
+        </article>
+
+        <article class="c" id="shellport" data-added="2026-10-18" data-updated="2026-10-18" data-k="macos linux gnu bsd bash zsh 셸 차이 이식성 portability seq 지수 표기 exponent 1.23457e+08 echo printf 역슬래시 escape sed -i for (( )) jq control characters 노트북 서버">
+          <div class="c-head"><h3>macOS와 Linux: 같은 명령, 다른 결과</h3></div>
+          <p class="why"><b>왜 알아야 하나</b>명령을 노트북에서 시험하고 서버에서 쓰는 일이 많다. 그런데 macOS와 Linux는 같은 이름의 도구라도 다른 프로그램이다. 셸도 다를 수 있다. 오류가 나면 차라리 다행이다. 조용히 다른 값이 나오면 알아채기 어렵다.</p>
+          <div class="tbl"><table>
+            <thead><tr><th>명령</th><th>Linux와 macOS의 차이</th><th>둘 다에서 같게</th></tr></thead>
+            <tbody>
+              <tr><td><code>seq</code> (큰 수)</td><td>Linux는 정수로 찍는다. macOS는 <code>1.23457e+08</code>처럼 지수로 찍는다. 기본 형식이 <code>%g</code>다</td><td><code>for (( i=A; i&lt;=B; i++ ))</code> 또는 <code>seq -f '%.0f' …</code></td></tr>
+              <tr><td><code>echo "$JSON"</code></td><td>bash의 echo는 글자 그대로 찍는다. zsh의 echo는 <code>\n</code>, <code>\t</code> 같은 글자를 바꾼다. JSON 문자열 안의 <code>\n</code>이 진짜 줄바꿈이 된다</td><td><code>printf '%s\n' "$JSON"</code>, 또는 파이프로 바로 넘긴다</td></tr>
+              <tr><td><code>sed -i</code></td><td>Linux에서는 된다. macOS에서는 오류다. <code>-i</code> 뒤에 백업 이름이 와야 한다(<code>sed -i '' …</code>)</td><td>새 파일에 쓰고 <code>mv</code>로 바꾼다</td></tr>
+              <tr><td><code>/bin/bash</code></td><td>Linux는 bash 5다. macOS는 bash 3.2(오래됨)이고, 기본 셸은 zsh다(macOS 10.15부터)</td><td>서버에서 돌릴 스크립트는 서버에서 시험한다</td></tr>
+            </tbody>
+          </table></div>
+          <ul>
+            <li>Linux에는 보통 GNU 도구와 bash가 있다. macOS에는 BSD 도구와 zsh가 있다. GNU 도구와 BSD 도구는 이름만 같고 다른 프로그램이다. 옵션과 기본 출력 형식이 다르다.</li>
+            <li>bash와 zsh도 다르다. 같은 <code>echo</code>라도 동작이 다르다.</li>
+            <li><code>for (( i=A; i&lt;B; i++ ))</code>는 bash와 zsh 모두에서 된다. 셸이 숫자를 직접 센다. 그래서 다른 도구의 출력 형식에 기대지 않는다.</li>
+            <li>변수에 담은 데이터(JSON 등)를 다음 명령에 줄 때는 <code>printf '%s\n' "$VAR"</code>를 쓴다. <code>printf</code>는 첫 인자(형식)만 해석하고, <code>%s</code> 자리의 값은 글자 그대로 둔다.</li>
+            <li>지금 셸은 <code>ps -p $$ -o comm=</code>으로 본다.</li>
+          </ul>
+          <div class="warn"><b>자주 하는 오해</b>"명령이 끝까지 돌았다 = 결과가 맞다"는 오해다. <code>seq</code>가 지수로 찍은 번호도 오류 없이 다음 명령에 간다. 다음 명령이 실패하고 스크립트가 그 오류를 찍지 않으면, 모든 줄이 같은 "빈 결과"로 보인다. 결과가 모두 같으면 먼저 입력을 의심한다.</div>
+          <div class="mine"><b>내 환경과 비교</b>promet은 Ubuntu Server다. 그래서 GNU 도구와 bash다. 같은 명령을 다른 컴퓨터(예: macOS)에서도 돌린다면, 아래 명령을 두 곳에서 실행해서 결과를 비교한다.</div>
+          <p class="ask"><b>생각해 볼 질문</b>jq가 <code>control characters … must be escaped</code>라고 하며 멈췄다. curl의 출력을 jq에 파이프로 바로 줄 때와, 변수에 담았다가 echo로 줄 때 결과가 다를까? 왜 그럴까?</p>
+          <details class="try"><summary>직접 확인 (두 컴퓨터에서 비교)</summary>
+<pre>ps -p $$ -o comm=                      <span class="cm"># 지금 셸</span>
+seq 123456789 123456790                <span class="cm"># GNU: 정수, BSD: 지수 표기</span>
+for (( i=123456789; i&lt;=123456790; i++ )); do echo $i; done
+<span class="cm"># bash와 zsh 모두 정수</span>
+echo 'a\nb'                            <span class="cm"># bash: 한 줄, zsh: 두 줄</span>
+printf '%s\n' 'a\nb'                   <span class="cm"># 어디서나 한 줄</span></pre>
+          </details>
+          <p class="rel">연결: <a href="#bashsafe">bash 스크립트</a><a href="#heredoc">heredoc</a><a href="#linecont">줄 이어 쓰기</a><a href="#helpread">도움말 읽기</a></p>
         </article>
 
         <article class="c" id="linecont" data-added="2026-10-17" data-updated="2026-10-17" data-k="줄 이어 쓰기 line continuation 백슬래시 backslash 줄바꿈 newline 끊김 command not found missing unknown key name ignoring 경고 무시 systemd-analyze verify cmdline proc ps args 공백 trailing space 조용한 실패">
@@ -906,7 +1070,7 @@ sudo bash -c "echo 바깥: $(whoami); echo 안쪽: \$(whoami)"
 sudo cat &gt; /root/x.txt &lt;&lt;&lt; 'a'        <span class="cm"># Permission denied: &gt; 는 내 셸이 연다</span>
 echo a | sudo tee /root/x.txt &gt;/dev/null; sudo cat /root/x.txt; sudo rm /root/x.txt</pre>
           </details>
-          <p class="rel">연결: <a href="#linecont">줄 이어 쓰기</a><a href="#execstart">ExecStart=</a><a href="#idempotent">멱등성</a><a href="#bashsafe">bash 스크립트</a><a href="#pod">Pod (Bitcoin 탭)</a></p>
+          <p class="rel">연결: <a href="#linecont">줄 이어 쓰기</a><a href="#execstart">ExecStart=</a><a href="#idempotent">멱등성</a><a href="#bashsafe">bash 스크립트</a><a href="#pod">Pod (Bitcoin 탭)</a><a href="#shellport">macOS와 Linux</a></p>
         </article>
 
         <article class="c" id="idempotent" data-added="2026-10-15" data-updated="2026-10-16" data-k="멱등성 멱등 idempotent idempotency 다시 실행 재실행 스크립트 apply create mkdir -p 안전 heredoc eof cat > [ -f ] 있는지 확인">
@@ -960,7 +1124,7 @@ systemd-analyze verify /etc/systemd/system/이름.service   <span class="cm"># �
           <p class="rel">연결: <a href="#ulimit">ulimit</a><a href="#idempotent">멱등성</a><a href="#desired">desired state (Bitcoin 탭)</a><a href="#process">프로세스 (Bitcoin 탭)</a><a href="#sdeps">systemd 의존성</a><a href="#svcuser">서비스 사용자</a><a href="#execstart">ExecStart=</a><a href="#linecont">줄 이어 쓰기</a></p>
         </article>
 
-        <article class="c" id="execstart" data-added="2026-10-17" data-updated="2026-10-17" data-k="execstart exec start systemd 셸 shell 파이프 pipe 리다이렉트 redirect 백그라운드 path 경로 절대 경로 environment environmentfile 변수 specifier %h %n bashrc profile 환경 bash -c 따옴표 systemctl show argv environ systemd-path execstartpre">
+        <article class="c" id="execstart" data-added="2026-10-17" data-updated="2026-10-18" data-k="execstart exec start systemd 셸 shell 파이프 pipe 리다이렉트 redirect 백그라운드 path 경로 절대 경로 environment environmentfile 변수 specifier %h %n bashrc profile 환경 bash -c 따옴표 systemctl show argv environ systemd-path execstartpre execsearchpath command -v 찾기 lookup">
           <div class="c-head"><h3>ExecStart=는 셸이 아니다</h3></div>
           <p class="why"><b>왜 알아야 하나</b>unit의 <code>ExecStart=</code> 줄은 셸 명령처럼 보인다. 하지만 systemd가 직접 읽고, 셸을 거치지 않는다. 그래서 터미널에서 되던 명령이 서비스에서는 다르게 돌 수 있다.</p>
           <div class="tbl"><table>
@@ -979,6 +1143,7 @@ systemd-analyze verify /etc/systemd/system/이름.service   <span class="cm"># �
             <li>셸의 기능이 꼭 필요하면 셸을 직접 부른다: <code>ExecStart=/bin/bash -c '명령 | 명령'</code>. 이때는 그 따옴표 안에서만 셸이 일한다.</li>
             <li>systemd가 실제로 읽은 줄은 <code>systemctl show -p ExecStart 이름</code>으로 본다. <code>argv[]=</code> 뒤가 프로그램이 받을 인자 목록이다.</li>
             <li>unit이 준 환경 변수는 <code>systemctl show -p Environment 이름</code>으로 본다. 실행 중인 프로세스의 실제 환경은 <code>/proc/PID/environ</code>에 있다.</li>
+            <li><code>Environment=PATH=…</code>는 실행 파일을 찾는 위치를 바꾸지 않는다. 그 값은 프로세스가 받는 환경 변수일 뿐이다. 찾는 위치를 바꾸는 줄은 <code>ExecSearchPath=</code>다(systemd 250부터). 가장 단순하고 분명한 것은 절대 경로다.</li>
           </ul>
           <div class="warn"><b>자주 하는 오해</b>"터미널에서 되면 서비스에서도 된다"는 오해다. 터미널에는 내 PATH, 내 환경 변수, 내 홈 디렉터리, 내 사용자가 있다. 서비스에는 unit에 적은 것만 있다. 그래서 서비스로 옮기기 전에, 각 줄이 누구의 환경을 기대하는지 본다.</div>
           <div class="mine"><b>내 Bitcoin 노드와 비교</b>Bitcoin Core가 주는 unit 파일은 실행 파일을 절대 경로(<code>/usr/bin/bitcoind</code>)로 적고, 옵션을 줄 끝 <code>\</code>로 여러 줄에 나눈다. 같은 파일에 <code>ExecStartPre=!/bin/chgrp …</code>도 있다. 앞의 <code>!</code>는 "이 줄만 <code>User=</code> 같은 권한 제한 없이 실행하라"는 systemd 기호다(2026-10-17 master에서 확인).</div>
@@ -987,6 +1152,7 @@ systemd-analyze verify /etc/systemd/system/이름.service   <span class="cm"># �
 <pre>systemctl show -p ExecStart docker       <span class="cm"># systemd가 읽은 명령줄 (argv[]=)</span>
 systemctl show -p Environment docker     <span class="cm"># unit이 준 환경 변수</span>
 systemd-path search-binaries-default     <span class="cm"># 절대 경로가 아닐 때 찾는 디렉터리</span>
+command -v dockerd                       <span class="cm"># 내 셸이 찾은 위치. 위의 목록과 비교한다</span>
 sudo cat /proc/$(pidof dockerd)/environ | tr '\0' '\n' | head
 <span class="cm"># 실행 중인 dockerd의 실제 환경</span></pre>
           </details>
@@ -1300,7 +1466,7 @@ kubectl get nodes -o wide</pre>
       <p class="lead">컨테이너와 Kubernetes는 리눅스 기능 위에 있다. 이 기본이 약하면 위층의 동작을 설명할 수 없다.</p>
       <div class="cards">
 
-        <article class="c" id="process" data-added="2026-10-12" data-updated="2026-10-12" data-k="프로세스 사용자 uid 권한 소유권 root 계정 taehwi nodelab">
+        <article class="c" id="process" data-added="2026-10-12" data-updated="2026-10-18" data-k="프로세스 사용자 uid 권한 소유권 root 계정 taehwi nodelab uid 0 sudo secure_path login.defs uid_min 시스템 사용자">
           <div class="c-head"><h3>프로세스, 사용자, 권한<span class="en">process · UID</span></h3></div>
           <p class="why"><b>왜 알아야 하나</b>"Permission denied"는 가장 흔한 오류다. 원인은 항상 "어떤 사용자의 프로세스가, 누구 소유의 파일에, 어떤 동작을 했는가"이다.</p>
           <ul>
@@ -1308,15 +1474,22 @@ kubectl get nodes -o wide</pre>
             <li>파일은 소유자, 그룹, 권한 비트(<code>rwx</code>)를 가진다.</li>
             <li>커널은 이름이 아니라 <b>번호(UID, GID)</b>를 비교한다. 이름은 사람을 위한 표시다.</li>
             <li>root(UID 0)는 대부분의 권한 검사를 통과한다.</li>
+            <li>root가 특별한 이유는 UID가 <b>0</b>이기 때문이다. 목록의 첫 줄이라서가 아니다. 커널은 이름도 순서도 보지 않고 번호가 0인지 본다.</li>
+            <li>번호의 범위는 배포판의 약속이다. Ubuntu는 1–999를 시스템 사용자(서비스용)에, 1000부터를 사람 사용자에 준다(<code>/etc/login.defs</code>의 <code>UID_MIN</code>).</li>
+            <li><code>sudo</code>는 명령 하나만 root로 실행한다. 그 명령이 끝나면 내 셸은 그대로 내 UID다. 한동안 비밀번호를 다시 묻지 않는 것은 인증을 기억하는 것이다. 내 셸이 root가 된 것이 아니다.</li>
+            <li><code>sudo</code>는 PATH도 바꾼다(<code>/etc/sudoers</code>의 <code>secure_path</code>). 그래서 내 PATH에만 있는 프로그램은 sudo 뒤에서 못 찾을 수 있다.</li>
           </ul>
           <div class="mine"><b>내 환경에서</b><code>taehwi</code>(UID 1000)와 <code>nodelab</code>(UID 1001)은 다른 사용자다. 계정 분리는 <b>파일과 프로세스의 접근 권한</b>을 나눈다. CPU와 메모리는 나누지 않는다. 자원을 나누려면 <a href="#cgroup">cgroup</a>이 필요하다.</div>
           <div class="warn"><b>자주 하는 오해</b>컨테이너 안의 UID 1000과 호스트의 UID 1000은 같은 번호다. 이름이 달라도 커널에게는 같은 사용자다. 그래서 볼륨 파일의 소유자가 이상하게 보일 수 있다.</div>
           <details class="try"><summary>직접 확인</summary>
 <pre>id                       <span class="cm"># 내 UID, GID, 그룹</span>
 ls -ln ~                 <span class="cm"># 이름 대신 번호로 소유자 표시</span>
-ps -o pid,uid,user,cmd -u nodelab</pre>
+ps -o pid,uid,user,cmd -u nodelab
+id -u; sudo id -u; id -u                 <span class="cm"># sudo는 그 명령 하나만 0이다</span>
+grep -E '^UID_(MIN|MAX)' /etc/login.defs <span class="cm"># 사람 사용자 번호의 범위</span>
+sudo sh -c 'echo $PATH'                  <span class="cm"># sudo 뒤의 PATH (secure_path)</span></pre>
           </details>
-          <p class="rel">연결: <a href="#dockergroup">docker 그룹</a><a href="#namespace">namespace</a><a href="#svcuser">서비스 사용자 (Solana 탭)</a><a href="#caps">capability (Solana 탭)</a></p>
+          <p class="rel">연결: <a href="#dockergroup">docker 그룹</a><a href="#namespace">namespace</a><a href="#svcuser">서비스 사용자 (Solana 탭)</a><a href="#caps">capability (Solana 탭)</a><a href="#execstart">ExecStart= (Solana 탭)</a></p>
         </article>
 
         <article class="c" id="mount" data-added="2026-10-12" data-updated="2026-10-16" data-k="파일시스템 마운트 mount 디렉터리 트리 ext4 /mnt/hdd lvm fstab 부팅">
