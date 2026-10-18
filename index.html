@@ -108,6 +108,14 @@ main { padding-block: 28px 80px; min-width: 0; display: flex; flex-direction: co
 .log summary { cursor: pointer; font-size: 13.5px; color: var(--accent); font-weight: 500; }
 .log .upd { list-style: none; padding: 0; margin: 8px 0 0; font-size: 13px; color: var(--muted); display: flex; flex-direction: column; gap: 4px; }
 .log .upd b { font-weight: 500; font-variant-numeric: tabular-nums; margin-right: 6px; color: var(--ink); }
+.asks { margin-top: 18px; max-width: 760px; border: 1.5px dashed var(--accent); border-radius: 6px; padding: 10px 14px; }
+.asks summary { cursor: pointer; font-size: 14px; color: var(--accent); font-weight: 500; }
+.asks .n { color: var(--muted); font-weight: 400; margin-left: 4px; font-variant-numeric: tabular-nums; }
+.intro .asks .note { font-size: 13px; color: var(--muted); margin: 8px 0 0; }
+.asks ol { margin: 8px 0 0; padding-left: 1.5em; font-size: 14px; line-height: 1.65; color: var(--ink); display: flex; flex-direction: column; gap: 8px; }
+.asks li a { display: inline-block; font-size: 12.5px; font-weight: 500; margin-right: 6px; }
+.fig svg a { cursor: pointer; }
+.fig svg a:hover rect, .fig svg a:focus-visible rect { stroke: var(--accent); stroke-width: 2.5; }
 .legend { display: flex; flex-wrap: wrap; gap: 8px 18px; font-size: 13px; color: var(--muted); margin-top: 12px; }
 .legend span::before { content: ""; display: inline-block; width: 10px; height: 10px; margin-right: 6px; border-radius: 2px; vertical-align: -1px; }
 .legend .l-why::before { background: var(--ink); }
@@ -237,9 +245,9 @@ svg .mkw { fill: var(--warn); }
   <main>
     <header class="intro">
       <h1>nodelab 개념 노트</h1>
-      <p class="stamp" id="stamp">마지막 갱신 <b><time datetime="2026-10-18T07:16+09:00">2026-10-18 07:16</time></b> (한국 시간) · 매일 06:52에 학습 기록을 읽고 자동으로 갱신한다.</p>
+      <p class="stamp" id="stamp">마지막 갱신 <b><time datetime="2026-10-18T15:37+09:00">2026-10-18 15:37</time></b> (한국 시간) · 매일 06:52에 학습 기록을 읽고 자동으로 갱신한다.</p>
       <div data-track="sol">
-        <p>Solana 노드를 이해하기 위한 기본 개념이다. 지금은 이 탭이 먼저 열린다. 서버 하드웨어의 단어부터 읽는다. 그다음 Solana의 기본 단어, 리눅스 운영 단어를 읽는다.</p>
+        <p>Solana 노드를 이해하기 위한 기본 개념이다. 지금은 이 탭이 먼저 열린다. 먼저 큰 그림(블록의 길)을 본다. 그다음 서버 하드웨어, Solana의 기본 단어, 리눅스 운영 단어, 측정과 계획을 읽는다.</p>
         <p>카드는 같은 순서로 쓴다. 먼저 <b>왜 알아야 하는지</b> 쓴다. 그다음 핵심 내용, 그다음 <b>promet이나 내 Bitcoin 노드와 비교</b>한다. 카드는 뜻과 이유를 설명한다. 무엇을 고를지는 쓰지 않는다. 직접 생각할 거리는 <b>생각해 볼 질문</b>에 둔다.</p>
         <div class="legend"><span class="l-why">왜 알아야 하나</span><span class="l-mine">내 환경과 비교</span><span class="l-warn">자주 하는 오해</span><span class="l-ask">생각해 볼 질문</span></div>
       </div>
@@ -256,7 +264,7 @@ svg .mkw { fill: var(--warn); }
       </div>
       <div class="now" id="now-sol" data-track="sol">
         <h2>지금 학습 위치</h2>
-        <p>하드웨어, Solana 기본 단어, 서비스 운영의 기본을 읽었다. 지금: 공개 cluster에 직접 물어서 숫자를 재고, 그 숫자의 뜻을 읽는 단계다. Solana가 시간을 세는 방법: <a href="#poh">PoH</a>, <a href="#slot">slot과 epoch</a>(목표 200ms, 두 방법으로 재기). 규칙이 바뀌는 방법: <a href="#featuregate">feature gate</a>. 블록이 디스크에 남는 모양: <a href="#shredtx">shred와 트랜잭션</a>, <a href="#blockcols">blockstore의 칸</a>. 같이 볼 것: <a href="#soltx">트랜잭션</a>(버전, 투표), <a href="#txmeta">transaction과 meta</a>, <a href="#snapshot">snapshot</a>, <a href="#solrpc">RPC</a>(요청 제한), 측정 명령을 다른 컴퓨터에서 돌릴 때는 <a href="#shellport">macOS와 Linux</a>.</p>
+        <p>하드웨어, Solana 기본 단어, 서비스 운영의 기본을 읽었다. 공개 cluster에서 숫자도 직접 재었다. 지금: 판단이 갈리는 곳을 자기 말로 설명하는 단계다. 먼저 <a href="#solmap">블록의 길</a>에서 전체를 본다. 기록을 얼마나 둘까: <a href="#retention">보관 기준과 여유</a>, <a href="#sampling">표본</a>, <a href="#tbtib">TB와 TiB</a>. 비정상 종료 뒤의 DB: <a href="#wal">WAL</a>. 받은 상태를 믿는 법: <a href="#snapshot">snapshot</a>. 로그: <a href="#logrot">로그와 회전</a>. 디스크 고장: <a href="#raid0">RAID0</a>(RAID10), <a href="#statehist">상태와 기록</a>(repair의 범위). 질문만 모아 보려면 아래의 <b>생각해 볼 질문 모음</b>을 연다.</p>
       </div>
       <div class="now" id="now" data-track="btc">
         <h2>지금 학습 위치</h2>
@@ -267,13 +275,15 @@ svg .mkw { fill: var(--warn); }
         <div class="tbl"><table>
           <thead><tr><th>단계</th><th>먼저 읽을 개념</th></tr></thead>
           <tbody>
+            <tr><td><b>0. 큰 그림 (먼저)</b></td><td><a href="#solmap">블록의 길</a></td></tr>
             <tr><td>1. 서버 하드웨어</td><td><a href="#cputopo">소켓, 코어, 스레드</a>, <a href="#alu">코어와 ALU</a>, <a href="#smt">SMT</a>, <a href="#numa">NUMA</a>, <a href="#smtnuma">SMT와 NUMA의 층</a>, <a href="#nvme">NVMe</a>, <a href="#raid0">RAID0</a>, <a href="#nic">NIC와 드라이버</a></td></tr>
-            <tr><td><b>2. Solana 기본 (지금)</b></td><td><a href="#soloverview">전체 지도</a>, <a href="#slot">slot과 epoch</a>, <a href="#poh">PoH</a>, <a href="#featuregate">feature gate</a>, <a href="#soltx">트랜잭션과 서명</a>, <a href="#ledger">ledger와 shred</a>, <a href="#shredtx">shred와 트랜잭션</a>, <a href="#turbine">turbine</a>, <a href="#snapshot">snapshot</a>, <a href="#accounts">account</a>, <a href="#statehist">상태와 기록</a>, <a href="#solrpc">RPC</a>, <a href="#rpclayers">RPC의 층</a>, <a href="#txmeta">transaction과 meta</a>, <a href="#blockcols">blockstore의 칸</a>, <a href="#gossip">gossip</a>, <a href="#keypair">keypair</a></td></tr>
-            <tr><td>3. 리눅스 운영</td><td><a href="#helpread">도움말 읽기</a>, <a href="#bashsafe">bash 스크립트</a>, <a href="#shellport">macOS와 Linux</a>, <a href="#linecont">줄 이어 쓰기</a>, <a href="#heredoc">heredoc</a>, <a href="#idempotent">멱등성</a>, <a href="#systemd">systemd unit</a>, <a href="#execstart">ExecStart=</a>, <a href="#sdeps">systemd 의존성</a>, <a href="#fstab">/etc/fstab</a>, <a href="#svcuser">서비스 사용자</a>, <a href="#caps">capability</a>, <a href="#sysctl">sysctl</a>, <a href="#ulimit">ulimit</a>, <a href="#ports">포트 번호</a>, <a href="#bindaddr">리슨 주소</a>, <a href="#ipport">IP와 포트</a>, <a href="#nat">NAT</a></td></tr>
-            <tr><td>Bitcoin 탭에서 같이 볼 것</td><td><a href="#mount">마운트</a>, <a href="#process">프로세스와 권한</a>, <a href="#ssdhdd">SSD, HDD</a>, <a href="#iometrics">IOPS와 지연</a>, <a href="#memory">메모리와 페이지 캐시</a>, <a href="#cgroup">cgroup</a>, <a href="#rpccookie">RPC와 쿠키</a>, <a href="#prune">-prune</a>, <a href="#fullnode">풀 노드</a>, <a href="#listen">-listen과 피어</a></td></tr>
+            <tr><td>2. Solana 기본</td><td><a href="#soloverview">전체 지도</a>, <a href="#slot">slot과 epoch</a>, <a href="#poh">PoH</a>, <a href="#featuregate">feature gate</a>, <a href="#soltx">트랜잭션과 서명</a>, <a href="#ledger">ledger와 shred</a>, <a href="#shredtx">shred와 트랜잭션</a>, <a href="#turbine">turbine</a>, <a href="#snapshot">snapshot</a>, <a href="#accounts">account</a>, <a href="#tokenacct">토큰 계정</a>, <a href="#statehist">상태와 기록</a>, <a href="#solrpc">RPC</a>, <a href="#rpclayers">RPC의 층</a>, <a href="#txmeta">transaction과 meta</a>, <a href="#blockcols">blockstore의 칸</a>, <a href="#wal">WAL</a>, <a href="#gossip">gossip</a>, <a href="#keypair">keypair</a></td></tr>
+            <tr><td>3. 리눅스 운영</td><td><a href="#helpread">도움말 읽기</a>, <a href="#bashsafe">bash 스크립트</a>, <a href="#shellport">macOS와 Linux</a>, <a href="#linecont">줄 이어 쓰기</a>, <a href="#heredoc">heredoc</a>, <a href="#idempotent">멱등성</a>, <a href="#systemd">systemd unit</a>, <a href="#execstart">ExecStart=</a>, <a href="#sdeps">systemd 의존성</a>, <a href="#fstab">/etc/fstab</a>, <a href="#svcuser">서비스 사용자</a>, <a href="#caps">capability</a>, <a href="#sysctl">sysctl</a>, <a href="#ulimit">ulimit</a>, <a href="#logrot">로그와 회전</a>, <a href="#ports">포트 번호</a>, <a href="#bindaddr">리슨 주소</a>, <a href="#ipport">IP와 포트</a>, <a href="#nat">NAT</a></td></tr>
+            <tr><td><b>4. 측정과 계획 (지금)</b></td><td><a href="#tbtib">TB와 TiB</a>, <a href="#sampling">표본</a>, <a href="#retention">보관 기준과 여유</a>, <a href="#experiment">실험 설계</a></td></tr>
+            <tr><td>Bitcoin 탭에서 같이 볼 것</td><td><a href="#mount">마운트</a>, <a href="#dudf">du와 df</a>, <a href="#process">프로세스와 권한</a>, <a href="#ssdhdd">SSD, HDD</a>, <a href="#iometrics">IOPS와 지연</a>, <a href="#memory">메모리와 페이지 캐시</a>, <a href="#cgroup">cgroup</a>, <a href="#rpccookie">RPC와 쿠키</a>, <a href="#prune">-prune</a>, <a href="#dbcache">UTXO와 dbcache</a>, <a href="#fullnode">풀 노드</a>, <a href="#listen">-listen과 피어</a></td></tr>
           </tbody>
         </table></div>
-        <p class="note" style="margin:8px 0 0;font-size:13px">리슨 주소, IP와 포트, NAT, 마지막 줄의 카드는 Bitcoin 탭에 있다. 누르면 그 탭으로 바뀐다.</p>
+        <p class="note" style="margin:8px 0 0;font-size:13px">리슨 주소, IP와 포트, NAT, 실험 설계, 마지막 줄의 카드는 Bitcoin 탭에 있다. 누르면 그 탭으로 바뀐다.</p>
       </div>
       <div class="order" data-track="btc">
         <h2>실습과 같이 읽는 순서</h2>
@@ -292,9 +302,15 @@ svg .mkw { fill: var(--warn); }
           </tbody>
         </table></div>
       </div>
+      <details class="asks" id="asks">
+        <summary>생각해 볼 질문 모음 <span class="n" id="asks-n"></span></summary>
+        <p class="note">이 탭의 카드에 있는 질문을 모았다. 답은 쓰지 않았다. 카드 이름을 누르면 그 카드로 간다. 판단이 갈리는 곳은 자기 말로 답을 써 본다.</p>
+        <ol id="asks-list"></ol>
+      </details>
       <details class="log">
         <summary>업데이트 기록</summary>
         <ul class="upd" id="changelog">
+          <li><b>2026-10-18 (2)</b> Solana 탭에 묶음 2개를 새로 만들었다: 맨 위의 "큰 그림"과 맨 아래의 "측정과 계획". 새 카드 7개. 큰 그림: 블록의 길(상자를 누르면 그 카드로 가는 그림). 측정과 계획: TB와 TiB, 표본(한 순간과 하루), 보관 기준과 여유. Solana 기본: WAL(쓰기 전에 적는 기록), 토큰 계정과 getProgramAccounts. 리눅스 운영: 로그와 회전. 보충: snapshot(해시로 믿는 법), 상태와 기록(repair의 범위), RAID0(RAID10). 머리말에 "생각해 볼 질문 모음"을 더했다. 이 탭의 질문을 한곳에서 본다.</li>
           <li><b>2026-10-18</b> Solana 탭에 새 카드 5개. Solana 기본: PoH(해시로 만든 시계), feature gate(미리 넣고 한꺼번에 켠다), shred와 트랜잭션(뜻의 단위, 운반의 단위), blockstore의 칸(원본, 영수증, 찾아보기). 리눅스 운영: macOS와 Linux(seq, echo, sed -i). 보충: slot(목표 400ms → 200ms, epoch 길이, 두 방법으로 재기), 트랜잭션(버전, 투표), transaction과 meta, snapshot(HTTP로 받는 길), RPC(요청 제한, 오류 찍기), ExecStart=(Environment=PATH와 ExecSearchPath=), 프로세스와 권한(UID 0, sudo).</li>
           <li><b>2026-10-17</b> Solana 탭에 새 카드 6개. 리눅스 운영: 도움말(--help) 읽는 법, 줄 이어 쓰기(\), heredoc과 펼침(쓸 때와 읽을 때), ExecStart=는 셸이 아니다, capability(root의 힘을 나눈 조각). Solana 기본: turbine(블록 조각이 퍼지는 나무). 보충: systemd unit(start, restart, daemon-reload, verify), bash 스크립트(local과 export가 실패를 가림), slot(getRecentPerformanceSamples).</li>
           <li><b>2026-10-16</b> Solana 탭에 새 카드 10개. Solana 기본: 상태와 기록, transaction과 meta, RPC의 층(TCP, HTTP, JSON-RPC, WebSocket), gossip과 ContactInfo, keypair. 리눅스 운영: /etc/fstab, systemd 의존성, bash 스크립트(set -euo pipefail), 포트 번호와 범위 표기, 서비스 사용자와 최소 권한. 보충: Solana RPC(구독 짝, 무거운 요청), slot, ledger(genesis 해시), 전체 지도(validator의 키 셋), RAID0(chunk), systemd unit(/usr/lib와 /etc, enable, Restart=), sysctl(버퍼, 매핑 수, nr_open, sysctl·rlimit·cgroup 비교), ulimit, 멱등성. Bitcoin 탭 보충: UTXO와 dbcache(정상 종료), kind(잠시 끄는 순서), 마운트.</li>
@@ -314,6 +330,31 @@ svg .mkw { fill: var(--warn); }
       <p class="other" id="other" hidden><span id="other-name"></span> 탭에도 맞는 카드가 <b id="other-n">0</b>개 있다.<button class="btn" id="other-go" type="button">그 탭에서 보기</button></p>
     </div>
     <!-- ===================== Solana 탭 ===================== -->
+    <section class="group" id="g-solmap" data-name="큰 그림" data-track="sol">
+      <h2>큰 그림 <small>OVERVIEW</small></h2>
+      <p class="lead">Solana 탭 전체의 지도다. 헷갈리면 여기로 돌아온다.</p>
+      <div class="cards">
+
+        <article class="c" id="solmap" data-added="2026-10-18" data-updated="2026-10-18" data-k="map 지도 큰 그림 overview 흐름 flow 블록의 길 파이프라인 pipeline leader turbine replay blockstore accounts snapshot rpc gossip wal 전체">
+          <div class="c-head"><h3>블록의 길: leader에서 내 노드의 답까지</h3></div>
+          <p class="why"><b>왜 알아야 하나</b>Solana 카드가 많다. 카드 하나는 작은 조각이다. 조각이 전체의 어디에 있는지 알면, 새 개념을 어디에 놓을지 보인다. 이 그림은 블록 하나가 만들어져서 사용자의 답이 되기까지의 길이다.</p>
+          <figure class="fig"><div class="sc"><svg viewBox="0 0 720 632" role="img" aria-label="블록의 길. 위: leader가 트랜잭션을 PoH 사슬에 넣고 slot마다 블록을 만들어 shred로 자른다. shred는 turbine으로 퍼진다. 가운데: 내 노드는 shred를 받아 blockstore에 기록하고(WAL 먼저), replay로 실행해서 accounts(상태)를 바꾸고, snapshot을 만든다. RPC 서버는 기록과 상태를 읽어 사용자에게 답한다. 아래: 리눅스, 하드웨어, 측정과 계획의 카드" style="min-width:600px;max-width:720px"><text class="tb" x="10" y="20" text-anchor="start">블록 하나가 내 노드의 답이 되기까지</text><text class="ts" x="710" y="20" text-anchor="end">상자를 누르면 그 카드로 간다</text><rect class="bg" x="10" y="32" width="700" height="96" rx="5"/><text class="ts" x="22" y="50" text-anchor="start">leader: 이번 slot의 블록을 만드는 validator</text><a href="#soltx"><rect class="bx" x="22" y="60" width="150" height="52" rx="5"/><text class="tb" x="97.0" y="81" text-anchor="middle">트랜잭션</text><text class="ts" x="97.0" y="100" text-anchor="middle">서명된 요청</text></a><a href="#poh"><rect class="bx" x="198" y="60" width="150" height="52" rx="5"/><text class="tb" x="273.0" y="81" text-anchor="middle">PoH</text><text class="ts" x="273.0" y="100" text-anchor="middle">해시 사슬로 순서</text></a><a href="#slot"><rect class="bx" x="374" y="60" width="150" height="52" rx="5"/><text class="tb" x="449.0" y="81" text-anchor="middle">slot</text><text class="ts" x="449.0" y="100" text-anchor="middle">블록을 만드는 시간 칸</text></a><a href="#shredtx"><rect class="bx" x="550" y="60" width="150" height="52" rx="5"/><text class="tb" x="625.0" y="81" text-anchor="middle">shred</text><text class="ts" x="625.0" y="100" text-anchor="middle">블록을 자른 조각</text></a><path class="ln" d="M174,86 H195" marker-end="url(#am)"/><path class="ln" d="M350,86 H371" marker-end="url(#am)"/><path class="ln" d="M526,86 H547" marker-end="url(#am)"/><path class="ln" d="M625,113 V143" marker-end="url(#am)"/><a href="#turbine"><rect class="bx" x="550" y="146" width="150" height="52" rx="5"/><text class="tb" x="625.0" y="167" text-anchor="middle">turbine</text><text class="ts" x="625.0" y="186" text-anchor="middle">나무 모양으로 퍼진다</text></a><rect class="bg" x="10" y="214" width="700" height="170" rx="5"/><text class="ts" x="22" y="232" text-anchor="start">내 노드 (RPC 노드): 받고, 적고, 실행하고, 답한다</text><path class="ln" d="M625,199 V241" marker-end="url(#am)"/><a href="#ledger"><rect class="bx" x="550" y="244" width="150" height="52" rx="5"/><text class="tb" x="625.0" y="265" text-anchor="middle">shred 받기</text><text class="ts" x="625.0" y="284" text-anchor="middle">모으고, 빠지면 채운다</text></a><a href="#blockcols"><rect class="bx" x="374" y="244" width="150" height="52" rx="5"/><text class="tb" x="449.0" y="265" text-anchor="middle">blockstore</text><text class="ts" x="449.0" y="284" text-anchor="middle">기록: 블록과 meta</text></a><a href="#statehist"><rect class="bx" x="198" y="244" width="150" height="52" rx="5"/><text class="tb" x="273.0" y="265" text-anchor="middle">replay</text><text class="ts" x="273.0" y="284" text-anchor="middle">기록을 실행해 상태로</text></a><a href="#accounts"><rect class="bx" x="22" y="244" width="150" height="52" rx="5"/><text class="tb" x="97.0" y="265" text-anchor="middle">accounts</text><text class="ts" x="97.0" y="284" text-anchor="middle">상태: 계정의 지금 값</text></a><path class="ln" d="M548,270 H527" marker-end="url(#am)"/><path class="ln" d="M372,270 H351" marker-end="url(#am)"/><path class="ln" d="M196,270 H175" marker-end="url(#am)"/><path class="ln" d="M625,297 V317" stroke-dasharray="4 4"/><a href="#gossip"><rect class="bx" x="550" y="320" width="150" height="52" rx="5"/><text class="tb" x="625.0" y="341" text-anchor="middle">gossip</text><text class="ts" x="625.0" y="360" text-anchor="middle">이웃과 주소를 안다</text></a><path class="ln" d="M449,297 V317"/><a href="#wal"><rect class="bx" x="374" y="320" width="150" height="52" rx="5"/><text class="tb" x="449.0" y="341" text-anchor="middle">WAL</text><text class="ts" x="449.0" y="360" text-anchor="middle">쓰기 전에 적는 기록</text></a><path class="ln" d="M97,297 V317" marker-end="url(#am)"/><a href="#snapshot"><rect class="bx" x="22" y="320" width="150" height="52" rx="5"/><text class="tb" x="97.0" y="341" text-anchor="middle">snapshot</text><text class="ts" x="97.0" y="360" text-anchor="middle">상태의 사진</text></a><a href="#solrpc"><rect class="hl" x="198" y="320" width="150" height="52" rx="5"/><text class="tb" x="273.0" y="341" text-anchor="middle">RPC 서버</text><text class="ts" x="273.0" y="360" text-anchor="middle">기록과 상태를 읽는다</text></a><path class="ln" d="M392,298 L335,318" marker-end="url(#am)"/><path class="ln" d="M152,298 L210,318" marker-end="url(#am)"/><path class="la" d="M273,374 V409" marker-end="url(#aa)" marker-start="url(#aa)"/><text class="ts ta" x="285" y="396" text-anchor="start">요청과 응답</text><a href="#rpclayers"><rect class="bx" x="198" y="412" width="150" height="52" rx="5"/><text class="tb" x="273.0" y="433" text-anchor="middle">사용자와 앱</text><text class="ts" x="273.0" y="452" text-anchor="middle">HTTP로 묻는다</text></a><text class="ts" x="374" y="434" text-anchor="start">자주 묻는 것</text><a href="#txmeta"><rect class="bx" x="374" y="442" width="150" height="26" rx="5"/><text x="449.0" y="460.0" text-anchor="middle">transaction과 meta</text></a><a href="#tokenacct"><rect class="bx" x="534" y="442" width="80" height="26" rx="5"/><text x="574.0" y="460.0" text-anchor="middle">토큰 계정</text></a><rect class="bg" x="10" y="486" width="700" height="40" rx="5"/><text class="ts" x="22" y="511" text-anchor="start">리눅스 위의 프로세스</text><a href="#systemd"><rect class="bx" x="176" y="493" width="75" height="26" rx="5"/><text x="213.5" y="511.0" text-anchor="middle">systemd</text></a><a href="#svcuser"><rect class="bx" x="261" y="493" width="106" height="26" rx="5"/><text x="314.0" y="511.0" text-anchor="middle">서비스 사용자</text></a><a href="#sysctl"><rect class="bx" x="377" y="493" width="68" height="26" rx="5"/><text x="411.0" y="511.0" text-anchor="middle">sysctl</text></a><a href="#ulimit"><rect class="bx" x="455" y="493" width="68" height="26" rx="5"/><text x="489.0" y="511.0" text-anchor="middle">ulimit</text></a><a href="#logrot"><rect class="bx" x="533" y="493" width="93" height="26" rx="5"/><text x="579.5" y="511.0" text-anchor="middle">로그와 회전</text></a><rect class="bg" x="10" y="534" width="700" height="40" rx="5"/><text class="ts" x="22" y="559" text-anchor="start">하드웨어</text><a href="#cputopo"><rect class="bx" x="176" y="541" width="92" height="26" rx="5"/><text x="222.0" y="559.0" text-anchor="middle">CPU와 코어</text></a><a href="#numa"><rect class="bx" x="278" y="541" width="57" height="26" rx="5"/><text x="306.5" y="559.0" text-anchor="middle">NUMA</text></a><a href="#nvme"><rect class="bx" x="345" y="541" width="56" height="26" rx="5"/><text x="373.0" y="559.0" text-anchor="middle">NVMe</text></a><a href="#raid0"><rect class="bx" x="411" y="541" width="57" height="26" rx="5"/><text x="439.5" y="559.0" text-anchor="middle">RAID</text></a><a href="#nic"><rect class="bx" x="478" y="541" width="49" height="26" rx="5"/><text x="502.5" y="559.0" text-anchor="middle">NIC</text></a><rect class="bg" x="10" y="582" width="700" height="40" rx="5"/><text class="ts" x="22" y="607" text-anchor="start">측정과 계획</text><a href="#tbtib"><rect class="bx" x="176" y="589" width="81" height="26" rx="5"/><text x="216.5" y="607.0" text-anchor="middle">TB와 TiB</text></a><a href="#sampling"><rect class="bx" x="267" y="589" width="50" height="26" rx="5"/><text x="292.0" y="607.0" text-anchor="middle">표본</text></a><a href="#retention"><rect class="bx" x="327" y="589" width="80" height="26" rx="5"/><text x="367.0" y="607.0" text-anchor="middle">보관 기준</text></a></svg></div><figcaption>상자를 누르면 그 카드로 간다. 화살표는 데이터가 가는 길이다. 시간 순서가 아니다. 투표와 fork 고르기는 뺐다.</figcaption></figure>
+          <ul>
+            <li><b>만드는 곳</b>: leader는 받은 트랜잭션을 <a href="#poh">PoH</a> 사슬에 넣는다. slot마다 블록 하나를 만든다. 블록은 shred라는 조각으로 잘라 보낸다.</li>
+            <li><b>퍼지는 길</b>: shred는 <a href="#turbine">turbine</a>이라는 나무 모양의 길로 퍼진다. 노드는 받은 조각을 다음 노드에 넘긴다.</li>
+            <li><b>내 노드 안</b>: 조각을 모은다. 빠진 조각은 남은 조각으로 복구하거나 다른 노드에 다시 요청한다. 모은 블록은 blockstore에 기록으로 쓴다. 이때 WAL에 먼저 적는다.</li>
+            <li>그다음 블록의 트랜잭션을 실행한다(replay). 실행하면 계정의 값(상태)이 바뀐다. 노드는 때때로 상태를 snapshot으로 저장한다.</li>
+            <li><b>답하는 곳</b>: RPC 서버는 기록과 상태를 읽어서 답한다. "이 트랜잭션의 결과는?"은 기록(blockstore)을 읽는다. "이 계정의 잔고는?"은 상태(accounts)를 읽는다.</li>
+            <li><b>바닥</b>: 이 모든 일을 리눅스 프로세스 하나가 한다. 그래서 systemd, 권한, 커널 값, 로그를 알아야 한다. CPU, 디스크, 네트워크 카드의 성질도 알아야 한다.</li>
+          </ul>
+          <div class="warn"><b>자주 하는 오해</b>"단계가 하나씩 차례로 끝난다"는 틀리다. 노드 안의 단계들은 동시에 돈다. 새 slot의 조각을 받는 동안 앞 slot을 실행한다. 그동안 RPC 요청에도 답한다.</div>
+          <div class="mine"><b>내 Bitcoin 노드와 비교</b>내 bitcoind도 같은 길을 간다. 피어에게서 블록을 받는다. 검증하고 실행한다. 블록은 <code>blocks/</code>에, 상태(UTXO)는 <code>chainstate</code>에 쓴다. 그리고 RPC로 답한다. 다른 점: Bitcoin 블록은 약 10분에 하나이고, 블록 단위로 받는다. Solana의 slot은 1초에 두 개가 넘고, 블록은 조각으로 온다.</div>
+          <p class="ask"><b>생각해 볼 질문</b>RPC 요청 하나를 고른다(예: 어느 트랜잭션의 결과, 어느 계정의 잔고). 그 요청은 그림의 어느 상자를 읽을까? 그 상자에 답이 없으면 노드는 무엇을 돌려줄까?</p>
+          <p class="rel">연결: <a href="#soloverview">Solana 전체 지도</a><a href="#ledger">ledger</a><a href="#blockcols">blockstore의 칸</a><a href="#statehist">상태와 기록</a><a href="#solrpc">Solana RPC</a><a href="#map">전체 지도 (Bitcoin 탭)</a></p>
+        </article>
+      </div>
+    </section>
+
     <section class="group" id="g-hw" data-name="하드웨어" data-track="sol">
       <h2>하드웨어 <small>HARDWARE</small></h2>
       <p class="lead">서버 사양을 읽기 위한 단어다. 큰 서버와 promet을 비교한다.</p>
@@ -443,7 +484,7 @@ ls /sys/block/nvme0n1/mq/               <span class="cm"># NVMe가 있으면: �
           <p class="rel">연결: <a href="#ssdhdd">SSD, HDD, SMR (Bitcoin 탭)</a><a href="#iometrics">IOPS와 지연 (Bitcoin 탭)</a><a href="#raid0">RAID0</a><a href="#numa">NUMA</a></p>
         </article>
 
-        <article class="c" id="raid0" data-added="2026-10-15" data-updated="2026-10-16" data-k="raid raid0 raid1 스트라이핑 striping 미러링 mirroring mdadm md0 mdstat 디스크 묶기 백업 chunk 청크 stripe unit 라운드로빈 round robin">
+        <article class="c" id="raid0" data-added="2026-10-15" data-updated="2026-10-18" data-k="raid raid0 raid1 스트라이핑 striping 미러링 mirroring mdadm md0 mdstat 디스크 묶기 백업 chunk 청크 stripe unit 라운드로빈 round robin raid10 raid1+0 미러 묶음">
           <div class="c-head"><h3>RAID0: 디스크 여러 개를 하나처럼</h3></div>
           <p class="why"><b>왜 알아야 하나</b>큰 서버는 디스크 여러 개를 묶어 하나처럼 쓴다. 묶는 방법에 따라 속도, 용량, 고장 때의 결과가 다르다. 디스크 하나가 고장 나면 무엇을 잃는지 미리 알아야 한다.</p>
           <figure class="fig"><div class="sc"><svg viewBox="0 0 720 230" role="img" aria-label="RAID0은 조각을 두 디스크에 번갈아 써서 하나가 고장 나면 모든 파일을 잃고, RAID1은 같은 내용을 두 디스크에 써서 하나가 고장 나도 남는다" style="min-width:600px;max-width:720px"><text class="tb" x="10" y="22" text-anchor="start">RAID0: 나눠서 번갈아 쓴다</text><rect class="hl" x="30" y="36" width="42" height="28" rx="5"/><text x="51" y="55" text-anchor="middle">1</text><rect class="hl" x="78" y="36" width="42" height="28" rx="5"/><text x="99" y="55" text-anchor="middle">2</text><rect class="hl" x="126" y="36" width="42" height="28" rx="5"/><text x="147" y="55" text-anchor="middle">3</text><rect class="hl" x="174" y="36" width="42" height="28" rx="5"/><text x="195" y="55" text-anchor="middle">4</text><rect class="hl" x="222" y="36" width="42" height="28" rx="5"/><text x="243" y="55" text-anchor="middle">5</text><rect class="hl" x="270" y="36" width="42" height="28" rx="5"/><text x="291" y="55" text-anchor="middle">6</text><path class="ln" d="M120,66 L100,100" marker-end="url(#am)"/><path class="ln" d="M220,66 L260,100" marker-end="url(#am)"/><rect class="bx" x="30" y="104" width="140" height="96" rx="5"/><text class="tb" x="100" y="124" text-anchor="middle">디스크 A</text><rect class="hl" x="40" y="136" width="36" height="28" rx="5"/><text x="58" y="155" text-anchor="middle">1</text><rect class="hl" x="85" y="136" width="36" height="28" rx="5"/><text x="103" y="155" text-anchor="middle">3</text><rect class="hl" x="130" y="136" width="36" height="28" rx="5"/><text x="148" y="155" text-anchor="middle">5</text><text class="ts" x="100" y="188" text-anchor="middle">파일마다 조각 절반</text><rect class="bx" x="190" y="104" width="140" height="96" rx="5"/><text class="tb" x="260" y="124" text-anchor="middle">디스크 B</text><rect class="hl" x="200" y="136" width="36" height="28" rx="5"/><text x="218" y="155" text-anchor="middle">2</text><rect class="hl" x="245" y="136" width="36" height="28" rx="5"/><text x="263" y="155" text-anchor="middle">4</text><rect class="hl" x="290" y="136" width="36" height="28" rx="5"/><text x="308" y="155" text-anchor="middle">6</text><text class="ts" x="260" y="188" text-anchor="middle">파일마다 조각 절반</text><text class="ts tw" x="180" y="220" text-anchor="middle">용량 = A + B · 디스크 하나 고장 = 전부 잃음</text><text class="tb" x="380" y="22" text-anchor="start">RAID1: 똑같이 두 번 쓴다</text><rect class="hl" x="470" y="36" width="42" height="28" rx="5"/><text x="491" y="55" text-anchor="middle">1</text><rect class="hl" x="518" y="36" width="42" height="28" rx="5"/><text x="539" y="55" text-anchor="middle">2</text><rect class="hl" x="566" y="36" width="42" height="28" rx="5"/><text x="587" y="55" text-anchor="middle">3</text><path class="ln" d="M490,66 L460,100" marker-end="url(#am)"/><path class="ln" d="M590,66 L620,100" marker-end="url(#am)"/><rect class="bx" x="390" y="104" width="140" height="96" rx="5"/><text class="tb" x="460" y="124" text-anchor="middle">디스크 A</text><rect class="hl" x="400" y="136" width="36" height="28" rx="5"/><text x="418" y="155" text-anchor="middle">1</text><rect class="hl" x="445" y="136" width="36" height="28" rx="5"/><text x="463" y="155" text-anchor="middle">2</text><rect class="hl" x="490" y="136" width="36" height="28" rx="5"/><text x="508" y="155" text-anchor="middle">3</text><text class="ts" x="460" y="188" text-anchor="middle">전부 들어 있음</text><rect class="bx" x="550" y="104" width="140" height="96" rx="5"/><text class="tb" x="620" y="124" text-anchor="middle">디스크 B</text><rect class="hl" x="560" y="136" width="36" height="28" rx="5"/><text x="578" y="155" text-anchor="middle">1</text><rect class="hl" x="605" y="136" width="36" height="28" rx="5"/><text x="623" y="155" text-anchor="middle">2</text><rect class="hl" x="650" y="136" width="36" height="28" rx="5"/><text x="668" y="155" text-anchor="middle">3</text><text class="ts" x="620" y="188" text-anchor="middle">전부 들어 있음</text><text class="ts ta" x="540" y="220" text-anchor="middle">용량 = 디스크 하나 몫 · 하나 고장 = 괜찮음</text></svg></div><figcaption>비유: RAID0은 책을 낱장으로 뜯어서 책장 두 개에 번갈아 꽂는 것이다. 두 사람이 동시에 꺼내므로 빠르다. 책장 하나가 불에 타면 모든 책이 반쪽이 된다.</figcaption></figure>
@@ -454,8 +495,17 @@ ls /sys/block/nvme0n1/mq/               <span class="cm"># NVMe가 있으면: �
             <li>자르는 단위를 <b>chunk</b>(stripe unit)라고 한다. 크기는 정할 수 있다(mdadm 기본 512KiB). 놓는 규칙은 고정이다: chunk 번호를 디스크 수로 나눈 나머지가 디스크 번호다(라운드로빈). 규칙이 계산이라서 "어느 조각이 어디 있나"를 적는 장부가 필요 없다.</li>
             <li>chunk 크기의 효과: 큰 파일 하나를 읽을 때는 chunk가 작을수록 여러 디스크가 같이 일한다. 작은 요청이 많을 때는 요청 하나가 디스크 하나에서 끝나는 편이 낫다. chunk가 작으면 작은 요청도 chunk 경계에 걸려 디스크 둘로 나뉠 수 있다. 어느 쪽이 좋은지는 작업 형태가 정한다.</li>
             <li><b>RAID1</b>(미러링): 같은 데이터를 두 디스크에 똑같이 쓴다. 하나가 고장 나도 남는다. 용량은 절반이다.</li>
+            <li><b>RAID10</b>(1+0): 디스크를 둘씩 RAID1로 묶는다. 그 묶음들을 RAID0으로 잇는다. 용량은 절반이다. 묶음마다 디스크 하나씩은 고장 나도 남는다. 같은 묶음의 두 디스크가 같이 고장 나면 전체를 잃는다.</li>
             <li>리눅스에서는 소프트웨어 RAID(<code>mdadm</code>)를 많이 쓴다. 묶은 장치는 <code>/dev/md0</code> 같은 이름이 된다.</li>
           </ul>
+          <div class="tbl"><table>
+            <thead><tr><th>레벨 (디스크 N개)</th><th>쓸 수 있는 용량</th><th>견디는 고장</th></tr></thead>
+            <tbody>
+              <tr><td>RAID0</td><td>N개 분</td><td>없다. 하나만 고장 나도 전체를 잃는다</td></tr>
+              <tr><td>RAID1 (2개)</td><td>1개 분</td><td>1개</td></tr>
+              <tr><td>RAID10</td><td>N/2개 분</td><td>묶음마다 1개. 같은 묶음의 2개가 고장 나면 전체를 잃는다</td></tr>
+            </tbody>
+          </table></div>
           <div class="warn"><b>자주 하는 오해</b>RAID는 백업이 아니다. RAID1도 실수로 지운 파일은 두 디스크에서 같이 지운다.</div>
           <div class="mine"><b>promet과 비교</b>promet은 SSD 1개와 HDD 1개를 따로 쓴다. RAID가 없다. 디스크 하나가 고장 나면 그 디스크의 데이터만 잃는다.</div>
           <p class="ask"><b>생각해 볼 질문</b>블록체인 노드의 데이터를 잃으면, 다시 구할 방법이 있을까? 은행의 데이터베이스를 잃는 것과 무엇이 다를까?</p>
@@ -507,7 +557,7 @@ cat /sys/class/net/&lt;인터페이스&gt;/device/numa_node</pre>
           </ul>
           <div class="warn"><b>자주 하는 오해</b>"RPC 노드"는 특별한 다른 프로그램이 아니다. validator와 같은 프로그램을 다른 역할로 실행한 것이다.</div>
           <div class="mine"><b>내 Bitcoin 노드와 비교</b>Bitcoin에는 정해진 leader가 없다. 채굴자가 작업증명(PoW)으로 경쟁해서 먼저 찾은 쪽이 블록을 만든다. 내 bitcoind는 블록을 검증하고 저장하지만 채굴하지 않는다. 이 점에서 Solana의 RPC 노드와 역할이 비슷하다. Signet은 시험용 네트워크라는 점에서 devnet, testnet과 비슷하다.</div>
-          <p class="rel">연결: <a href="#slot">slot과 epoch</a><a href="#solrpc">Solana RPC</a><a href="#ledger">ledger</a><a href="#fullnode">풀 노드 (Bitcoin 탭)</a><a href="#signet">Signet (Bitcoin 탭)</a><a href="#turbine">turbine</a><a href="#poh">PoH</a><a href="#featuregate">feature gate</a></p>
+          <p class="rel">연결: <a href="#slot">slot과 epoch</a><a href="#solrpc">Solana RPC</a><a href="#ledger">ledger</a><a href="#fullnode">풀 노드 (Bitcoin 탭)</a><a href="#signet">Signet (Bitcoin 탭)</a><a href="#turbine">turbine</a><a href="#poh">PoH</a><a href="#featuregate">feature gate</a><a href="#solmap">블록의 길</a></p>
         </article>
 
         <article class="c" id="slot" data-added="2026-10-15" data-updated="2026-10-18" data-k="slot 슬롯 block 블록 epoch 에포크 leader schedule 리더 순서 skipped 건너뛴 block height 블록 높이 400ms 432000 getslot getblockheight 빈 slot getrecentperformancesamples 성능 샘플 numslots poh tick feature 200ms simd-0525 getblocktime 두 방법">
@@ -698,7 +748,7 @@ kubectl -n bitcoin-lab exec bitcoin-node-0 -- \
           <p class="rel">연결: <a href="#ledger">ledger와 shred</a><a href="#slot">slot과 leader</a><a href="#gossip">gossip</a><a href="#statehist">repair</a><a href="#soloverview">Solana 전체 지도</a><a href="#listen">-listen과 피어 (Bitcoin 탭)</a><a href="#shredtx">shred와 트랜잭션</a></p>
         </article>
 
-        <article class="c" id="snapshot" data-added="2026-10-15" data-updated="2026-10-18" data-k="snapshot 스냅샷 full incremental 증분 상태 state tar zst 내려받기 시작 부트스트랩 assumeutxo ibd http redirect 303 404 curl -i content-length 크기 snapshot.tar.bz2">
+        <article class="c" id="snapshot" data-added="2026-10-15" data-updated="2026-10-18" data-k="snapshot 스냅샷 full incremental 증분 상태 state tar zst 내려받기 시작 부트스트랩 assumeutxo ibd http redirect 303 404 curl -i content-length 크기 snapshot.tar.bz2 믿기 trust 해시 확인 verify snapshothashes gossip">
           <div class="c-head"><h3>snapshot: full과 incremental</h3></div>
           <p class="why"><b>왜 알아야 하나</b>새 노드는 처음 블록부터 모두 다시 실행하지 않는다. 다른 노드가 만든 상태의 사진(snapshot)에서 시작한다. snapshot에 무엇이 있고 무엇이 없는지 알아야 한다.</p>
           <figure class="fig"><div class="sc"><svg viewBox="0 0 720 190" role="img" aria-label="slot 축 위에 genesis, full snapshot S, 그 뒤의 incremental snapshot 두 개가 있다. 새 노드는 S와 가장 새 incremental로 상태를 만들고 그 뒤 블록만 실행한다. S 이전의 블록 기록은 없다" style="min-width:600px;max-width:720px"><path class="ln" d="M30,70 H700" marker-end="url(#am)"/><text class="ts" x="700" y="58" text-anchor="end">slot</text><rect class="bx" x="30" y="60" width="20" height="20" rx="5"/><text class="ts mono" x="40" y="98" text-anchor="middle">genesis</text><rect class="hl" x="344" y="52" width="32" height="36" rx="5"/><text class="tb" x="360" y="76" text-anchor="middle">F</text><text class="ts" x="360" y="104" text-anchor="middle">full (slot S)</text><rect class="bx" x="458" y="56" width="24" height="28" rx="5"/><text class="tb" x="470" y="75" text-anchor="middle">I</text><rect class="bx" x="568" y="56" width="24" height="28" rx="5"/><text class="tb" x="580" y="75" text-anchor="middle">I</text><path class="la" d="M366,50 Q418,18 466,54" marker-end="url(#aa)"/><path class="la" d="M372,50 Q480,-4 576,54" marker-end="url(#aa)"/><text class="ts" x="525" y="104" text-anchor="middle">incremental: S 이후 바뀐 것만</text><text class="tb" x="650" y="98" text-anchor="middle">지금</text><rect class="wr" x="40" y="120" width="300" height="30" rx="5"/><text class="ts tw" x="190" y="140" text-anchor="middle">S 이전의 블록 기록: 이 노드에 없다</text><rect class="hl" x="344" y="120" width="306" height="30" rx="5"/><text class="ts ta" x="497" y="140" text-anchor="middle">S 이후: F와 I로 만들고, 이어서 블록을 실행</text><text class="ts" x="360" y="180" text-anchor="middle">새 노드 = full S + 같은 S 기준의 가장 새 incremental. 이 둘로 그 시점의 상태를 만든다.</text></svg></div><figcaption>snapshot은 상태의 사진이다. 기록(블록, 트랜잭션)은 들어 있지 않다.</figcaption></figure>
@@ -711,9 +761,12 @@ kubectl -n bitcoin-lab exec bitcoin-node-0 -- \
             <li>파일 이름에 slot 번호가 있다: <code>snapshot-&lt;slot&gt;-&lt;해시&gt;.tar.zst</code>, <code>incremental-snapshot-&lt;base slot&gt;-&lt;slot&gt;-&lt;해시&gt;.tar.zst</code>.</li>
             <li>RPC 노드는 자기의 가장 새 snapshot을 HTTP로 내준다. 주소는 <code>/snapshot.tar.bz2</code>(full)와 <code>/incremental-snapshot.tar.bz2</code>다. 이 주소는 진짜 파일 이름으로 보내는 안내(redirect)다. 새 노드는 이 길로 snapshot을 받는다.</li>
             <li>주소 끝은 <code>.tar.bz2</code>지만 진짜 파일은 <code>.tar.zst</code>일 수 있다. 옛 주소 이름을 그대로 둔 것이다. 내줄 snapshot이 없는 노드는 404를 준다.</li>
+            <li><b>snapshot을 믿는 법</b>: snapshot 파일 이름에는 해시가 있다. 노드는 snapshot을 연 뒤, 계정 상태로 해시를 다시 계산해서 이름의 해시와 비교한다. 다르면 시작하지 않는다(Agave 소스 <code>snapshot_bank_utils.rs</code>).</li>
+            <li>그래서 남는 질문은 "어느 해시를 믿나"다. 노드들은 자기가 가진 snapshot의 (slot, 해시)를 gossip으로 알린다(<code>crds_data.rs</code>의 <code>SnapshotHashes</code>). 새 노드는 자기가 믿기로 한 노드들이 알린 해시와 같은 snapshot만 고를 수 있다(<code>bootstrap.rs</code>).</li>
           </ul>
           <div class="warn"><b>자주 하는 오해</b>snapshot은 노드 데이터 전체의 백업이 아니다. 상태만 있다. snapshot에서 시작한 노드는 그 이전 slot의 블록을 자기 디스크에 갖고 있지 않다.</div>
           <div class="mine"><b>내 Bitcoin 노드와 비교</b>내 bitcoind는 IBD에서 genesis부터 모든 블록을 검증했다. Bitcoin Core에도 비슷한 방법(assumeutxo: UTXO 집합의 사진에서 시작)이 있다. 하지만 Bitcoin Core는 그 뒤에 처음부터 다시 검증하는 일을 뒤에서 한다. Solana 노드는 snapshot의 해시를 확인하고 그 시점부터 시작한다.</div>
+          <p class="ask"><b>생각해 볼 질문</b>해시로 내용을 확인할 수 있다면, snapshot을 누구에게서 받는지는 신경 쓰지 않아도 될까? 믿기로 한 노드들이 해시를 알리지 않으면 새 노드는 어떻게 될까?</p>
           <details class="try"><summary>직접 확인 (크기만 보기)</summary>
 <pre>curl -sIL https://api.devnet.solana.com/snapshot.tar.bz2 | grep -iE '^(HTTP|location|content-length)'
 <span class="cm"># -I: 머리(header)만 받는다. 파일은 내려받지 않는다. -L: 안내를 따라간다</span>
@@ -735,10 +788,38 @@ kubectl -n bitcoin-lab exec bitcoin-node-0 -- \
           </ul>
           <div class="warn"><b>자주 하는 오해</b>"계정"은 "지갑 하나"가 아니다. 지갑 주소도 계정이다. 하지만 토큰 잔액, 프로그램, 프로그램의 데이터도 각각 계정이다.</div>
           <div class="mine"><b>내 Bitcoin 노드와 비교</b>bitcoind의 상태는 UTXO 집합이다. chainstate(LevelDB)에 있고, dbcache가 그 메모리 캐시다. Solana의 상태는 계정 집합이다. 둘 다 "기록(블록)"과 "지금 상태"를 따로 둔다.</div>
-          <p class="rel">연결: <a href="#ledger">ledger</a><a href="#snapshot">snapshot</a><a href="#soltx">트랜잭션</a><a href="#dbcache">UTXO와 dbcache (Bitcoin 탭)</a><a href="#memory">메모리 (Bitcoin 탭)</a></p>
+          <p class="rel">연결: <a href="#ledger">ledger</a><a href="#snapshot">snapshot</a><a href="#soltx">트랜잭션</a><a href="#dbcache">UTXO와 dbcache (Bitcoin 탭)</a><a href="#memory">메모리 (Bitcoin 탭)</a><a href="#tokenacct">토큰 계정</a></p>
         </article>
 
-        <article class="c" id="statehist" data-added="2026-10-16" data-updated="2026-10-16" data-k="상태 기록 state history 역산 거꾸로 snapshot blockstore 과거 이력 repair 보관 pruned prune 잔고 요약 getfirstavailableblock">
+        <article class="c" id="tokenacct" data-added="2026-10-18" data-updated="2026-10-18" data-k="토큰 token spl token 토큰 계정 token account mint 민트 owner 소유자 amount 잔고 165 getprogramaccounts memcmp datasize 필터 filter offset gettokenaccountsbyowner 지갑 wallet scantxoutset 찾아보기 표">
+          <div class="c-head"><h3>토큰 계정과 getProgramAccounts</h3></div>
+          <p class="why"><b>왜 알아야 하나</b>Solana에서 토큰 잔고는 지갑 계정 안에 없다. 토큰마다 따로 "토큰 계정"이 있다. 이 구조를 알아야 "이 지갑의 토큰은?", "이 토큰을 가진 계정은?" 같은 질문에 노드가 무엇을 읽는지 안다.</p>
+          <figure class="fig"><div class="sc"><svg viewBox="0 0 720 256" role="img" aria-label="토큰 계정 165 bytes의 칸: 0부터 mint 32 bytes, 32부터 owner 32 bytes, 64부터 amount 8 bytes, 72부터 나머지 93 bytes. 계정의 owner는 Token 프로그램이고, 데이터 안의 owner 칸은 지갑 주소다" style="min-width:600px;max-width:720px"><text class="tb" x="10" y="20" text-anchor="start">SPL Token의 토큰 계정 하나 = 165 bytes (데이터 칸)</text><text class="ts mono" x="12" y="44" text-anchor="start">0</text><rect class="hl" x="10" y="50" width="190" height="52" rx="5"/><text class="tb" x="105.0" y="71" text-anchor="middle">mint</text><text class="ts" x="105.0" y="91" text-anchor="middle">어느 토큰인가 (32)</text><text class="ts mono" x="202" y="44" text-anchor="start">32</text><rect class="hl" x="200" y="50" width="190" height="52" rx="5"/><text class="tb" x="295.0" y="71" text-anchor="middle">owner</text><text class="ts" x="295.0" y="91" text-anchor="middle">누구의 것인가: 지갑 (32)</text><text class="ts mono" x="392" y="44" text-anchor="start">64</text><rect class="bx" x="390" y="50" width="100" height="52" rx="5"/><text class="tb" x="440.0" y="71" text-anchor="middle">amount</text><text class="ts" x="440.0" y="91" text-anchor="middle">얼마 (8)</text><text class="ts mono" x="492" y="44" text-anchor="start">72</text><rect class="bg" x="490" y="50" width="220" height="52" rx="5"/><text class="tb" x="600.0" y="71" text-anchor="middle">나머지</text><text class="ts" x="600.0" y="91" text-anchor="middle">위임, 상태, 닫기 권한 (93)</text><text class="ts mono" x="708" y="44" text-anchor="end">165</text><rect class="bg" x="10" y="128" width="330" height="46" rx="5"/><text class="tb" x="175" y="148" text-anchor="middle">계정의 owner = Token 프로그램</text><text class="ts" x="175" y="166" text-anchor="middle">데이터 칸 밖의 정보. 데이터를 바꿀 수 있는 프로그램</text><rect class="bg" x="380" y="128" width="330" height="46" rx="5"/><text class="tb" x="545" y="148" text-anchor="middle">데이터 안의 owner 칸 = 지갑 주소</text><text class="ts" x="545" y="166" text-anchor="middle">이 토큰을 쓸 수 있는 사람</text><path class="ln" d="M420,126 L330,105" marker-end="url(#am)" stroke-dasharray="3 3"/><text class="tb" x="10" y="202" text-anchor="start">getProgramAccounts(Token 프로그램) 필터의 예</text><text class="mono" x="10" y="224" text-anchor="start">dataSize 165 + memcmp offset 32 = 지갑 주소 → 그 지갑의 토큰 계정들</text><text class="mono" x="10" y="244" text-anchor="start">dataSize 165 + memcmp offset 0 = mint 주소 → 그 토큰의 계정 전부</text></svg></div><figcaption>같은 "owner"가 두 곳에 있다. 계정의 owner는 프로그램이고, 데이터 안의 owner 칸은 지갑이다.</figcaption></figure>
+          <ul>
+            <li>Solana의 계정에는 모두 owner가 있다. 그 계정의 데이터를 바꿀 수 있는 프로그램이다(<a href="#accounts">account</a> 카드).</li>
+            <li>SPL Token에서 토큰 잔고는 <b>토큰 계정</b>에 있다. 토큰 계정의 owner(프로그램)는 Token 프로그램이다.</li>
+            <li>그런데 토큰 계정의 데이터 안에도 "owner" 칸이 있다. 이것은 그 토큰을 쓸 수 있는 지갑의 주소다. 같은 단어, 다른 뜻이다.</li>
+            <li>토큰 계정의 데이터는 165 bytes다. 0번째 byte부터 32 bytes가 <b>mint</b>(어느 토큰인가), 32번째부터 32 bytes가 <b>owner</b>(누구의 것인가), 64번째부터 8 bytes가 <b>amount</b>(얼마)다(SPL Token 소스 <code>state.rs</code>).</li>
+            <li>지갑 하나가 토큰 열 가지를 가지면 토큰 계정도 보통 열 개다. 그래서 "이 지갑의 토큰은?"은 지갑 계정 하나만 읽어서는 답할 수 없다.</li>
+            <li><b>getProgramAccounts</b>: 어느 프로그램이 owner인 계정들을 돌려준다. 필터를 줄 수 있다: <code>dataSize</code>(데이터 크기가 이 값인가), <code>memcmp</code>(이 위치의 bytes가 이 값과 같은가).</li>
+            <li>예: <code>dataSize</code> 165와 <code>memcmp</code> offset 32 = 지갑 주소 → 그 지갑의 토큰 계정들. offset 0 = mint 주소 → 그 토큰의 계정 전부.</li>
+            <li>필터는 돌려주는 양을 줄인다. 하지만 찾는 일의 양은 줄이지 않을 수 있다. 노드에 따로 만든 찾아보기 표(index)가 없으면, 노드는 Token 프로그램의 계정을 하나씩 보면서 필터와 맞춰 본다. Token 프로그램의 계정은 아주 많다.</li>
+            <li>같은 질문에 답하는 전용 메서드도 있다. 예: <code>getTokenAccountsByOwner</code>(지갑의 토큰 계정들).</li>
+          </ul>
+          <div class="warn"><b>자주 하는 오해</b>"지갑 계정을 읽으면 그 지갑의 토큰이 보인다"는 틀리다. 지갑 계정(System 프로그램 소유)에는 SOL 잔고만 있다. 토큰은 여러 토큰 계정에 흩어져 있다.</div>
+          <div class="mine"><b>내 Bitcoin 노드와 비교</b>bitcoind에는 주소로 찾는 표가 없다. 그래서 <code>scantxoutset</code>은 UTXO 집합 전체를 처음부터 끝까지 읽으면서 맞는 것을 고른다(<code>src/rpc/blockchain.cpp</code>의 <code>FindScriptPubKey</code>). 결과가 하나여도 읽는 양은 같다. 찾아보기 표가 없는 노드의 getProgramAccounts도 같은 성격이다.</div>
+          <p class="ask"><b>생각해 볼 질문</b>어느 토큰을 가진 계정 전부를 알고 싶은 사람은 누구일까? 지갑 하나의 토큰을 알고 싶은 사람과 무엇이 다를까?</p>
+          <details class="try"><summary>직접 확인</summary>
+<pre>curl -s https://api.devnet.solana.com -X POST -H 'Content-Type: application/json' \
+  -d '{"jsonrpc":"2.0","id":1,"method":"getTokenAccountsByOwner","params":["&lt;지갑 주소&gt;",{"programId":"TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"},{"encoding":"jsonParsed"}]}'
+<span class="cm"># 지갑 하나의 토큰 계정들. &lt;지갑 주소&gt;에 devnet 지갑 주소를 넣는다</span>
+<span class="cm"># 같은 질문을 getProgramAccounts로 쓰면 params가 이런 모양이다:</span>
+<span class="cm"># ["TokenkegQ…", {"filters":[{"dataSize":165},{"memcmp":{"offset":32,"bytes":"&lt;지갑 주소&gt;"}}]}]</span></pre>
+          </details>
+          <p class="rel">연결: <a href="#accounts">account</a><a href="#solrpc">Solana RPC</a><a href="#rpclayers">RPC의 층</a><a href="#keypair">keypair</a><a href="#dbcache">UTXO와 dbcache (Bitcoin 탭)</a></p>
+        </article>
+
+        <article class="c" id="statehist" data-added="2026-10-16" data-updated="2026-10-18" data-k="상태 기록 state history 역산 거꾸로 snapshot blockstore 과거 이력 repair 보관 pruned prune 잔고 요약 getfirstavailableblock root 루트 set_root repair 범위">
           <div class="c-head"><h3>상태와 기록: 지금에서 과거로 갈 수 없다</h3></div>
           <p class="why"><b>왜 알아야 하나</b>노드에는 "지금 얼마인가"(상태)와 "무슨 일이 있었나"(기록)가 따로 있다. 하나로 다른 하나를 대신할 수 없다. 이것을 알아야 새 노드가 어떤 질문에 답하지 못하는지 안다.</p>
           <figure class="fig"><div class="sc"><svg viewBox="0 0 720 208" role="img" aria-label="서로 다른 세 과거가 모두 잔고 100만 원이라는 같은 지금을 만든다. 지금 상태에서는 어느 과거였는지 알 수 없다. 상태는 accounts와 snapshot, 기록은 블록과 blockstore다" style="min-width:600px;max-width:720px"><text class="tb" x="10" y="22" text-anchor="start">여러 과거가 같은 지금을 만든다</text><rect class="bx" x="10" y="40" width="262" height="40" rx="5"/><text class="ts" x="141" y="65" text-anchor="middle">과거 1: 100만 원이 한 번 들어옴</text><path class="ln" d="M274,60 L318,91" marker-end="url(#am)"/><rect class="bx" x="10" y="92" width="262" height="40" rx="5"/><text class="ts" x="141" y="117" text-anchor="middle">과거 2: 200만 들어옴, 100만 나감</text><path class="ln" d="M274,112 L318,112" marker-end="url(#am)"/><rect class="bx" x="10" y="144" width="262" height="40" rx="5"/><text class="ts" x="141" y="169" text-anchor="middle">과거 3: 1만 원씩 100번 들어옴</text><path class="ln" d="M274,164 L318,133" marker-end="url(#am)"/><rect class="hl" x="322" y="88" width="120" height="48" rx="5"/><text class="tb" x="382" y="109" text-anchor="middle">지금 상태</text><text class="ts" x="382" y="127" text-anchor="middle">잔고 100만 원</text><text class="ts tw" x="382" y="160" text-anchor="middle">지금에서 과거로:</text><text class="ts tw" x="382" y="178" text-anchor="middle">어느 과거인지 모른다</text><rect class="bx" x="470" y="30" width="240" height="78" rx="5"/><text class="tb" x="486" y="54" text-anchor="start">상태: 지금 얼마인가</text><text class="ts" x="486" y="76" text-anchor="start">Solana: accounts</text><text class="ts" x="486" y="96" text-anchor="start">저장본: snapshot</text><rect class="bx" x="470" y="120" width="240" height="78" rx="5"/><text class="tb" x="486" y="144" text-anchor="start">기록: 무슨 일이 있었나</text><text class="ts" x="486" y="166" text-anchor="start">Solana: 블록과 트랜잭션</text><text class="ts" x="486" y="186" text-anchor="start">저장: blockstore</text></svg></div><figcaption>상태는 결과의 요약이다. 요약에서는 과정이 사라진다. 그래서 상태로 기록을 대신할 수 없다.</figcaption></figure>
@@ -749,6 +830,7 @@ kubectl -n bitcoin-lab exec bitcoin-node-0 -- \
             <li>새 노드는 snapshot에서 시작한다. 그래서 그 slot부터 앞으로 오는 블록만 자기 디스크에 쌓는다. 그 이전의 블록은 없다.</li>
             <li>새 블록을 검증하는 데는 상태만 있으면 된다. 과거 블록은 필요 없다. 그래서 운영자는 기록을 얼마나 오래 둘지 고를 수 있다. 오래 둘수록 디스크를 많이 쓴다.</li>
             <li>노드끼리 빠진 조각을 요청하는 기능이 있다(<b>repair</b>). 이것은 지금 따라잡는 데 필요한 최근 조각을 채운다. 오래된 기록을 통째로 받는 기능이 아니다.</li>
+            <li>repair가 다루는 범위는 노드의 <b>root</b>보다 뒤의 slot이다. root는 노드가 더 이상 되돌리지 않기로 한 slot이다. root가 앞으로 갈 때마다 그보다 오래된 slot은 repair 목록에서 지운다(Agave 소스 <code>repair_service.rs</code>, <code>repair_weight.rs</code>의 <code>set_root</code>).</li>
           </ul>
           <div class="warn"><b>자주 하는 오해</b>"그때의 snapshot이 있으면 그때 일을 안다"는 반만 맞다. 그때의 잔액(과거 상태)은 안다. 하지만 누가 누구에게 보냈는지(과거 기록)는 모른다. snapshot에는 거래 내역이 없다.</div>
           <div class="mine"><b>내 Bitcoin 노드와 비교</b>bitcoind의 상태는 UTXO 집합(chainstate)이다. 기록은 <code>blocks/</code>의 블록 파일이다. <code>-prune</code>을 쓰면 오래된 블록 파일을 지운다. 그래도 UTXO 집합은 전부 남는다. 그래서 pruned 노드도 새 블록을 검증한다. 하지만 지운 블록을 묻는 <code>getblock</code>에는 답하지 못한다. Solana 노드가 기록을 얼마나 둘지 정하는 것도 같은 성격이다.</div>
@@ -860,7 +942,41 @@ kubectl -n bitcoin-lab exec bitcoin-node-0 -- \
   bitcoin-cli -signet -datadir=/home/bitcoin/.bitcoin getindexinfo
 <span class="cm"># 내 bitcoind가 켠 색인 목록. 하나도 없으면 {}</span></pre>
           </details>
-          <p class="rel">연결: <a href="#txmeta">transaction과 meta</a><a href="#ledger">ledger</a><a href="#shredtx">shred와 트랜잭션</a><a href="#statehist">상태와 기록</a><a href="#solrpc">Solana RPC</a><a href="#datadir">데이터 디렉터리 (Bitcoin 탭)</a></p>
+          <p class="rel">연결: <a href="#txmeta">transaction과 meta</a><a href="#ledger">ledger</a><a href="#shredtx">shred와 트랜잭션</a><a href="#statehist">상태와 기록</a><a href="#solrpc">Solana RPC</a><a href="#datadir">데이터 디렉터리 (Bitcoin 탭)</a><a href="#wal">WAL</a></p>
+        </article>
+
+        <article class="c" id="wal" data-added="2026-10-18" data-updated="2026-10-18" data-k="wal write-ahead log 선행 기록 일지 rocksdb leveldb lsm memtable sst flush compaction 복구 recovery 깨짐 corruption 비정상 종료 crash 정전 fsync sync 일관성 consistency point-in-time 시점">
+          <div class="c-head"><h3>WAL: 쓰기 전에 적는 기록</h3></div>
+          <p class="why"><b>왜 알아야 하나</b>데이터베이스는 정전이나 강제 종료 뒤에도 다시 열려야 한다. 그래서 바꿀 내용을 먼저 일지(WAL)에 적는다. 일지가 깨졌을 때 무엇을 버리느냐에 따라, 다시 연 DB의 모습이 달라진다.</p>
+          <figure class="fig"><div class="sc"><svg viewBox="0 0 720 344" role="img" aria-label="위: 쓰기 요청은 먼저 WAL 끝에 덧붙이고 memtable에 넣는다. memtable이 차면 SST 파일로 쓴다. 아래: 기록 3이 깨진 WAL을 다시 읽을 때, 완전 일치와 꼬리 허용은 DB를 열지 않는다. 시점 복구는 1, 2만 살린다. 모두 건너뜀은 1, 2, 4, 5, 6을 살린다" style="min-width:600px;max-width:720px"><text class="tb" x="10" y="20" text-anchor="start">쓰기의 길</text><rect class="bx" x="10" y="34" width="104" height="40" rx="5"/><text x="62" y="59" text-anchor="middle">쓰기 요청</text><rect class="hl" x="160" y="30" width="230" height="40" rx="5"/><text x="275" y="55" text-anchor="middle">① WAL 끝에 덧붙인다 (디스크)</text><rect class="bx" x="160" y="84" width="230" height="40" rx="5"/><text x="275" y="109" text-anchor="middle">② memtable에 넣는다 (메모리)</text><path class="ln" d="M116,48 L157,46" marker-end="url(#am)"/><path class="ln" d="M116,60 L157,100" marker-end="url(#am)"/><path class="ln" d="M392,104 H449" marker-end="url(#am)"/><text class="ts" x="420" y="98" text-anchor="middle">flush</text><rect class="bg" x="452" y="84" width="150" height="40" rx="5"/><text x="527" y="109" text-anchor="middle">SST 파일 (디스크)</text><text class="ts" x="452" y="55" text-anchor="start">flush가 끝난 부분의 WAL은 지운다</text><text class="tb" x="10" y="154" text-anchor="start">다시 열 때: WAL을 처음부터 다시 읽어 memtable을 만든다. 기록 ③이 깨졌다면?</text><text class="mono" x="10" y="186" text-anchor="start">WAL</text><rect class="bx" x="170" y="168" width="50" height="26" rx="5"/><text x="195" y="186" text-anchor="middle">1</text><rect class="bx" x="226" y="168" width="50" height="26" rx="5"/><text x="251" y="186" text-anchor="middle">2</text><rect class="wr" x="282" y="168" width="50" height="26" rx="5"/><text class="tw" x="307" y="186" text-anchor="middle">3 ✕</text><rect class="bx" x="338" y="168" width="50" height="26" rx="5"/><text x="363" y="186" text-anchor="middle">4</text><rect class="bx" x="394" y="168" width="50" height="26" rx="5"/><text x="419" y="186" text-anchor="middle">5</text><rect class="bx" x="450" y="168" width="50" height="26" rx="5"/><text x="475" y="186" text-anchor="middle">6</text><text x="10" y="228" text-anchor="start">완전 일치</text><text class="tw" x="170" y="228" text-anchor="start">열지 않는다</text><text class="ts" x="516" y="228" text-anchor="start">가장 엄격하다</text><text x="10" y="260" text-anchor="start">꼬리 허용</text><text class="tw" x="170" y="260" text-anchor="start">열지 않는다</text><text class="ts" x="516" y="260" text-anchor="start">맨 끝의 반쪽 기록만 봐준다</text><text x="10" y="292" text-anchor="start">시점 복구</text><rect class="hl" x="170" y="274" width="50" height="26" rx="5"/><text x="195" y="292" text-anchor="middle">1</text><rect class="hl" x="226" y="274" width="50" height="26" rx="5"/><text x="251" y="292" text-anchor="middle">2</text><text class="ts" x="516" y="292" text-anchor="start">깨진 곳 앞에서 멈춘다</text><text x="10" y="324" text-anchor="start">모두 건너뜀</text><rect class="hl" x="170" y="306" width="50" height="26" rx="5"/><text x="195" y="324" text-anchor="middle">1</text><rect class="hl" x="226" y="306" width="50" height="26" rx="5"/><text x="251" y="324" text-anchor="middle">2</text><rect class="hl" x="338" y="306" width="50" height="26" rx="5"/><text x="363" y="324" text-anchor="middle">4</text><rect class="hl" x="394" y="306" width="50" height="26" rx="5"/><text x="419" y="324" text-anchor="middle">5</text><rect class="hl" x="450" y="306" width="50" height="26" rx="5"/><text x="475" y="324" text-anchor="middle">6</text><text class="ts" x="516" y="324" text-anchor="start">깨진 기록만 버린다</text></svg></div><figcaption>위: 쓰기의 길. 아래: 기록 ③이 깨진 WAL을 네 정책으로 다시 읽은 결과. 정책 이름은 RocksDB의 네 가지를 우리말로 줄인 것이다.</figcaption></figure>
+          <ul>
+            <li>RocksDB와 LevelDB는 LSM 방식의 DB다. 쓰기는 먼저 메모리의 표(memtable)에 들어간다. 메모리는 전원이 꺼지면 사라진다. 그래서 같은 내용을 디스크의 WAL 파일 끝에도 덧붙인다.</li>
+            <li>memtable이 차면 정렬된 파일(SST)로 디스크에 쓴다(flush). 그 부분의 WAL은 이제 필요 없어서 지운다.</li>
+            <li>다시 열 때: SST는 이미 디스크에 있다. 아직 SST가 되지 못한 쓰기는 WAL에만 있다. 그래서 WAL을 처음부터 다시 읽어 memtable을 다시 만든다.</li>
+            <li>비정상 종료 직후에는 WAL의 마지막 기록이 반쪽일 수 있다. 쓰는 도중에 멈췄기 때문이다. 디스크나 소프트웨어에 문제가 있으면 중간의 기록이 깨질 수도 있다.</li>
+            <li>깨진 기록을 만났을 때 어떻게 할지를 RocksDB는 네 가지 정책으로 둔다(소스 <code>include/rocksdb/options.h</code>). 아래 표의 정책 이름은 우리말로 줄인 것이다.</li>
+          </ul>
+          <div class="tbl"><table>
+            <thead><tr><th>정책</th><th>깨진 기록을 만나면</th><th>RocksDB 주석이 쓴 쓰임새</th></tr></thead>
+            <tbody>
+              <tr><td style="white-space:nowrap">완전 일치</td><td>DB를 열지 않는다</td><td>깨끗하게 끈 뒤의 복구. 시험, 아주 높은 일관성이 필요한 드문 프로그램</td></tr>
+              <tr><td style="white-space:nowrap">꼬리 허용</td><td>마지막 기록의 반쪽만 넘긴다. 다른 곳이 깨졌으면 열지 않는다</td><td>LevelDB의 원래 방식. 한 번 적용한 쓰기가 복구 뒤에 되돌려지면 안 되는 프로그램</td></tr>
+              <tr><td style="white-space:nowrap">시점 복구</td><td>깨진 곳 앞에서 멈춘다. 그 뒤의 기록은 버린다</td><td>디스크 컨트롤러 캐시가 있는 장치(HDD, 전원 보호가 없는 SSD)에 서로 관련된 데이터를 두는 시스템</td></tr>
+              <tr><td style="white-space:nowrap">모두 건너뜀</td><td>깨진 기록만 버리고 계속한다. 가장 많이 살린다</td><td>재해 뒤의 마지막 시도, 또는 서로 관계없는 덜 중요한 데이터</td></tr>
+            </tbody>
+          </table></div>
+          <ul>
+            <li>"시점 복구"의 결과는 어느 한 시점의 모습이다. "모두 건너뜀"의 결과는 아닐 수 있다. 앞의 쓰기는 빠지고 뒤의 쓰기는 남을 수 있기 때문이다.</li>
+          </ul>
+          <div class="warn"><b>자주 하는 오해</b>"WAL이 있으면 쓴 것을 잃지 않는다"는 틀릴 수 있다. RocksDB는 기본으로 쓰기마다 디스크에 확실히 쓰는 일(fsync)을 하지 않는다. 그래서 프로세스만 죽으면 잃지 않는다. 하지만 기계가 꺼지면 마지막 쓰기 몇 개를 잃을 수 있다(<code>WriteOptions</code>의 <code>sync</code> 주석).</div>
+          <div class="mine"><b>내 Bitcoin 노드와 비교</b>bitcoind의 <code>chainstate</code>와 <code>blocks/index</code>는 LevelDB다. 그 폴더의 <code>*.log</code> 파일이 WAL이다. LevelDB 문서는 이것을 "최근 쓰기를 차례로 덧붙인 파일"이라고 쓴다. 약 4MB가 되면 정렬된 표 파일(<code>*.ldb</code>)로 바뀐다.</div>
+          <p class="ask"><b>생각해 볼 질문</b>은행의 원장 DB와 블록체인 노드의 기록 DB는 깨진 기록을 같은 정책으로 다뤄야 할까? 무엇이 그 선택을 바꿀까?</p>
+          <details class="try"><summary>직접 확인 (내 노드의 LevelDB 파일)</summary>
+<pre>kubectl -n bitcoin-lab exec bitcoin-node-0 -- \
+  ls -la /home/bitcoin/.bitcoin/signet/chainstate | head
+<span class="cm"># *.ldb: 정렬된 표, *.log: WAL, MANIFEST: 어느 표가 있는지 적은 목록</span></pre>
+          </details>
+          <p class="rel">연결: <a href="#blockcols">blockstore의 칸</a><a href="#ledger">ledger</a><a href="#statehist">상태와 기록</a><a href="#dbcache">UTXO와 dbcache (Bitcoin 탭)</a><a href="#datadir">데이터 디렉터리 (Bitcoin 탭)</a></p>
         </article>
 
         <article class="c" id="gossip" data-added="2026-10-16" data-updated="2026-10-16" data-k="gossip 가십 contactinfo 명함 entrypoint 진입점 광고 advertise 도달 reachability getclusternodes tvu tpu repair pubsub identity 공개키 dns seed externalip addr">
@@ -1121,7 +1237,7 @@ systemctl cat docker               <span class="cm"># unit 파일 내용</span>
 journalctl -u docker --since today
 systemd-analyze verify /etc/systemd/system/이름.service   <span class="cm"># 내가 쓴 unit 검사. 경고만 있으면 종료 코드는 0</span></pre>
           </details>
-          <p class="rel">연결: <a href="#ulimit">ulimit</a><a href="#idempotent">멱등성</a><a href="#desired">desired state (Bitcoin 탭)</a><a href="#process">프로세스 (Bitcoin 탭)</a><a href="#sdeps">systemd 의존성</a><a href="#svcuser">서비스 사용자</a><a href="#execstart">ExecStart=</a><a href="#linecont">줄 이어 쓰기</a></p>
+          <p class="rel">연결: <a href="#ulimit">ulimit</a><a href="#idempotent">멱등성</a><a href="#desired">desired state (Bitcoin 탭)</a><a href="#process">프로세스 (Bitcoin 탭)</a><a href="#sdeps">systemd 의존성</a><a href="#svcuser">서비스 사용자</a><a href="#execstart">ExecStart=</a><a href="#linecont">줄 이어 쓰기</a><a href="#logrot">로그와 회전</a></p>
         </article>
 
         <article class="c" id="execstart" data-added="2026-10-17" data-updated="2026-10-18" data-k="execstart exec start systemd 셸 shell 파이프 pipe 리다이렉트 redirect 백그라운드 path 경로 절대 경로 environment environmentfile 변수 specifier %h %n bashrc profile 환경 bash -c 따옴표 systemctl show argv environ systemd-path execstartpre execsearchpath command -v 찾기 lookup">
@@ -1341,6 +1457,32 @@ kubectl -n bitcoin-lab exec bitcoin-node-0 -- cat /proc/1/limits   <span class="
           <p class="rel">연결: <a href="#systemd">systemd unit</a><a href="#sysctl">sysctl</a><a href="#cgroup">cgroup (Bitcoin 탭)</a><a href="#process">프로세스 (Bitcoin 탭)</a></p>
         </article>
 
+        <article class="c" id="logrot" data-added="2026-10-18" data-updated="2026-10-18" data-k="로그 log logrotate 회전 rotate journald journalctl copytruncate create postrotate 신호 signal sighup hup usr1 inode fd 파일 디스크립터 lsof +L1 지운 파일 deleted su 권한 insecure permissions 속도 한도 rate limit ratelimitburst debug.log nginx timer">
+          <div class="c-head"><h3>로그와 회전: 쓰는 쪽과 자르는 쪽</h3></div>
+          <p class="why"><b>왜 알아야 하나</b>오래 도는 서비스는 로그를 계속 쓴다. 그대로 두면 디스크를 채운다. 그래서 옛 로그를 잘라 낸다. 그런데 프로그램은 파일을 열어 둔 채로 쓴다. 이 둘을 같이 알아야 로그를 잃거나 디스크가 차는 일을 막는다.</p>
+          <figure class="fig"><div class="sc"><svg viewBox="0 0 720 258" role="img" aria-label="로그 회전 세 단계. 1: 프로그램이 app.log(#100)에 쓴다. 2: logrotate가 이름을 app.log.1로 바꾸고 새 app.log(#200)를 만든다. 프로그램은 아직 #100에 쓴다. 3: 신호를 받은 프로그램이 파일을 다시 열어 #200에 쓴다" style="min-width:600px;max-width:720px"><text class="tb" x="10" y="20" text-anchor="start">1. 평소</text><rect class="bx" x="10" y="34" width="120" height="40" rx="5"/><text x="70" y="59" text-anchor="middle">프로그램 (fd 3)</text><rect class="hl" x="10" y="118" width="104" height="40" rx="5"/><text class="mono" x="62" y="143" text-anchor="middle">#100</text><text class="mono" x="62" y="176" text-anchor="middle">app.log</text><path class="ln" d="M70,76 L62,116" marker-end="url(#am)"/><text class="ts" x="10" y="200" text-anchor="start">프로그램이 #100에 쓴다</text><text class="tb" x="248" y="20" text-anchor="start">2. logrotate가 이름을 바꿈</text><rect class="bx" x="248" y="34" width="120" height="40" rx="5"/><text x="308" y="59" text-anchor="middle">프로그램 (fd 3)</text><rect class="hl" x="248" y="118" width="104" height="40" rx="5"/><text class="mono" x="300" y="143" text-anchor="middle">#100</text><text class="mono" x="300" y="176" text-anchor="middle">app.log.1</text><rect class="bx" x="366" y="118" width="104" height="40" rx="5"/><text class="ts" x="418" y="143" text-anchor="middle">#200 (빈 파일)</text><text class="mono" x="418" y="176" text-anchor="middle">app.log</text><path class="lw" d="M308,76 L300,116" marker-end="url(#aw)"/><text class="ts tw" x="248" y="200" text-anchor="start">아직 #100(이제 app.log.1)에 쓴다</text><text class="tb" x="486" y="20" text-anchor="start">3. 신호 → 다시 열기</text><rect class="bx" x="486" y="34" width="120" height="40" rx="5"/><text x="546" y="59" text-anchor="middle">프로그램 (fd 3)</text><rect class="bg" x="486" y="118" width="104" height="40" rx="5"/><text class="mono" x="538" y="143" text-anchor="middle">#100 (닫힘)</text><text class="mono" x="538" y="176" text-anchor="middle">app.log.1</text><rect class="hl" x="604" y="118" width="104" height="40" rx="5"/><text class="mono" x="656" y="143" text-anchor="middle">#200</text><text class="mono" x="656" y="176" text-anchor="middle">app.log</text><path class="la" d="M546,76 L656,116" marker-end="url(#aa)"/><text class="ts ta" x="486" y="200" text-anchor="start">이제 #200(app.log)에 쓴다</text><text class="ts" x="10" y="228" text-anchor="start">이름표(app.log)는 파일의 실체(inode, 위의 #번호)를 가리킨다. 프로그램은 열 때 잡은 실체에 계속 쓴다.</text><text class="ts" x="10" y="248" text-anchor="start">copytruncate: 복사한 뒤 원래 파일을 0으로 자른다. 프로그램은 그대로다. 복사와 자르기 사이에 쓴 줄은 잃을 수 있다.</text></svg></div><figcaption>프로그램은 이름이 아니라 열어 둔 파일(inode)에 쓴다. 이름만 바꾸면 옛 파일에 계속 쓴다.</figcaption></figure>
+          <ul>
+            <li><b>journald로 가는 로그</b>: systemd 서비스가 화면(stdout, stderr)에 쓴 것은 기본으로 journald가 모은다. <code>journalctl -u 서비스이름</code>으로 본다. journald는 자기 한도로 옛 기록을 지운다(<a href="#retention">보관 기준</a>).</li>
+            <li>journald는 서비스마다 속도 한도도 둔다. 기본은 30초에 메시지 10,000개다. 실제 한도는 남은 디스크가 클수록 몇 배로 커진다(예: 남은 공간이 4GB 이하면 4배, 1TB 이하면 6배). 한도를 넘은 메시지는 버린다. 버린 개수는 한 줄로 남긴다(<code>man journald.conf</code>).</li>
+            <li><b>파일로 가는 로그</b>: 프로그램이 직접 파일에 쓰기도 한다. 이 파일은 journald가 관리하지 않는다. 보통 logrotate가 돌린다. logrotate는 보통 systemd timer(<code>logrotate.timer</code>)가 하루에 한 번 실행한다.</li>
+            <li>프로그램은 파일을 열 때 이름이 아니라 파일의 실체(inode)를 잡는다. 이름을 바꿔도(<code>app.log</code> → <code>app.log.1</code>) 같은 실체에 계속 쓴다. 그래서 새 <code>app.log</code>는 비어 있고, 로그는 <code>app.log.1</code>에 쌓인다.</li>
+            <li><b>방법 1. 다시 열게 하기</b>: 이름을 바꾸고 새 빈 파일을 만든다(<code>create</code>). 그다음 프로그램에 신호를 보내 파일을 다시 열게 한다(<code>postrotate</code>). 신호는 프로그램마다 다르다. nginx는 USR1, bitcoind는 HUP이다(각 소스). 프로그램에 이 기능이 있어야 한다.</li>
+            <li><b>방법 2. 복사하고 자르기</b>(<code>copytruncate</code>): 복사한 뒤 원래 파일을 0으로 자른다. 프로그램은 건드리지 않는다. 하지만 복사와 자르기 사이에 쓴 줄은 잃을 수 있다(<code>man logrotate</code>).</li>
+            <li><b>디렉터리 권한 검사</b>: logrotate를 root로 돌리면, 로그가 있는 디렉터리의 권한을 먼저 본다. 모두가 쓸 수 있거나 root가 아닌 그룹이 쓸 수 있으면, 그 로그를 건너뛰고 오류를 남긴다(logrotate 소스). 이런 디렉터리에는 <code>su 사용자 그룹</code> 지시를 쓰라고 문서가 권한다. 그러면 그 사용자의 권한으로 돌린다.</li>
+          </ul>
+          <div class="warn"><b>자주 하는 오해</b>"로그 파일을 <code>rm</code>으로 지우면 자리가 생긴다"는 틀릴 수 있다. 프로그램이 그 파일을 열고 있으면 이름만 사라진다. 자리는 프로그램이 파일을 닫을 때 돌아온다. 그래서 <code>df</code>와 <code>du</code>의 숫자가 달라진다. <code>lsof +L1</code>로 이런 파일을 찾는다.</div>
+          <div class="mine"><b>내 Bitcoin 노드와 비교</b>bitcoind는 <code>debug.log</code>에 직접 쓴다. HUP 신호를 받으면 <code>debug.log</code>를 다시 연다(<code>src/init.cpp</code>의 주석: "Reopen debug.log on SIGHUP"). 그래서 방법 1과 같이 쓸 수 있다.</div>
+          <p class="ask"><b>생각해 볼 질문</b>한 줄도 잃으면 안 되는 로그와 조금 잃어도 되는 로그는 무엇이 다를까? 회전한 뒤에 로그가 새 파일에 쌓이는지 어떻게 확인할까?</p>
+          <details class="try"><summary>직접 확인</summary>
+<pre>journalctl --disk-usage                    <span class="cm"># journald가 쓰는 크기</span>
+systemctl list-timers logrotate.timer      <span class="cm"># logrotate가 언제 도나</span>
+ls /etc/logrotate.d/                       <span class="cm"># 프로그램마다의 회전 설정</span>
+sudo logrotate -d /etc/logrotate.conf      <span class="cm"># -d: 할 일을 보여만 준다. 아무것도 바꾸지 않는다</span>
+sudo lsof +L1 | head                       <span class="cm"># 지웠지만 아직 열려 있는 파일</span></pre>
+          </details>
+          <p class="rel">연결: <a href="#systemd">systemd unit</a><a href="#svcuser">서비스 사용자</a><a href="#retention">보관 기준과 여유</a><a href="#dudf">du와 df (Bitcoin 탭)</a><a href="#process">프로세스와 권한 (Bitcoin 탭)</a><a href="#datadir">데이터 디렉터리 (Bitcoin 탭)</a></p>
+        </article>
+
         <article class="c" id="ports" data-added="2026-10-16" data-updated="2026-10-16" data-k="포트 port 범위 range 0-1023 well-known 잘 알려진 특권 privileged root cap_net_bind_service ephemeral 임시 포트 ip_local_port_range nodeport tcp udp 반열린 구간 half-open 닫힌 구간">
           <div class="c-head"><h3>포트 번호: 구역과 범위 표기</h3></div>
           <p class="why"><b>왜 알아야 하나</b>포트 번호에는 구역이 있다. 어떤 구역은 root만 쓸 수 있다. 어떤 구역은 커널이 나가는 연결에 자동으로 쓴다. 프로그램에 포트나 범위를 줄 때 구역과 표기법을 모르면 충돌이 나거나 개수를 틀린다.</p>
@@ -1362,6 +1504,91 @@ systemctl cat caddy | grep -iE 'User=|Capabilit'   <span class="cm"># Caddy가 4
 python3 -c 'print(len(range(30000, 32768)))'  <span class="cm"># 반열린 구간: 2768</span></pre>
           </details>
           <p class="rel">연결: <a href="#ipport">IP와 포트 (Bitcoin 탭)</a><a href="#nodeport">NodePort (Bitcoin 탭)</a><a href="#bindaddr">리슨 주소 (Bitcoin 탭)</a><a href="#rpclayers">RPC의 층</a><a href="#sysctl">sysctl</a><a href="#caps">capability</a></p>
+        </article>
+      </div>
+    </section>
+
+    <section class="group" id="g-plan" data-name="측정과 계획" data-track="sol">
+      <h2>측정과 계획 <small>MEASURE · PLAN</small></h2>
+      <p class="lead">숫자로 계획할 때 쓰는 단어다. 단위, 표본, 보관 기준. 그림의 숫자는 모두 만든 예시다.</p>
+      <div class="cards">
+
+        <article class="c" id="tbtib" data-added="2026-10-18" data-updated="2026-10-18" data-k="tb tib gb gib mb mib kb kib 단위 unit 10진 2진 si iec 1000 1024 df -h -H lsblk du free numfmt 디스크 크기 용량 예약 reserved 5% mke2fs tune2fs journald">
+          <div class="c-head"><h3>TB와 TiB: 같은 디스크, 다른 숫자</h3></div>
+          <p class="why"><b>왜 알아야 하나</b>디스크 회사는 1000으로 센다. 리눅스 도구는 대부분 1024로 센다. 그래서 같은 디스크가 다른 숫자로 보인다. 계획할 때 두 단위를 섞으면 숫자가 틀린다. 크기가 클수록 많이 틀린다.</p>
+          <figure class="fig"><div class="sc"><svg viewBox="0 0 720 248" role="img" aria-label="단위별 차이: KiB는 kB보다 2.4%, MiB는 MB보다 4.9%, GiB는 GB보다 7.4%, TiB는 TB보다 10.0% 크다. 예: 1 TB 디스크는 약 931 GiB로 보인다" style="min-width:600px;max-width:720px"><text class="tb" x="10" y="20" text-anchor="start">1 KiB, 1 MiB, 1 GiB, 1 TiB는 같은 이름의 10진 단위보다 얼마나 큰가</text><text class="mono" x="10" y="58" text-anchor="start">1 KiB</text><rect class="hl" x="110" y="40" width="420" height="26" rx="5"/><text class="ts" x="320.0" y="58" text-anchor="middle">1 kB = 1000 bytes</text><rect class="wr" x="530" y="40" width="10.1" height="26" rx="5"/><text class="tw" x="548.08" y="58" text-anchor="start">+2.4%</text><text class="mono" x="10" y="96" text-anchor="start">1 MiB</text><rect class="hl" x="110" y="78" width="420" height="26" rx="5"/><text class="ts" x="320.0" y="96" text-anchor="middle">1 MB = 1000² bytes</text><rect class="wr" x="530" y="78" width="20.4" height="26" rx="5"/><text class="tw" x="558.40192" y="96" text-anchor="start">+4.9%</text><text class="mono" x="10" y="134" text-anchor="start">1 GiB</text><rect class="hl" x="110" y="116" width="420" height="26" rx="5"/><text class="ts" x="320.0" y="134" text-anchor="middle">1 GB = 1000³ bytes</text><rect class="wr" x="530" y="116" width="31.0" height="26" rx="5"/><text class="tw" x="568.97156608" y="134" text-anchor="start">+7.4%</text><text class="mono" x="10" y="172" text-anchor="start">1 TiB</text><rect class="hl" x="110" y="154" width="420" height="26" rx="5"/><text class="ts" x="320.0" y="172" text-anchor="middle">1 TB = 1000⁴ bytes</text><rect class="wr" x="530" y="154" width="41.8" height="26" rx="5"/><text class="tw" x="579.79488366592" y="172" text-anchor="start">+10.0%</text><text x="10" y="214" text-anchor="start">예: "1 TB" 디스크 = 10¹² bytes = 약 931 GiB = 약 0.91 TiB</text><text class="ts" x="10" y="236" text-anchor="start">lsblk, df -h, du -h는 1024로 세고 "G", "T"라고만 쓴다. 그래서 이 디스크가 약 931G로 보인다.</text></svg></div><figcaption>단위가 클수록 차이가 커진다. T에서는 약 10%다.</figcaption></figure>
+          <ul>
+            <li><b>10진 단위</b>(SI): kB, MB, GB, TB. 1000, 1000², 1000³, 1000⁴ bytes다. 디스크 회사와 네트워크 속도(Gbps)가 이 단위를 쓴다.</li>
+            <li><b>2진 단위</b>(IEC): KiB, MiB, GiB, TiB. 1024, 1024², 1024³, 1024⁴ bytes다. 메모리와 많은 리눅스 도구가 이 단위를 쓴다.</li>
+            <li>문제는 이름표다. 많은 도구가 1024로 세면서 "G", "T"라고만 쓴다. <code>df -h</code>, <code>du -h</code>, <code>lsblk</code>, <code>free -h</code>가 그렇다. <code>df -H</code>는 1000으로 센다.</li>
+            <li>차이는 단계마다 커진다: K 2.4%, M 4.9%, G 7.4%, T 10.0%. 그래서 "1 TB" 디스크(10¹² bytes)는 <code>lsblk</code>에서 약 931G로 보인다. 이 G는 GiB다.</li>
+            <li>설정 파일의 단위도 문서에서 확인한다. 예: systemd-journald의 크기 설정에서 G는 1024³ bytes다(<code>man journald.conf</code>). 같은 글자도 프로그램마다 뜻이 다를 수 있다.</li>
+            <li>디스크 크기와 파일을 쓸 수 있는 자리는 또 다르다. 파일시스템은 자기 정보(inode 표, 저널)에 자리를 쓴다. ext4는 기본으로 블록의 5%를 root용으로 남긴다(<code>man mke2fs</code>의 <code>-m</code>). 이 5%는 <code>df</code>의 Avail에 들어가지 않는다.</li>
+          </ul>
+          <div class="warn"><b>자주 하는 오해</b>"<code>df -h</code>에 T가 보이면 TB다"는 틀리다. 그 T는 TiB다. 1000으로 센 숫자가 필요하면 <code>df -H</code>를 쓴다.</div>
+          <div class="mine"><b>promet과 비교</b>promet의 디스크도 회사는 1000으로 센 크기로 판다. <code>lsblk</code>에는 더 작은 숫자로 보인다. 아래 명령으로 같은 디스크의 두 숫자를 나란히 본다.</div>
+          <p class="ask"><b>생각해 볼 질문</b>계획 문서에 크기를 쓴다. 읽는 사람이 1000으로 읽을지 1024로 읽을지 어떻게 정해 둘까? 디스크 크기, 잰 크기, 설정 값이 모두 같은 단위인지 어떻게 확인할까?</p>
+          <details class="try"><summary>직접 확인</summary>
+<pre>lsblk -d -o NAME,SIZE        <span class="cm"># 1024로 센다 (G = GiB)</span>
+lsblk -d -b -o NAME,SIZE     <span class="cm"># bytes 그대로</span>
+df -h /                      <span class="cm"># 1024로 센다</span>
+df -H /                      <span class="cm"># 1000으로 센다</span>
+numfmt --to=si 1000000000000                      <span class="cm"># 1.0T</span>
+numfmt --to=iec-i --round=nearest 1000000000000   <span class="cm"># 931Gi</span>
+sudo tune2fs -l /dev/sda1 | grep -i 'reserved block count'
+<span class="cm"># ext4의 root용 블록 수. 장치 이름은 예시다</span></pre>
+          </details>
+          <p class="rel">연결: <a href="#nvme">NVMe</a><a href="#raid0">RAID0</a><a href="#retention">보관 기준과 여유</a><a href="#dudf">du와 df (Bitcoin 탭)</a><a href="#mount">마운트 (Bitcoin 탭)</a></p>
+        </article>
+
+        <article class="c" id="sampling" data-added="2026-10-18" data-updated="2026-10-18" data-k="표본 sample sampling 샘플 모집단 population 연속 흩은 평균 mean 중앙값 median 최댓값 max p99 백분위 percentile 대표값 측정 measurement 시간대 하루 주기 변동 오차">
+          <div class="c-head"><h3>표본: 한 순간과 하루</h3></div>
+          <p class="why"><b>왜 알아야 하나</b>크기나 속도는 보통 일부만 재고 전체를 짐작한다. 어느 부분을 재느냐에 따라 숫자가 많이 달라진다. 그래서 숫자를 믿기 전에 "어떻게 골라서 쟀나"를 먼저 본다.</p>
+          <figure class="fig"><div class="sc"><svg viewBox="0 0 720 252" role="img" aria-label="예시 그래프: 하루 동안 분당 요청 수가 밤에 낮고 오후에 높다. 새벽 3시의 연속 30분을 재면 평균 150, 2시간마다 재면 평균 457, 하루 전체의 평균은 460, 중앙값 460, 최댓값 900이다" style="min-width:600px;max-width:720px"><text class="tb" x="10" y="20" text-anchor="start">예시: 웹 서버의 분당 요청 수, 하루 (숫자는 만든 예시)</text><path class="ln" d="M50,200 H476"/><path class="ln" d="M50,200 V44"/><text class="ts" x="44" y="129.0" text-anchor="end">500</text><text class="ts" x="44" y="54.0" text-anchor="end">1000</text><text class="ts" x="50.0" y="216" text-anchor="middle">0시</text><text class="ts" x="155.0" y="216" text-anchor="middle">6시</text><text class="ts" x="260.0" y="216" text-anchor="middle">12시</text><text class="ts" x="365.0" y="216" text-anchor="middle">18시</text><text class="ts" x="470.0" y="216" text-anchor="middle">24시</text><rect class="wr" x="102.5" y="50" width="8.8" height="150" rx="1"/><text class="ts tw" x="115.25" y="150" text-anchor="start">연속 30분</text><polyline class="la" points="58.8,167.0 76.2,173.0 93.8,176.0 111.2,177.5 128.8,177.5 146.2,174.5 163.8,165.5 181.2,150.5 198.8,132.5 216.2,116.0 233.8,107.0 251.2,101.0 268.8,95.0 286.2,92.0 303.8,86.0 321.2,65.0 338.8,83.0 356.2,95.0 373.8,104.0 391.2,116.0 408.8,129.5 426.2,143.0 443.8,155.0 461.2,162.5"/><circle class="hl" cx="58.8" cy="167.0" r="5"/><circle class="hl" cx="93.8" cy="176.0" r="5"/><circle class="hl" cx="128.8" cy="177.5" r="5"/><circle class="hl" cx="163.8" cy="165.5" r="5"/><circle class="hl" cx="198.8" cy="132.5" r="5"/><circle class="hl" cx="233.8" cy="107.0" r="5"/><circle class="hl" cx="268.8" cy="95.0" r="5"/><circle class="hl" cx="303.8" cy="86.0" r="5"/><circle class="hl" cx="338.8" cy="83.0" r="5"/><circle class="hl" cx="373.8" cy="104.0" r="5"/><circle class="hl" cx="408.8" cy="129.5" r="5"/><circle class="hl" cx="443.8" cy="155.0" r="5"/><text class="ts ta" x="150" y="72" text-anchor="start">2시간마다 1번 (점)</text><text class="tb" x="500" y="46" text-anchor="start">같은 하루, 다른 숫자</text><text class="ts" x="500" y="73" text-anchor="start">연속 30분의 평균</text><rect class="wr" x="620" y="61" width="10.5" height="16" rx="2"/><text class="ts" x="634.5" y="73" text-anchor="start">150</text><text class="ts" x="500" y="99" text-anchor="start">2시간마다 잰 평균</text><rect class="hl" x="620" y="87" width="32.0" height="16" rx="2"/><text class="ts" x="655.9666666666667" y="99" text-anchor="start">457</text><text class="ts" x="500" y="125" text-anchor="start">2시간마다 잰 최댓값</text><rect class="hl" x="620" y="113" width="54.6" height="16" rx="2"/><text class="ts" x="678.6" y="125" text-anchor="start">780</text><text class="ts" x="500" y="151" text-anchor="start">하루 전체의 평균</text><rect class="bx" x="620" y="139" width="32.2" height="16" rx="2"/><text class="ts" x="656.2" y="151" text-anchor="start">460</text><text class="ts" x="500" y="177" text-anchor="start">하루 전체의 중앙값</text><rect class="bx" x="620" y="165" width="32.2" height="16" rx="2"/><text class="ts" x="656.2" y="177" text-anchor="start">460</text><text class="ts" x="500" y="203" text-anchor="start">하루 전체의 최댓값</text><rect class="bx" x="620" y="191" width="63.0" height="16" rx="2"/><text class="ts" x="687.0" y="203" text-anchor="start">900</text><text class="ts" x="10" y="240" text-anchor="start">연속 표본은 그 구간을 정확히 안다. 흩은 표본은 하루의 흐름을 본다. 둘 다 잰 순간 밖은 모른다.</text></svg></div><figcaption>숫자는 만든 예시다. 같은 하루를 재도, 고르는 방법과 대표값에 따라 숫자가 다르다.</figcaption></figure>
+          <ul>
+            <li><b>모집단</b>: 알고 싶은 전체다. 예: 이번 주의 모든 분. <b>표본</b>: 실제로 잰 부분이다.</li>
+            <li><b>연속 표본</b>: 한 구간을 빠짐없이 잰다. 그 구간은 정확히 안다. 하지만 그 구간 밖(다른 시간대, 다른 요일)은 모른다.</li>
+            <li><b>흩은 표본</b>: 긴 기간에 걸쳐 여러 순간을 잰다. 하루의 흐름이 보인다. 하지만 잰 순간 사이는 보지 못한다.</li>
+            <li>많은 숫자가 시간대에 따라 변한다. 서버의 요청 수, 디스크에 쓰는 양, 블록의 크기가 그렇다. 사람이 많이 쓰는 시간에 커진다.</li>
+            <li><b>평균</b>: 합계를 개수로 나눈 값이다. 총량을 계산할 때 쓴다(총량 = 평균 × 개수). <b>중앙값</b>: 줄 세웠을 때 가운데 값이다. "보통은 얼마인가"를 말한다. 튀는 값에 덜 흔들린다. <b>최댓값</b>과 <b>백분위</b>(p99: 100개 중 99번째로 작은 값): "바쁠 때는 얼마인가"를 말한다.</li>
+            <li>그래서 숫자 하나를 쓸 때는 같이 적는다: 언제, 얼마 동안, 어떻게 골랐나, 어느 대표값인가.</li>
+          </ul>
+          <div class="warn"><b>자주 하는 오해</b>"많이 재면 정확하다"는 반만 맞다. 같은 시간대에서 많이 재면 그 시간대만 정확해진다. 재는 개수보다 고르는 범위가 숫자를 더 크게 바꿀 수 있다.</div>
+          <div class="mine"><b>내 Bitcoin 노드와 비교</b>실습 F에서 <code>-reindex-chainstate</code>를 조건마다 한 번씩 재었다. 그래서 오차 범위는 모른다(<a href="#experiment">실험 설계</a> 카드, Bitcoin 탭). 한 번 잰 값은 크기가 1인 표본이다.</div>
+          <p class="ask"><b>생각해 볼 질문</b>하루를 잰 표본으로 일주일을 말해도 될까? 무엇을 더 재면 그것을 알 수 있을까?</p>
+          <details class="try"><summary>직접 확인 (잰 값의 대표값)</summary>
+<pre><span class="cm"># values.txt: 한 줄에 잰 값 하나</span>
+sort -n values.txt | awk '{a[NR]=$1; s+=$1}
+  END {print "개수", NR; print "평균", s/NR;
+       print "중앙값", (NR%2 ? a[(NR+1)/2] : (a[NR/2]+a[NR/2+1])/2); print "최댓값", a[NR]}'</pre>
+          </details>
+          <p class="rel">연결: <a href="#experiment">실험 설계 (Bitcoin 탭)</a><a href="#retention">보관 기준과 여유</a><a href="#tbtib">TB와 TiB</a><a href="#slot">slot과 epoch</a><a href="#use">성능을 보는 순서 (Bitcoin 탭)</a></p>
+        </article>
+
+        <article class="c" id="retention" data-added="2026-10-18" data-updated="2026-10-18" data-k="보관 보존 retention 기간 크기 time size 한도 limit 여유 headroom 빈 공간 free space 약속 sla kafka retention.ms retention.bytes journald maxretentionsec systemmaxuse systemkeepfree logrotate rotate maxage maxsize prune compaction 예약">
+          <div class="c-head"><h3>보관 기준과 여유: 기간이냐 크기냐</h3></div>
+          <p class="why"><b>왜 알아야 하나</b>기록을 쌓는 시스템은 언젠가 옛 기록을 지운다. 지우는 기준은 보통 기간 아니면 크기다. 두 기준은 서로 다른 것을 약속한다. 그래서 먼저 "누구에게 무엇을 약속하나"를 정한다.</p>
+          <figure class="fig"><div class="sc"><svg viewBox="0 0 720 236" role="img" aria-label="왼쪽: 기간 기준. 같은 N일이라도 바쁜 때는 막대가 높아서 크기가 크다. 오른쪽: 크기 기준. 같은 S GB 상자에 조용한 때는 6일 치, 바쁜 때는 3일 치가 들어간다" style="min-width:600px;max-width:720px"><text class="tb" x="10" y="20" text-anchor="start">기간을 고정하면 크기가 움직인다</text><text class="tb" x="370" y="20" text-anchor="start">크기를 고정하면 기간이 움직인다</text><rect class="hl" x="22" y="124" width="20" height="26" rx="2"/><rect class="hl" x="48" y="120" width="20" height="30" rx="2"/><rect class="hl" x="74" y="128" width="20" height="22" rx="2"/><rect class="hl" x="100" y="122" width="20" height="28" rx="2"/><rect class="hl" x="126" y="126" width="20" height="24" rx="2"/><path class="ln" d="M20,158 H148" stroke-dasharray="3 3"/><text class="ts" x="84" y="174" text-anchor="middle">N일 (조용한 때)</text><text x="84" y="194" text-anchor="middle">크기: 작다</text><rect class="wr" x="192" y="94" width="20" height="56" rx="2"/><rect class="wr" x="218" y="80" width="20" height="70" rx="2"/><rect class="wr" x="244" y="88" width="20" height="62" rx="2"/><rect class="wr" x="270" y="70" width="20" height="80" rx="2"/><rect class="wr" x="296" y="84" width="20" height="66" rx="2"/><path class="ln" d="M190,158 H318" stroke-dasharray="3 3"/><text class="ts" x="254" y="174" text-anchor="middle">N일 (바쁜 때)</text><text class="tb" x="254" y="194" text-anchor="middle">크기: 크다</text><text class="ts ta" x="22" y="222" text-anchor="start">읽는 쪽에 하는 약속: "언제나 N일 치가 있다"</text><rect class="bg" x="384" y="46" width="110" height="106" rx="5"/><rect class="hl" x="390" y="137" width="98" height="14" rx="2"/><rect class="hl" x="390" y="119" width="98" height="16" rx="2"/><rect class="hl" x="390" y="105" width="98" height="12" rx="2"/><rect class="hl" x="390" y="88" width="98" height="15" rx="2"/><rect class="hl" x="390" y="73" width="98" height="13" rx="2"/><rect class="hl" x="390" y="57" width="98" height="14" rx="2"/><text class="ts" x="439" y="174" text-anchor="middle">S GB (조용한 때)</text><text x="439" y="194" text-anchor="middle">기간: 길다 (6일 치)</text><rect class="bg" x="554" y="46" width="110" height="106" rx="5"/><rect class="wr" x="560" y="113" width="98" height="38" rx="2"/><rect class="wr" x="560" y="79" width="98" height="32" rx="2"/><rect class="wr" x="560" y="47" width="98" height="30" rx="2"/><text class="ts" x="609" y="174" text-anchor="middle">S GB (바쁜 때)</text><text class="tb" x="609" y="194" text-anchor="middle">기간: 짧다 (3일 치)</text><text class="ts ta" x="384" y="222" text-anchor="start">디스크에 하는 약속: "S GB를 넘지 않는다"</text><path class="ln" d="M356,30 V230" stroke-dasharray="2 4"/></svg></div><figcaption>무엇을 고정하나. 기간을 고정하면 크기가 움직이고, 크기를 고정하면 기간이 움직인다. 막대 하나가 하루 치다.</figcaption></figure>
+          <ul>
+            <li><b>기간 기준</b>: "N일 치를 둔다." 읽는 쪽에 하는 약속이다. 크기는 트래픽에 따라 커지고 작아진다. Kafka 문서는 시간 한도를 "소비자가 데이터를 얼마나 빨리 읽어야 하나에 대한 SLA"라고 쓴다.</li>
+            <li><b>크기 기준</b>: "S GB까지 둔다." 디스크에 하는 약속이다. 바쁜 때에는 남는 기간이 짧아진다.</li>
+            <li>시스템마다 기본이 다르다. Kafka 토픽은 기본으로 시간 한도만 있다. 크기 한도는 없다. systemd-journald는 기본으로 크기 한도만 있다(파일시스템의 10%, 최대 4G). 시간 한도(<code>MaxRetentionSec=</code>)는 기본으로 꺼져 있다. journald 문서는 "보통은 크기 한도로 충분하다. 보존 정책을 지켜야 하면 시간 한도를 쓸 수 있다"고 쓴다.</li>
+            <li>두 한도를 같이 거는 시스템도 많다: logrotate(<code>rotate</code> 개수, <code>maxage</code> 일수, <code>maxsize</code>), journald(<code>SystemMaxUse=</code>, <code>MaxRetentionSec=</code>), Kafka(<code>retention.ms</code>, <code>retention.bytes</code>). 이때는 어느 한도든 먼저 닿으면 옛 기록을 지운다.</li>
+            <li><b>여유</b>(headroom): 계획한 크기와 디스크 크기 사이에 남기는 자리다. 이유는 두 가지다.</li>
+            <li>첫째, 수요가 변한다. 평균보다 바쁜 날이 온다. 쓰는 사람과 데이터가 늘 수도 있다.</li>
+            <li>둘째, 시스템 자신이 자리를 쓴다. ext4는 기본으로 5%를 root용으로 남긴다. journald는 기본으로 파일시스템의 15%를 비워 둔다(최대 4G). LSM 방식의 DB(RocksDB, LevelDB)는 정리(compaction)할 때 새 파일을 먼저 쓰고, 옛 파일은 정리가 끝난 뒤에 지운다(LevelDB 문서). 그래서 정리하는 동안 잠깐 더 많은 자리를 쓴다.</li>
+          </ul>
+          <div class="warn"><b>자주 하는 오해</b>"logrotate의 <code>rotate 4</code>는 4일 치다"는 틀리다. <code>rotate</code>는 남길 옛 파일의 개수다. 기간은 회전 주기와 곱해서 나온다. <code>weekly</code>와 같이 쓰면 약 4주, <code>daily</code>와 같이 쓰면 약 4일이다. 크기로 회전하면(<code>maxsize</code>) 바쁜 때에는 더 짧아진다.</div>
+          <div class="mine"><b>내 Bitcoin 노드와 비교</b><code>-prune=N</code>은 크기 기준이다. 블록 파일이 N MiB를 넘지 않게 옛 블록 파일을 지운다(<code>bitcoind -help</code>). 그래서 pruned 노드가 며칠 치 블록을 가졌는지는 블록 크기에 따라 변한다.</div>
+          <p class="ask"><b>생각해 볼 질문</b>내가 쌓는 기록은 누구에게 하는 약속인가? 그 약속이 깨지면 누가 먼저 알아차릴까?</p>
+          <details class="try"><summary>직접 확인</summary>
+<pre>journalctl --disk-usage                     <span class="cm"># journald가 지금 쓰는 크기</span>
+systemd-analyze cat-config systemd/journald.conf | grep -E 'MaxUse|KeepFree|MaxRetention'
+<span class="cm"># 줄 앞에 #이 있으면 설정하지 않은 것이다. 그러면 기본값을 쓴다</span>
+grep -E '^(daily|weekly|monthly|rotate|maxage|maxsize)' /etc/logrotate.conf
+df -h /var/log</pre>
+          </details>
+          <p class="rel">연결: <a href="#logrot">로그와 회전</a><a href="#sampling">표본</a><a href="#tbtib">TB와 TiB</a><a href="#statehist">상태와 기록</a><a href="#prune">-prune (Bitcoin 탭)</a><a href="#dudf">du와 df (Bitcoin 탭)</a></p>
         </article>
       </div>
     </section>
@@ -1539,7 +1766,7 @@ kubectl -n bitcoin-lab exec deploy/bitcoin-signet -- \
   du -sh /home/bitcoin/.bitcoin/signet          <span class="cm"># 노드 하나의 크기</span>
 sudo lsof +L1 | head                            <span class="cm"># 지워졌지만 열린 파일</span></pre>
           </details>
-          <p class="rel">연결: <a href="#mount">마운트</a><a href="#pvpvc">PV와 PVC</a><a href="#prune">pruned 노드</a></p>
+          <p class="rel">연결: <a href="#mount">마운트</a><a href="#pvpvc">PV와 PVC</a><a href="#prune">pruned 노드</a><a href="#tbtib">TB와 TiB (Solana 탭)</a></p>
         </article>
 
         <article class="c" id="dockergroup" data-added="2026-10-12" data-updated="2026-10-12" data-k="docker 그룹 root 권한 보안 sock 소켓">
@@ -2622,7 +2849,7 @@ kubectl -n bitcoin-lab logs bitcoin-node-0 | grep Bound   <span class="cm"># 실
             <li>잃는 것: 오래된 블록을 다른 노드에 줄 수 없다. <code>-txindex</code>를 쓸 수 없다. 오래된 지갑 재검색이 안 된다.</li>
           </ul>
           <div class="mine"><b>내 환경에서</b>Signet은 작아서 지금은 pruning이 꼭 필요하지 않다. 다만 노드끼리 동기화하는 실험에서는 주의한다. pruned 노드는 처음부터 동기화하는 피어에게 오래된 블록을 줄 수 없다.</div>
-          <p class="rel">연결: <a href="#datadir">데이터 디렉터리</a><a href="#dudf">du와 df</a></p>
+          <p class="rel">연결: <a href="#datadir">데이터 디렉터리</a><a href="#dudf">du와 df</a><a href="#retention">보관 기준과 여유 (Solana 탭)</a></p>
         </article>
 
         <article class="c" id="dbcache" data-added="2026-10-12" data-updated="2026-10-16" data-k="utxo dbcache chainstate 캐시 flush leveldb 메모리 동기화 속도 connectblock ccoinsviewcache fetchcoin ccoinsviewdb txdb 코드 경로 sigterm sigkill 정상 종료 강제 종료 timeoutstopsec">
@@ -2744,7 +2971,7 @@ kubectl -n bitcoin-lab exec bitcoin-node-1 -- \
             <li>카운터에는 작업이 끝난 뒤의 대기 시간도 섞여 있다(실행 1 약 10시간, 실행 2 약 6.5시간). 대기 중 사용량은 작다.</li>
             <li>실행 1에서는 컨테이너 자신의 한도(2Gi)에 닿았다. 상자를 키우자 부족한 곳이 한 층 아래로 옮겨 갔다.</li>
           </ul>
-          <p class="rel">연결: <a href="#reindex">-reindex-chainstate</a><a href="#use">USE</a><a href="#memory">캐시 효과</a><a href="#signet">Signet의 한계</a></p>
+          <p class="rel">연결: <a href="#reindex">-reindex-chainstate</a><a href="#use">USE</a><a href="#memory">캐시 효과</a><a href="#signet">Signet의 한계</a><a href="#sampling">표본 (Solana 탭)</a></p>
         </article>
       </div>
     </section>
@@ -2859,6 +3086,27 @@ kubectl -n bitcoin-lab exec bitcoin-node-1 -- \
     freshN = newOnes.length + updOnes.length;
   }
 
+  // 생각해 볼 질문 모음: 지금 탭의 카드에서 p.ask를 모은다. 답은 없다.
+  var asks = document.getElementById('asks');
+  function renderAsks() {
+    if (!asks) return;
+    var list = document.getElementById('asks-list');
+    while (list.firstChild) list.removeChild(list.firstChild);
+    var n = 0;
+    cards.filter(inCur).forEach(function (c) {
+      Array.prototype.forEach.call(c.querySelectorAll('p.ask'), function (p) {
+        var li = document.createElement('li');
+        var a = document.createElement('a'); a.href = '#' + c.id; a.textContent = title(c);
+        li.appendChild(a);
+        var lab = p.querySelector('b');
+        Array.prototype.forEach.call(p.childNodes, function (nd) { if (nd !== lab) li.appendChild(nd.cloneNode(true)); });
+        list.appendChild(li); n++;
+      });
+    });
+    document.getElementById('asks-n').textContent = n ? n + '개' : '';
+    asks.hidden = !n;
+  }
+
   function paint() {
     var mine = cards.filter(inCur), n = 0;
     cards.forEach(function (c) {
@@ -2918,7 +3166,7 @@ kubectl -n bitcoin-lab exec bitcoin-node-1 -- \
     parts.forEach(function (p) { p.hidden = p.getAttribute('data-track') !== t; });
     var ph = q.getAttribute('data-ph-' + t); if (ph) q.placeholder = ph;
     if (keep) { try { localStorage.setItem(TKEY, t); } catch (e) {} }
-    renderFresh(); paint(); applyView();
+    renderFresh(); renderAsks(); paint(); applyView();
   }
 
   function hashTarget() {
