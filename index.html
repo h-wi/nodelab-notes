@@ -244,7 +244,7 @@ svg .mkw { fill: var(--warn); }
   <main>
     <header class="intro">
       <h1>nodelab 개념 노트</h1>
-      <p class="stamp" id="stamp">마지막 갱신 <b><time datetime="2026-11-06T23:55+09:00">2026-11-06 23:55</time></b> (한국 시간) · 매일 06:52에 학습 기록을 읽고 자동으로 갱신한다.</p>
+      <p class="stamp" id="stamp">마지막 갱신 <b><time datetime="2026-11-07T07:10+09:00">2026-11-07 07:10</time></b> (한국 시간) · 매일 06:52에 학습 기록을 읽고 자동으로 갱신한다.</p>
       <div data-track="iv">
         <p>노드 운영의 기본기를 <b>정확하게</b> 설명하기 위한 노트다. 2026-11-06에 새로 시작했다. 비유를 쓰지 않는다. 정의 → 구조 → 그 구조에서 나오는 동작 → 확인하는 명령의 순서로 쓴다.</p>
         <p>카드마다 <b>자주 하는 오해</b>가 있다. 비슷하지만 틀린 말과, 어디가 틀렸는지다. <b>생각해 볼 질문</b>에는 답을 쓰지 않았다. 자기 말로 답해 본다.</p>
@@ -258,7 +258,7 @@ svg .mkw { fill: var(--warn); }
       </div>
       <div class="now" id="now-iv" data-track="iv">
         <h2>지금 학습 위치</h2>
-        <p>파일시스템(<a href="#fs">파일시스템이란</a>부터 <a href="#fsspace">용량이 줄어드는 이유</a>까지)에 이어, 커널 설정 값 밑에 있는 구조를 다뤘다. 메모리: <a href="#page">page와 page table</a>, <a href="#pagefault">page fault</a>, <a href="#vma">VMA</a>, <a href="#mmap">mmap</a>, <a href="#kmem">커널 메모리</a>, <a href="#pin">메모리 고정</a>. 프로세스와 커널의 경계: <a href="#fd">fd</a>, <a href="#nofile">열린 파일 한도</a>, <a href="#sysctlunit">sysctl과 unit</a>, <a href="#sockbuf">소켓 버퍼</a>, <a href="#iouring">io_uring</a>, <a href="#ring">링 버퍼</a>. systemd: <a href="#boot">부팅 순서</a>, <a href="#wantsafter">Wants=와 After=</a>, <a href="#restart">재시작 제한</a>. Solana: <a href="#slot">slot</a>, <a href="#snapshot">snapshot</a>, <a href="#alpenglow">합의의 변화</a>, <a href="#keys">키</a>, <a href="#disksplit">accounts와 ledger</a>. 다음에 다룰 후보: 프로세스와 load average, <code>df</code>와 <code>du</code>, TCP와 UDP, NAT, QUIC, namespace와 cgroup, OOM, RAID, 모니터링.</p>
+        <p>파일시스템(<a href="#fs">파일시스템이란</a>부터 <a href="#fsspace">용량이 줄어드는 이유</a>까지)에 이어, 커널 설정 값 밑에 있는 구조를 다뤘다. 메모리: <a href="#page">page와 page table</a>, <a href="#pagefault">page fault</a>, <a href="#vma">VMA</a>, <a href="#mmap">mmap</a>, <a href="#kmem">커널 메모리</a>, <a href="#pin">메모리 고정</a>, <a href="#anonpage">익명 페이지와 파일 페이지</a>. 저장: <a href="#lsmbtree">LSM-tree와 B-tree</a>. CPU: <a href="#cpuusage">CPU 사용량의 단위</a>. 프로세스와 커널의 경계: <a href="#fd">fd</a>, <a href="#nofile">열린 파일 한도</a>, <a href="#sysctlunit">sysctl과 unit</a>, <a href="#sockbuf">소켓 버퍼</a>, <a href="#iouring">io_uring</a>, <a href="#ring">링 버퍼</a>. systemd: <a href="#boot">부팅 순서</a>, <a href="#wantsafter">Wants=와 After=</a>, <a href="#restart">재시작 제한</a>. Solana: <a href="#slot">slot</a>, <a href="#shred">shred</a>, <a href="#snapshot">snapshot</a>(신뢰 명단과 entrypoint 보충), <a href="#alpenglow">합의의 변화</a>, <a href="#keys">키</a>, <a href="#disksplit">accounts와 ledger</a>. 다음에 다룰 후보: 프로세스와 load average, <code>df</code>와 <code>du</code>, TCP와 UDP, NAT, QUIC, namespace와 cgroup, OOM, RAID, 모니터링.</p>
       </div>
       <div class="order" data-track="iv">
         <h2>읽는 순서</h2>
@@ -266,13 +266,13 @@ svg .mkw { fill: var(--warn); }
           <thead><tr><th>단계</th><th>읽을 개념</th></tr></thead>
           <tbody>
             <tr><td>1. 파일시스템의 뼈대</td><td><a href="#fs">파일시스템이란</a>, <a href="#vfs">VFS</a>, <a href="#inode">inode</a>, <a href="#links">하드 링크와 소프트 링크</a></td></tr>
-            <tr><td>2. ext4의 속</td><td><a href="#itable">inode 표와 bitmap</a>, <a href="#extent">indirect block과 extent</a>, <a href="#ext4">ext4의 특징</a>, <a href="#fsspace">용량이 줄어드는 이유</a></td></tr>
+            <tr><td>2. ext4의 속</td><td><a href="#itable">inode 표와 bitmap</a>, <a href="#extent">indirect block과 extent</a>, <a href="#ext4">ext4의 특징</a>, <a href="#fsspace">용량이 줄어드는 이유</a>, <a href="#lsmbtree">LSM-tree와 B-tree</a></td></tr>
             <tr><td>3. 장치</td><td><a href="#iostack">HDD, SSD, NVMe</a></td></tr>
-            <tr><td>4. 메모리</td><td><a href="#page">page와 page table</a>, <a href="#pagefault">page fault</a>, <a href="#vma">VMA</a>, <a href="#mmap">mmap</a>, <a href="#kmem">커널 메모리</a>, <a href="#pin">메모리 고정</a></td></tr>
+            <tr><td>4. 메모리</td><td><a href="#page">page와 page table</a>, <a href="#pagefault">page fault</a>, <a href="#vma">VMA</a>, <a href="#mmap">mmap</a>, <a href="#kmem">커널 메모리</a>, <a href="#pin">메모리 고정</a>, <a href="#anonpage">익명 페이지와 파일 페이지</a></td></tr>
             <tr><td>5. fd와 한도</td><td><a href="#fd">fd</a>, <a href="#nofile">열린 파일 한도</a>, <a href="#sysctlunit">sysctl과 unit</a>, <a href="#sockbuf">소켓 버퍼</a></td></tr>
             <tr><td>6. 비동기 I/O</td><td><a href="#ring">링 버퍼</a>, <a href="#iouring">io_uring</a></td></tr>
-            <tr><td>7. 서버와 서비스</td><td><a href="#serveros">서버 OS</a>, <a href="#boot">부팅 순서</a>, <a href="#wantsafter">Wants=와 After=</a>, <a href="#restart">재시작 제한</a>, <a href="#sysdocker">Docker가 아닌 systemd</a></td></tr>
-            <tr><td>8. Solana 노드</td><td><a href="#slot">slot</a>, <a href="#snapshot">snapshot</a>, <a href="#alpenglow">합의의 변화</a>, <a href="#keys">키</a>, <a href="#disksplit">accounts와 ledger</a></td></tr>
+            <tr><td>7. 서버와 서비스</td><td><a href="#serveros">서버 OS</a>, <a href="#boot">부팅 순서</a>, <a href="#wantsafter">Wants=와 After=</a>, <a href="#restart">재시작 제한</a>, <a href="#cpuusage">CPU 사용량의 단위</a>, <a href="#sysdocker">Docker가 아닌 systemd</a></td></tr>
+            <tr><td>8. Solana 노드</td><td><a href="#slot">slot</a>, <a href="#shred">shred</a>, <a href="#snapshot">snapshot</a>, <a href="#alpenglow">합의의 변화</a>, <a href="#keys">키</a>, <a href="#disksplit">accounts와 ledger</a></td></tr>
           </tbody>
         </table></div>
       </div>
@@ -284,6 +284,7 @@ svg .mkw { fill: var(--warn); }
       <details class="log">
         <summary>업데이트 기록</summary>
         <ul class="upd" id="changelog">
+          <li><b>2026-11-07</b> 새 카드 4개: 익명 페이지와 파일 페이지, LSM-tree와 B-tree, CPU 사용량의 단위, shred. 보충 1개: snapshot(신뢰 명단에 적는 것은 공개키, entrypoint와 다른 점).</li>
           <li><b>2026-11-06 밤</b> 새 카드 20개. 메모리: page와 page table, page fault, VMA, mmap, 커널 메모리, 메모리 고정. fd와 한도: fd, 열린 파일 한도, sysctl과 unit, 소켓 버퍼. 비동기 I/O: io_uring, 링 버퍼. systemd: 부팅 순서, Wants=와 After=, 재시작 제한. Solana: slot, snapshot, 합의의 변화, 키, accounts와 ledger.</li>
           <li><b>2026-11-06</b> 새로 시작했다. 옛 카드(하드웨어, Solana, 리눅스 운영, Kubernetes, Bitcoin 등 105개)는 내렸다. 새 카드 11개: 파일시스템이란, VFS, HDD·SSD·NVMe, inode, 하드 링크와 소프트 링크, indirect block과 extent, inode 표와 bitmap, ext4의 특징, 용량이 줄어드는 이유, 서버 OS, Docker가 아닌 systemd.</li>
         </ul>
@@ -628,6 +629,44 @@ sudo umount /mnt/t; rm /tmp/t.img</pre>
           </details>
           <p class="rel">연결: <a href="#inode">inode</a><a href="#itable">inode 표와 bitmap</a><a href="#ext4">ext4</a><a href="#fs">파일시스템이란</a></p>
         </article>
+
+        <article class="c" id="lsmbtree" data-added="2026-11-07" data-updated="2026-11-07" data-k="lsm-tree b-tree rocksdb leveldb cassandra innodb postgresql sqlite sst memtable compaction tombstone 지움 표시 delete range deletefilesinrange compaction filter purge vacuum auto_vacuum freelist wal checkpoint 삭제 공간 회수 키 순서">
+          <div class="c-head"><h3>LSM-tree와 B-tree: 지운 공간의 회수</h3></div>
+          <p class="why"><b>왜 알아야 하나</b>지워도 디스크 사용량이 바로 줄지 않는 DB가 많다. 그러나 이유와 결과는 저장 구조에 따라 다르다. 디스크 용량을 계획할 때 "지운 뒤 언제, 어떻게 공간이 돌아오나"가 여기서 정해진다.</p>
+          <ul>
+            <li><b>LSM-tree</b> (RocksDB, LevelDB, Cassandra)
+              <ul>
+                <li>쓰기는 메모리(memtable)에 모았다가 정렬된 파일(SST)로 한 번에 쓴다. SST는 한 번 쓰면 고치지 않는다.</li>
+                <li>삭제도 "지움 표시(tombstone)"를 새로 쓰는 일이다. 옛 값은 그대로 파일에 남는다.</li>
+                <li>compaction이 여러 SST를 읽어 합치고 다시 쓸 때, 지운 값과 지움 표시를 버린다. 이때 공간이 돌아온다.</li>
+                <li>그래서 compaction 전까지는 지운 공간을 <b>다시 쓰지도 못한다</b>. 새 데이터는 새 파일로 가고, 사용량이 늘어난다.</li>
+              </ul>
+            </li>
+            <li><b>B-tree</b> (MySQL InnoDB, PostgreSQL, SQLite)
+              <ul>
+                <li>페이지를 제자리에서 고친다.</li>
+                <li>지운 줄의 공간은 정리 작업(InnoDB purge, PostgreSQL VACUUM) 뒤 <b>DB 안에서 다시 쓴다</b>. SQLite는 빈 페이지를 파일 안의 freelist에 넣고 다시 쓴다.</li>
+                <li>파일 크기는 보통 줄지 않는다. 줄이려면 파일을 다시 쓴다(SQLite <code>VACUUM</code>, PostgreSQL <code>VACUUM FULL</code>). 대신 오래 돌면 파일 크기가 거의 일정해진다.</li>
+              </ul>
+            </li>
+            <li><b>LSM-tree에서 키의 순서가 회수 속도를 정한다</b>
+              <ul>
+                <li>키가 시간 순(예: 높이, 번호가 앞에 오는 키)이면 오래된 데이터가 같은 SST 파일들에 모인다. 범위 삭제 뒤 그 범위에 완전히 들어가는 파일을 <b>통째로 지울</b> 수 있다(RocksDB <code>DeleteFilesInRange</code>). compaction을 기다리지 않는다.</li>
+                <li>키가 해시나 주소 순이면 오래된 줄이 모든 파일에 흩어진다. 파일째 지울 수 없어서, compaction이 줄을 하나씩 보고 버린다(compaction filter). 회수는 compaction이 도는 주기만큼 늦다.</li>
+                <li>그래서 용량 계획에는 "보관 기간 + compaction이 늦게 회수하는 몫"을 넣는다.</li>
+              </ul>
+            </li>
+            <li><b>WAL</b>: 두 구조 모두 변경을 먼저 로그 파일에 덧붙인다. SQLite WAL 모드에서는 checkpoint가 내용을 본 파일에 옮긴 뒤에야 WAL 파일을 처음부터 다시 쓴다. 긴 읽기가 checkpoint를 막으면 WAL 파일이 커진다.</li>
+          </ul>
+          <div class="warn"><b>자주 하는 오해</b>"compaction을 해야 실제로 지워지는 것은 거의 모든 DB가 같다." 늦게 회수하는 것은 흔하다. 다른 점은 그 사이의 공간이다. B-tree는 지운 자리를 DB 안에서 다시 쓴다. LSM-tree는 compaction 전까지 다시 쓰지 못해서 사용량이 계속 는다.</div>
+          <p class="ask"><b>생각해 볼 질문</b>B-tree DB에서 큰 테이블의 절반을 지웠다. 디스크 사용량을 줄이려면 무엇을 해야 할까? 그 작업이 도는 동안 서비스에는 무엇이 생길까?</p>
+          <details class="try"><summary>직접 확인</summary>
+<pre>du -sh &lt;DB 디렉터리&gt;; ls &lt;DB 디렉터리&gt; | grep -c '\.sst$'   <span class="cm"># RocksDB: SST 파일 수</span>
+sqlite3 a.db 'PRAGMA freelist_count; PRAGMA page_count;'          <span class="cm"># SQLite: 빈 페이지 수</span>
+psql -c 'SELECT relname, n_dead_tup FROM pg_stat_user_tables;'    <span class="cm"># PostgreSQL: 지웠지만 아직 남은 줄</span></pre>
+          </details>
+          <p class="rel">연결: <a href="#disksplit">accounts와 ledger</a><a href="#fsspace">용량이 줄어드는 이유</a><a href="#ring">링 버퍼</a></p>
+        </article>
       </div>
     </section>
 
@@ -829,6 +868,33 @@ grep -E 'VmLck|VmPin' /proc/&lt;pid&gt;/status    <span class="cm"># 지금 잠�
 systemctl show &lt;서비스&gt; -p LimitMEMLOCK</pre>
           </details>
           <p class="rel">연결: <a href="#iouring">io_uring</a><a href="#page">page</a><a href="#nofile">한도의 층</a><a href="#iostack">HDD, SSD, NVMe</a></p>
+        </article>
+
+        <article class="c" id="anonpage" data-added="2026-11-07" data-updated="2026-11-07" data-k="익명 페이지 anonymous page 파일 페이지 file-backed page cache 힙 스택 map_anonymous malloc 할당기 jemalloc swap oom killer 회수 reclaim rss anon file meminfo active inactive dirty writeback">
+          <div class="c-head"><h3>익명 페이지와 파일 페이지</h3></div>
+          <p class="why"><b>왜 알아야 하나</b>RAM이 모자랄 때 커널이 하는 일은 page의 종류에 따라 다르다. 그래서 "RAM에 올라 있다"는 같은 말도, 어떤 종류냐에 따라 "버릴 수 있는 메모리"와 "버릴 수 없는 메모리"로 나뉜다.</p>
+          <ul>
+            <li><b>익명 페이지(anonymous)</b>: 뒤에 파일이 없는 메모리다. 힙, 스택, <code>MAP_ANONYMOUS</code>로 받은 메모리가 여기에 든다. 메모리 할당기(glibc malloc, jemalloc)도 내부에서 <code>mmap</code>을 부르지만, 파일 없이 부르므로 결과는 익명 페이지다.</li>
+            <li><b>파일 페이지(file-backed)</b>: 뒤에 파일이 있는 메모리다. page cache와, 파일을 <a href="#mmap">mmap</a>한 구간이 여기에 든다.</li>
+            <li><b>RAM이 모자랄 때 커널의 처리</b>
+              <ul>
+                <li>파일 페이지, 고치지 않음(clean): 그냥 버린다. 필요하면 파일에서 다시 읽는다.</li>
+                <li>파일 페이지, 고침(dirty): 먼저 파일에 쓴(writeback) 뒤 버린다.</li>
+                <li>익명 페이지: 다시 읽을 파일이 없다. swap이 있으면 swap으로 내보낸다. swap이 없거나 모자라면 회수할 수 없다. 끝내 모자라면 OOM killer가 프로세스를 죽인다.</li>
+              </ul>
+            </li>
+            <li><b>운영에서 보는 뜻</b>: 프로그램이 큰 자료구조(색인, 캐시)를 힙에 두면, 그 크기만큼 RAM을 "돌려받을 수 없는 몫"으로 잡는다. RAM 계획은 이 몫이 RAM 안에 들어가는지로 판단한다. 남은 RAM은 놀지 않고 page cache(파일 페이지)로 쓰인다.</li>
+            <li><b>프로세스의 RSS도 둘로 나뉜다</b>: <code>/proc/&lt;pid&gt;/status</code>의 <code>RssAnon</code>(익명)과 <code>RssFile</code>(파일). 같은 RSS라도 RssFile이 크면 커널이 회수할 여지가 크다.</li>
+          </ul>
+          <div class="warn"><b>자주 하는 오해</b>"RAM 위에 올린다 = 프로세스가 파일을 mmap해 둔 상태다." 힙에 할당한 자료구조는 파일과 연결되지 않은 익명 메모리다. 할당기가 mmap을 쓰더라도 파일 없이 쓴다. 파일을 mmap한 것과는 RAM이 모자랄 때의 처리가 다르다.</div>
+          <p class="ask"><b>생각해 볼 질문</b>swap을 끈 서버에서 익명 메모리가 RAM에 거의 닿았다. 그 뒤 디스크 읽기 성능은 어떻게 바뀔까? OOM이 나기 전에 어떤 신호가 먼저 보일까?</p>
+          <details class="try"><summary>직접 확인</summary>
+<pre>grep -E 'RssAnon|RssFile|RssShmem|VmSwap' /proc/&lt;pid&gt;/status
+grep -E 'AnonPages|^Cached|Dirty|SwapTotal|SwapFree' /proc/meminfo
+free -h                          <span class="cm"># available = 지금 회수할 수 있는 몫을 더한 어림</span>
+journalctl -k | grep -i 'out of memory'</pre>
+          </details>
+          <p class="rel">연결: <a href="#mmap">mmap</a><a href="#pagefault">page fault</a><a href="#pin">메모리 고정</a><a href="#kmem">커널 메모리</a></p>
         </article>
       </div>
     </section>
@@ -1245,6 +1311,28 @@ systemctl reset-failed &lt;서비스&gt;       <span class="cm"># 제한에 걸�
           </details>
           <p class="rel">연결: <a href="#wantsafter">Wants=와 After=</a><a href="#sysdocker">Docker가 아닌 systemd</a></p>
         </article>
+
+        <article class="c" id="cpuusage" data-added="2026-11-07" data-updated="2026-11-07" data-k="cpu 사용률 사용량 코어 core 시분할 time sharing 스케줄러 scheduler top %cpu 100% 0.2 코어 스레드 잠듦 sleep runnable load average mpstat pidstat 하이퍼스레딩 논리 cpu">
+          <div class="c-head"><h3>CPU 사용량의 단위: "코어 1개 미만"의 뜻</h3></div>
+          <p class="why"><b>왜 알아야 하나</b>"이 작업은 코어 0.2개를 쓴다"는 말을 코어를 쪼개 가진다는 뜻으로 읽으면, CPU 계획과 <code>top</code>의 숫자를 잘못 읽는다.</p>
+          <ul>
+            <li><b>정의</b>: CPU 사용량은 "정해진 시간 동안 코어가 그 작업을 실행한 시간"이다. 1초 중 0.2초를 실행했으면 0.2 코어다. <code>top</code>의 %CPU로는 20%다.</li>
+            <li><b>시분할</b>: 스레드는 할 일이 있을 때만 코어에서 돈다. 할 일이 없으면 잠든다(sleep). 그동안 그 코어는 스케줄러가 고른 다른 스레드를 실행한다. 그래서 한 코어를 여러 스레드가 시간으로 나누어 쓴다.</li>
+            <li><b>한 스레드의 최대</b>: 스레드 하나는 한순간에 코어 하나에서만 돈다. 그래서 스레드 하나의 최대는 1 코어(100%)다. 여러 스레드를 가진 프로세스는 100%를 넘을 수 있다(예: 4 스레드가 쉬지 않으면 400%).</li>
+            <li><b>코어 수의 단위</b>: <code>nproc</code>와 <code>top</code>이 세는 것은 논리 CPU다. 하이퍼스레딩이 켜져 있으면 물리 코어 하나가 논리 CPU 둘이다. 논리 CPU 둘이 같은 물리 코어의 실행 장치를 나누어 쓰므로, 처리량이 두 배가 되지는 않는다.</li>
+            <li><b>load average와의 차이</b>: load average는 사용률이 아니다. 실행 중이거나 실행을 기다리는 스레드 수(리눅스는 디스크를 기다리는 D 상태도 셈)의 평균이다. 그래서 CPU가 한가해도 디스크 대기 때문에 load가 높을 수 있다.</li>
+          </ul>
+          <div class="warn"><b>자주 하는 오해</b>"어떤 작업이든 코어를 최소 1개는 써야 한다." 코어는 작업에 통째로 묶이지 않는다. 작업이 실행되는 시간만 그 코어를 쓰고, 나머지 시간에는 다른 스레드가 쓴다. 그래서 1개 미만이 정상이다.</div>
+          <p class="ask"><b>생각해 볼 질문</b>어떤 작업이 평균 0.2 코어를 쓴다고 측정되었다. 이 숫자만으로 그 작업이 다른 작업의 지연을 늘리지 않는다고 말할 수 있을까? 평균이 가리는 것은 무엇일까?</p>
+          <details class="try"><summary>직접 확인</summary>
+<pre>nproc; lscpu | grep -E 'Thread|Core|Socket'   <span class="cm"># 논리 CPU 수, 물리 코어 구성</span>
+top -H -p &lt;pid&gt;              <span class="cm"># 스레드별 %CPU</span>
+pidstat -u -t -p &lt;pid&gt; 1     <span class="cm"># 스레드별 사용률 (sysstat)</span>
+mpstat -P ALL 1              <span class="cm"># 코어별 사용률</span>
+cat /proc/loadavg</pre>
+          </details>
+          <p class="rel">연결: <a href="#kmem">커널 모드</a><a href="#iouring">io_uring</a><a href="#serveros">서버 OS</a></p>
+        </article>
       </div>
     </section>
 
@@ -1275,7 +1363,7 @@ solana block-production           <span class="cm"># leader별 맡은 slot, 건�
           <p class="rel">연결: <a href="#snapshot">snapshot</a><a href="#alpenglow">합의의 변화</a></p>
         </article>
 
-        <article class="c" id="snapshot" data-added="2026-11-06" data-updated="2026-11-06" data-k="snapshot 스냅샷 계정 account 상태 state bank slot full incremental replay genesis hash 검증 ledger 블록 기록 tar.zst assumeutxo">
+        <article class="c" id="snapshot" data-added="2026-11-06" data-updated="2026-11-07" data-k="snapshot 스냅샷 계정 account 상태 state bank slot full incremental replay genesis hash 검증 ledger 블록 기록 tar.zst assumeutxo">
           <div class="c-head"><h3>snapshot</h3></div>
           <p class="why"><b>왜 알아야 하나</b>노드를 새로 켜거나 다시 맞출 때 snapshot에서 시작한다. snapshot에 무엇이 있고 무엇이 없는지를 알아야, 켠 노드가 어떤 질문에 답할 수 있는지 안다.</p>
           <ul>
@@ -1289,10 +1377,17 @@ solana block-production           <span class="cm"># leader별 맡은 slot, 건�
             <li><b>들어 있지 않은 것</b>: 블록과 트랜잭션의 기록이다. 기록은 ledger에 있다. 그래서 snapshot으로 켠 노드는 그 slot 이전의 기록을 갖고 있지 않다.</li>
             <li><b>왜 쓰나</b>: 새 노드가 genesis부터 모든 블록을 다시 실행(replay)하지 않고, 그 slot부터 시작해서 뒤의 블록만 replay하려고.</li>
             <li><b>두 종류</b>: full(전체 상태)과 incremental(마지막 full 뒤에 바뀐 계정만). 노드는 둘을 주기적으로 만들고, 정해진 수만 남긴다.</li>
-            <li><b>믿는 방법</b>: 받은 snapshot의 hash가 신뢰하는 validator들이 gossip에 알린 hash와 같아야 쓴다. 위조된 snapshot을 막는다.</li>
+            <li><b>믿는 방법</b>: 받은 snapshot의 hash가 신뢰하는 validator들이 gossip에 알린 hash와 같아야 쓴다. 위조된 snapshot을 막는다.
+              <ul>
+                <li>운영자가 적는 것은 hash가 아니라 <b>신뢰할 노드의 identity 공개키</b>다. hash는 snapshot마다 바뀌어서 미리 적으면 곧 낡는다. 공개키는 바뀌지 않는다.</li>
+                <li>그 노드들은 새 snapshot을 만들 때마다 (slot, hash)를 gossip에 알린다. gossip 메시지에는 보낸 노드의 서명이 있다. 그래서 "이 hash를 정말 그 노드가 알렸다"를 검사한다.</li>
+                <li>받는 곳을 그 노드들의 RPC로 좁히는 선택도 있다. 나쁜 노드에서 큰 파일을 다 받은 뒤에야 위조를 아는 시간을 줄인다. 대가는 받을 곳이 적어지는 것이다. 그 노드들이 모두 응답하지 않으면 시작하지 못한다.</li>
+              </ul>
+            </li>
+            <li><b>entrypoint와 다른 점</b>: entrypoint는 gossip에 처음 들어가기 위한 <b>주소</b>(host:port)다. 다른 노드 목록, 밖에서 보이는 내 주소, 네트워크 구분값(shred version)을 받는다. 데이터를 믿는 기준이 아니다. 들어간 뒤에는 다른 노드와 직접 통신한다.</li>
             <li><b>비교</b>: Bitcoin의 assumeutxo도 기록 없이 "지금 상태"(UTXO 집합)를 가져와 시작한다.</li>
           </ul>
-          <div class="warn"><b>자주 하는 오해</b>"네트워크에 참여하는 모든 계정의 한 순간을 저장한 것." 세 곳을 다듬는다. "참여하는"은 노드나 사용자 목록처럼 들린다. "한 순간"은 "특정 slot"으로 말한다. 계정만이 아니라 bank 상태도 있다. 그리고 "무엇"에 "왜 쓰나"(replay를 줄이려고)를 붙여야 이해한 답으로 들린다.</div>
+          <div class="warn"><b>자주 하는 오해</b>(1) "신뢰 명단에 적은 값은 유효한 snapshot의 hash다." 명단에는 노드의 공개키를 적는다. hash는 그 노드들이 서명해서 알린 최신 값을 쓴다. (2) "네트워크에 참여하는 모든 계정의 한 순간을 저장한 것." 세 곳을 다듬는다. "참여하는"은 노드나 사용자 목록처럼 들린다. "한 순간"은 "특정 slot"으로 말한다. 계정만이 아니라 bank 상태도 있다. 그리고 "무엇"에 "왜 쓰나"(replay를 줄이려고)를 붙여야 이해한 답으로 들린다.</div>
           <p class="ask"><b>생각해 볼 질문</b>오래된 snapshot으로 노드를 켜면 무엇이 늘어날까? snapshot을 자주 만들수록 노드는 무엇을 더 쓰게 될까?</p>
           <details class="try"><summary>직접 확인</summary>
 <pre>ls -lh &lt;snapshot 디렉터리&gt;        <span class="cm"># 파일 이름의 slot, full과 incremental</span>
@@ -1386,6 +1481,33 @@ cat /sys/block/nvme0n1/queue/nr_requests
 ls /sys/block/nvme0n1/mq | wc -l   <span class="cm"># 하드웨어 큐 수</span></pre>
           </details>
           <p class="rel">연결: <a href="#iostack">HDD, SSD, NVMe</a><a href="#snapshot">snapshot</a><a href="#fsspace">용량이 줄어드는 이유</a></p>
+        </article>
+
+        <article class="c" id="shred" data-added="2026-11-07" data-updated="2026-11-07" data-k="shred 슈레드 data shred coding shred fec set erasure coding 이레이저 코딩 reed-solomon udp 패킷 mtu ip 조각 fragmentation merkle root 서명 leader turbine repair blockstore entry 블록 전파">
+          <div class="c-head"><h3>shred</h3></div>
+          <p class="why"><b>왜 알아야 하나</b>블록은 shred 단위로 퍼지고, 받고, 저장된다. 노드가 블록을 잃었을 때 다시 만들 수 있는지, 저장 공간을 무엇으로 세는지가 shred의 구조에서 나온다.</p>
+          <ul>
+            <li><b>정의</b>: leader가 블록 데이터를 <b>UDP 패킷 하나에 들어가게</b> 자른 단위다.</li>
+            <li><b>자르는 대상</b>: 트랜잭션이 아니라 블록(slot의 entry들)이다. leader는 블록 데이터를 이어 붙인 뒤 자른다. 그래서 트랜잭션 하나가 shred 두 개에 걸칠 수 있다.</li>
+            <li><b>크기를 정하는 이유</b>: 속도가 아니라 패킷 하나에 맞추는 것이다. 패킷이 경로의 MTU보다 크면 IP 단계에서 조각난다. 조각 하나만 잃어도 패킷 전체를 잃는다.</li>
+            <li><b>두 종류</b>
+              <ul>
+                <li>data shred: 블록 데이터를 담는다.</li>
+                <li>coding shred: 복구용이다. Reed-Solomon 이레이저 코딩으로 data shred에서 만든다.</li>
+              </ul>
+            </li>
+            <li><b>묶음(FEC set)</b>: data shred와 coding shred를 묶음 단위로 만든다. Agave 소스의 기본은 묶음마다 data 32개, coding 32개다. 그래서 묶음에서 어느 shred든 절반까지 잃어도 data를 다시 만든다.</li>
+            <li><b>위조 방지</b>: leader가 묶음의 Merkle root에 서명한다. 각 shred에는 그 서명과 Merkle 증명이 있다. 받는 노드는 shred 하나만 받아도 leader의 것인지 검사한다.</li>
+            <li><b>퍼짐과 저장</b>: Turbine으로 노드에서 노드로 퍼진다. 그래도 모자란 shred는 repair로 다른 노드에 요청한다. 받은 shred는 blockstore(ledger)에 shred 단위로 저장된다.</li>
+          </ul>
+          <div class="warn"><b>자주 하는 오해</b>(1) "트랜잭션을 잘게 쪼갠 것이다." 쪼개는 대상은 블록 데이터다. (2) "shred 하나에 데이터와 복구용이 반반 들어 있다." shred는 두 종류로 따로 있고, 반반인 것은 <b>묶음</b>이다. (3) "검증용 shred가 있다." 두 번째 종류는 복구용이다. 검증은 leader의 서명으로 한다. (4) "UDP로 빠르게 보내려고 자른다." 크기의 이유는 패킷 하나에 들어가야 한다는 것이다.</div>
+          <p class="ask"><b>생각해 볼 질문</b>coding shred의 비율을 data와 같게 하지 않고 더 낮추면 무엇을 얻고 무엇을 잃을까? 패킷 손실이 많은 네트워크에서는 어느 쪽이 나을까?</p>
+          <details class="try"><summary>직접 확인</summary>
+<pre>ip link show &lt;nic&gt; | grep -o 'mtu [0-9]*'   <span class="cm"># 인터페이스의 MTU</span>
+tracepath &lt;상대 주소&gt;                        <span class="cm"># 경로 MTU (pmtu)</span>
+nstat -az UdpInErrors UdpRcvbufErrors</pre>
+          </details>
+          <p class="rel">연결: <a href="#slot">slot</a><a href="#sockbuf">소켓 버퍼</a><a href="#disksplit">accounts와 ledger</a><a href="#lsmbtree">LSM-tree와 B-tree</a></p>
         </article>
       </div>
     </section>
