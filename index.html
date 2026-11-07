@@ -244,7 +244,7 @@ svg .mkw { fill: var(--warn); }
   <main>
     <header class="intro">
       <h1>nodelab 개념 노트</h1>
-      <p class="stamp" id="stamp">마지막 갱신 <b><time datetime="2026-11-07T07:10+09:00">2026-11-07 07:10</time></b> (한국 시간) · 매일 06:52에 학습 기록을 읽고 자동으로 갱신한다.</p>
+      <p class="stamp" id="stamp">마지막 갱신 <b><time datetime="2026-11-07T13:55+09:00">2026-11-07 13:55</time></b> (한국 시간) · 매일 06:52에 학습 기록을 읽고 자동으로 갱신한다.</p>
       <div data-track="iv">
         <p>노드 운영의 기본기를 <b>정확하게</b> 설명하기 위한 노트다. 2026-11-06에 새로 시작했다. 비유를 쓰지 않는다. 정의 → 구조 → 그 구조에서 나오는 동작 → 확인하는 명령의 순서로 쓴다.</p>
         <p>카드마다 <b>자주 하는 오해</b>가 있다. 비슷하지만 틀린 말과, 어디가 틀렸는지다. <b>생각해 볼 질문</b>에는 답을 쓰지 않았다. 자기 말로 답해 본다.</p>
@@ -258,7 +258,7 @@ svg .mkw { fill: var(--warn); }
       </div>
       <div class="now" id="now-iv" data-track="iv">
         <h2>지금 학습 위치</h2>
-        <p>파일시스템(<a href="#fs">파일시스템이란</a>부터 <a href="#fsspace">용량이 줄어드는 이유</a>까지)에 이어, 커널 설정 값 밑에 있는 구조를 다뤘다. 메모리: <a href="#page">page와 page table</a>, <a href="#pagefault">page fault</a>, <a href="#vma">VMA</a>, <a href="#mmap">mmap</a>, <a href="#kmem">커널 메모리</a>, <a href="#pin">메모리 고정</a>, <a href="#anonpage">익명 페이지와 파일 페이지</a>. 저장: <a href="#lsmbtree">LSM-tree와 B-tree</a>. CPU: <a href="#cpuusage">CPU 사용량의 단위</a>. 프로세스와 커널의 경계: <a href="#fd">fd</a>, <a href="#nofile">열린 파일 한도</a>, <a href="#sysctlunit">sysctl과 unit</a>, <a href="#sockbuf">소켓 버퍼</a>, <a href="#iouring">io_uring</a>, <a href="#ring">링 버퍼</a>. systemd: <a href="#boot">부팅 순서</a>, <a href="#wantsafter">Wants=와 After=</a>, <a href="#restart">재시작 제한</a>. Solana: <a href="#slot">slot</a>, <a href="#shred">shred</a>, <a href="#snapshot">snapshot</a>(신뢰 명단과 entrypoint 보충), <a href="#alpenglow">합의의 변화</a>, <a href="#keys">키</a>, <a href="#disksplit">accounts와 ledger</a>. 다음에 다룰 후보: 프로세스와 load average, <code>df</code>와 <code>du</code>, TCP와 UDP, NAT, QUIC, namespace와 cgroup, OOM, RAID, 모니터링.</p>
+        <p>파일시스템(<a href="#fs">파일시스템이란</a>부터 <a href="#fsspace">용량이 줄어드는 이유</a>까지)에 이어, 커널 설정 값 밑에 있는 구조를 다뤘다. 메모리: <a href="#page">page와 page table</a>, <a href="#pagefault">page fault</a>, <a href="#vma">VMA</a>, <a href="#mmap">mmap</a>, <a href="#kmem">커널 메모리</a>, <a href="#pin">메모리 고정</a>, <a href="#anonpage">익명 페이지와 파일 페이지</a>. 저장: <a href="#lsmbtree">LSM-tree와 B-tree</a>. CPU: <a href="#cpuusage">CPU 사용량의 단위</a>, <a href="#nice">nice</a>, <a href="#numa">NUMA</a>. 네트워크: <a href="#bind">bind와 0.0.0.0</a>. 프로세스와 커널의 경계: <a href="#fd">fd</a>, <a href="#nofile">열린 파일 한도</a>, <a href="#sysctlunit">sysctl과 unit</a>, <a href="#sockbuf">소켓 버퍼</a>, <a href="#iouring">io_uring</a>, <a href="#ring">링 버퍼</a>. systemd: <a href="#boot">부팅 순서</a>, <a href="#wantsafter">Wants=와 After=</a>, <a href="#restart">재시작 제한</a>. Solana: <a href="#solacct">계정 모델</a>, <a href="#secidx">보조 색인</a>, <a href="#txmeta">트랜잭션 meta</a>, <a href="#slot">slot</a>, <a href="#shred">shred</a>, <a href="#snapshot">snapshot</a>(신뢰 명단과 entrypoint 보충), <a href="#alpenglow">합의의 변화</a>, <a href="#keys">키</a>, <a href="#disksplit">accounts와 ledger</a>. 다음에 다룰 후보: 프로세스와 load average, <code>df</code>와 <code>du</code>, TCP와 UDP, NAT, QUIC, namespace와 cgroup, OOM, RAID, 모니터링.</p>
       </div>
       <div class="order" data-track="iv">
         <h2>읽는 순서</h2>
@@ -269,10 +269,10 @@ svg .mkw { fill: var(--warn); }
             <tr><td>2. ext4의 속</td><td><a href="#itable">inode 표와 bitmap</a>, <a href="#extent">indirect block과 extent</a>, <a href="#ext4">ext4의 특징</a>, <a href="#fsspace">용량이 줄어드는 이유</a>, <a href="#lsmbtree">LSM-tree와 B-tree</a></td></tr>
             <tr><td>3. 장치</td><td><a href="#iostack">HDD, SSD, NVMe</a></td></tr>
             <tr><td>4. 메모리</td><td><a href="#page">page와 page table</a>, <a href="#pagefault">page fault</a>, <a href="#vma">VMA</a>, <a href="#mmap">mmap</a>, <a href="#kmem">커널 메모리</a>, <a href="#pin">메모리 고정</a>, <a href="#anonpage">익명 페이지와 파일 페이지</a></td></tr>
-            <tr><td>5. fd와 한도</td><td><a href="#fd">fd</a>, <a href="#nofile">열린 파일 한도</a>, <a href="#sysctlunit">sysctl과 unit</a>, <a href="#sockbuf">소켓 버퍼</a></td></tr>
+            <tr><td>5. fd와 한도</td><td><a href="#fd">fd</a>, <a href="#nofile">열린 파일 한도</a>, <a href="#sysctlunit">sysctl과 unit</a>, <a href="#sockbuf">소켓 버퍼</a>, <a href="#bind">bind와 0.0.0.0</a></td></tr>
             <tr><td>6. 비동기 I/O</td><td><a href="#ring">링 버퍼</a>, <a href="#iouring">io_uring</a></td></tr>
-            <tr><td>7. 서버와 서비스</td><td><a href="#serveros">서버 OS</a>, <a href="#boot">부팅 순서</a>, <a href="#wantsafter">Wants=와 After=</a>, <a href="#restart">재시작 제한</a>, <a href="#cpuusage">CPU 사용량의 단위</a>, <a href="#sysdocker">Docker가 아닌 systemd</a></td></tr>
-            <tr><td>8. Solana 노드</td><td><a href="#slot">slot</a>, <a href="#shred">shred</a>, <a href="#snapshot">snapshot</a>, <a href="#alpenglow">합의의 변화</a>, <a href="#keys">키</a>, <a href="#disksplit">accounts와 ledger</a></td></tr>
+            <tr><td>7. 서버와 서비스</td><td><a href="#serveros">서버 OS</a>, <a href="#boot">부팅 순서</a>, <a href="#wantsafter">Wants=와 After=</a>, <a href="#restart">재시작 제한</a>, <a href="#cpuusage">CPU 사용량의 단위</a>, <a href="#nice">nice</a>, <a href="#numa">NUMA</a>, <a href="#sysdocker">Docker가 아닌 systemd</a></td></tr>
+            <tr><td>8. Solana 노드</td><td><a href="#solacct">계정 모델</a>, <a href="#secidx">보조 색인</a>, <a href="#txmeta">트랜잭션 meta</a>, <a href="#slot">slot</a>, <a href="#shred">shred</a>, <a href="#snapshot">snapshot</a>, <a href="#alpenglow">합의의 변화</a>, <a href="#keys">키</a>, <a href="#disksplit">accounts와 ledger</a></td></tr>
           </tbody>
         </table></div>
       </div>
@@ -284,7 +284,8 @@ svg .mkw { fill: var(--warn); }
       <details class="log">
         <summary>업데이트 기록</summary>
         <ul class="upd" id="changelog">
-          <li><b>2026-11-07</b> 새 카드 4개: 익명 페이지와 파일 페이지, LSM-tree와 B-tree, CPU 사용량의 단위, shred. 보충 1개: snapshot(신뢰 명단에 적는 것은 공개키, entrypoint와 다른 점).</li>
+          <li><b>2026-11-07 낮</b> 새 카드 6개: bind와 0.0.0.0, nice와 CPU 우선순위, NUMA, Solana의 계정 모델, RPC 노드의 보조 색인, 트랜잭션 meta. 보충 1개: mmap(page fault 때 커널이 하는 일, 같은 frame).</li>
+          <li><b>2026-11-07 아침</b> 새 카드 4개: 익명 페이지와 파일 페이지, LSM-tree와 B-tree, CPU 사용량의 단위, shred. 보충 1개: snapshot(신뢰 명단에 적는 것은 공개키, entrypoint와 다른 점).</li>
           <li><b>2026-11-06 밤</b> 새 카드 20개. 메모리: page와 page table, page fault, VMA, mmap, 커널 메모리, 메모리 고정. fd와 한도: fd, 열린 파일 한도, sysctl과 unit, 소켓 버퍼. 비동기 I/O: io_uring, 링 버퍼. systemd: 부팅 순서, Wants=와 After=, 재시작 제한. Solana: slot, snapshot, 합의의 변화, 키, accounts와 ledger.</li>
           <li><b>2026-11-06</b> 새로 시작했다. 옛 카드(하드웨어, Solana, 리눅스 운영, Kubernetes, Bitcoin 등 105개)는 내렸다. 새 카드 11개: 파일시스템이란, VFS, HDD·SSD·NVMe, inode, 하드 링크와 소프트 링크, indirect block과 extent, inode 표와 bitmap, ext4의 특징, 용량이 줄어드는 이유, 서버 OS, Docker가 아닌 systemd.</li>
         </ul>
@@ -776,7 +777,7 @@ pmap -x &lt;pid&gt; | tail -1           <span class="cm"># 구간별 크기의 �
           <p class="rel">연결: <a href="#mmap">mmap</a><a href="#page">page</a><a href="#kmem">커널 메모리</a></p>
         </article>
 
-        <article class="c" id="mmap" data-added="2026-11-06" data-updated="2026-11-06" data-k="mmap munmap memory map 파일 연결 익명 메모리 anonymous map_shared map_private copy-on-write read 복사 page cache 지연 로딩 sigbus 128kib malloc 공유 라이브러리">
+        <article class="c" id="mmap" data-added="2026-11-06" data-updated="2026-11-07" data-k="mmap munmap memory map 파일 연결 익명 메모리 anonymous map_shared map_private copy-on-write read 복사 page cache 지연 로딩 sigbus 128kib malloc 공유 라이브러리">
           <div class="c-head"><h3>mmap</h3></div>
           <p class="why"><b>왜 알아야 하나</b>큰 파일을 다루는 프로그램은 <code>read()</code> 대신 mmap을 쓰기도 한다. 어느 쪽이냐에 따라 RAM 사용량의 모양, VMA 수, I/O 지연이 나타나는 자리가 달라진다.</p>
           <ul>
@@ -796,10 +797,11 @@ pmap -x &lt;pid&gt; | tail -1           <span class="cm"># 구간별 크기의 �
               </ul>
             </li>
             <li><b>그래도 <code>read()</code>가 기본인 이유</b>: 받은 데이터가 그 순간의 내 사본이 된다. 아무 주소, 아무 크기의 버퍼에 받는다(mmap은 page 경계와 page 단위만 된다). 소켓, 파이프처럼 page cache가 없는 대상도 같은 방식으로 읽는다. 작은 I/O는 복사가 page table 작업보다 싸다. 디스크 오류가 반환값으로 온다(mmap은 SIGBUS 신호로 온다).</li>
+            <li><b>page fault 때 일어나는 일</b>: 커널이 fault 난 주소의 VMA를 찾아 "이 파일의 몇 번째 page"인지 안다. 그 page가 page cache에 없으면 디스크에서 새 frame으로 읽고 page cache에 등록한다. 그다음 프로세스의 page table에 "이 가상 page → 그 page cache frame"을 써 넣고, 멈췄던 명령을 다시 실행한다. 같은 파일을 mmap한 다른 프로세스도 <b>같은 frame</b>을 가리킨다.</li>
             <li><b>MAP_SHARED와 MAP_PRIVATE</b>: SHARED는 쓴 내용이 파일과 다른 프로세스에 보인다. PRIVATE는 쓸 때 그 page만 내 것으로 복사된다(copy-on-write).</li>
             <li><b>파일 없는 mmap</b>: 익명 메모리다. glibc의 <code>malloc</code>은 기본으로 128KiB 이상의 요청을 힙이 아니라 mmap으로 받는다. 그래야 <code>free</code> 때 바로 OS에 돌려준다.</li>
           </ul>
-          <div class="warn"><b>자주 하는 오해</b>(1) "mmap은 가상 주소를 실제 메모리로 옮기는 일이다." 주소 변환은 MMU가 page table로 한다. mmap은 VMA를 만들 뿐이다. (2) "mmap은 페이지 변환 없이 파일을 통째로 메모리에 가져다 놓는다." 두 곳이 틀렸다. 변환은 모든 메모리 접근에서 항상 일어난다. mmap이 없애는 것은 <b>복사</b>다. 그리고 통째로가 아니라 건드린 page만 나중에 읽는다.</div>
+          <div class="warn"><b>자주 하는 오해</b>(1) "mmap은 가상 주소를 실제 메모리로 옮기는 일이다." 주소 변환은 MMU가 page table로 한다. mmap은 VMA를 만들 뿐이다. (2) "mmap은 디스크의 데이터가 커널을 거치지 않고 메모리에 바로 연결되는 것이다." 디스크에서 읽는 일은 page fault 때 커널이 한다. 없어지는 것은 커널이 아니라 복사 한 번과 접근마다의 시스템 호출이다. (3) "mmap은 페이지 변환 없이 파일을 통째로 메모리에 가져다 놓는다." 두 곳이 틀렸다. 변환은 모든 메모리 접근에서 항상 일어난다. mmap이 없애는 것은 <b>복사</b>다. 그리고 통째로가 아니라 건드린 page만 나중에 읽는다.</div>
           <p class="ask"><b>생각해 볼 질문</b>프로그램이 수십만 개의 파일을 하나씩 mmap한다. 어떤 커널 한도에 먼저 닿을까? 같은 일을 <code>read()</code>나 비동기 I/O로 바꾸면 그 한도 대신 무엇을 신경 써야 할까?</p>
           <details class="try"><summary>직접 확인</summary>
 <pre>grep -v ' 0 *$' /proc/&lt;pid&gt;/maps | head   <span class="cm"># 파일과 연결된 VMA</span>
@@ -1047,6 +1049,42 @@ ss -uamp | head                              <span class="cm"># 소켓마다 버
 ethtool -S &lt;nic&gt; | grep -i drop              <span class="cm"># NIC 단계에서 버린 수</span></pre>
           </details>
           <p class="rel">연결: <a href="#ring">링 버퍼</a><a href="#kmem">커널 메모리</a><a href="#sysctlunit">sysctl과 unit</a></p>
+        </article>
+
+        <article class="c" id="bind" data-added="2026-11-07" data-updated="2026-11-07" data-k="bind 바인드 소켓 socket ip 주소 포트 port 0.0.0.0 inaddr_any 127.0.0.1 루프백 loopback 내부망 nic 네트워크 인터페이스 network interface eth0 enp lo listen ss -ltnp 방화벽 nftables ufw p2p rpc 다층 방어">
+          <div class="c-head"><h3>bind와 0.0.0.0</h3></div>
+          <p class="why"><b>왜 알아야 하나</b>서비스가 "어디서 오는 연결을 받는가"는 bind 주소가 정한다. 방화벽 설정 하나에만 기대지 않으려면, bind로 받는 범위를 먼저 좁힐 수 있어야 한다.</p>
+          <ul>
+            <li><b>NIC와 네트워크 인터페이스</b>: NIC(Network Interface Card)는 네트워크로 데이터를 보내고 받는 하드웨어다. 커널은 NIC 하나를 네트워크 인터페이스 하나로 보인다(<code>eth0</code>, <code>enp1s0</code> 등). 하드웨어가 없는 가상 인터페이스도 있다(<code>lo</code>, 브리지). IP 주소는 관리자가 인터페이스에 붙인다. 인터페이스 하나에 주소가 여러 개일 수 있다.</li>
+            <li><b>bind의 정의</b>: 소켓에 <b>(IP 주소, 포트 번호)</b> 한 쌍을 붙이는 시스템 호출이다. 연결이나 패킷이 오면 커널은 목적지 주소와 포트를 둘 다 보고 받을 소켓을 고른다.
+              <ul>
+                <li>포트: 이 서버의 어느 소켓인가. 프로그램 하나가 소켓을 여러 개 열 수 있다.</li>
+                <li>주소: 이 서버의 어느 주소로 온 것을 받나.</li>
+              </ul>
+            </li>
+          </ul>
+          <div class="tbl"><table>
+            <thead><tr><th>bind 주소</th><th>받는 연결</th></tr></thead>
+            <tbody>
+              <tr><td><code>127.0.0.1</code></td><td>같은 서버 안에서 온 것만(루프백)</td></tr>
+              <tr><td>특정 주소 (예: 내부망 <code>192.168.0.5</code>)</td><td>그 주소로 온 것만</td></tr>
+              <tr><td><code>0.0.0.0</code> (INADDR_ANY)</td><td>이 서버의 모든 IPv4 주소로 온 것. 공인 주소가 붙은 인터페이스도 포함한다</td></tr>
+            </tbody>
+          </table></div>
+          <ul>
+            <li><b>같은 포트, 다른 주소</b>: <code>127.0.0.1:P</code>와 <code>192.168.0.5:P</code>는 다른 소켓으로 따로 bind할 수 있다. <code>0.0.0.0:P</code>는 둘 다를 덮어서, 이것이 있으면 같은 포트를 다른 주소로 bind하지 못한다.</li>
+            <li><b>소켓마다 받는 범위를 다르게 한다</b>: 한 프로그램 안에서도 상대가 다르면 소켓을 나눈다. 예: 블록체인 노드의 P2P 소켓은 인터넷의 다른 노드가 닿아야 해서 모든 주소에서 받는다. 클라이언트용 API 소켓은 쓰는 쪽이 내부망뿐이면 내부망 주소에만 bind한다.</li>
+            <li><b>층을 겹친다</b>: 바깥 방화벽, 서버의 방화벽(nftables, ufw), bind 주소는 서로 다른 층이다. bind를 좁혀 두면 방화벽 설정이 실수로 열려도 그 소켓은 밖에서 받지 않는다.</li>
+          </ul>
+          <div class="warn"><b>자주 하는 오해</b>(1) "bind는 포트 번호로 하는 것이다." 주소와 포트 한 쌍이다. (2) "IP 주소는 NIC가 정한다." 주소는 인터페이스에 <b>붙인</b> 것이고, 하나의 인터페이스에 여러 개일 수 있다. (3) "프로그램이 받을 주소를 하나로 좁히면 모든 통신이 좁혀진다." 프로그램이 소켓을 여러 개 쓰면, 소켓마다 bind 주소를 정하는 설정이 따로일 수 있다. 인터넷 쪽 상대가 필요한 소켓까지 내부망으로 좁히면 그 통신이 끊긴다.</div>
+          <p class="ask"><b>생각해 볼 질문</b>서버에 인터페이스가 공인망과 내부망 두 개 있다. 내부망 주소에만 bind한 API를 같은 서버 안의 다른 프로그램이 <code>127.0.0.1</code>로 부르면 닿을까? 닿게 하려면 무엇을 바꿔야 할까?</p>
+          <details class="try"><summary>직접 확인</summary>
+<pre>ip -br addr                 <span class="cm"># 인터페이스와 붙은 주소</span>
+ss -ltnp; ss -lunp          <span class="cm"># TCP/UDP 소켓의 bind 주소:포트와 프로그램</span>
+sudo nft list ruleset | head
+curl -sS http://127.0.0.1:&lt;포트&gt;/ ; curl -sS http://&lt;내부망 주소&gt;:&lt;포트&gt;/</pre>
+          </details>
+          <p class="rel">연결: <a href="#sockbuf">소켓 버퍼</a><a href="#fd">fd</a><a href="#numa">NUMA</a></p>
         </article>
       </div>
     </section>
@@ -1333,6 +1371,65 @@ cat /proc/loadavg</pre>
           </details>
           <p class="rel">연결: <a href="#kmem">커널 모드</a><a href="#iouring">io_uring</a><a href="#serveros">서버 OS</a></p>
         </article>
+
+        <article class="c" id="nice" data-added="2026-11-07" data-updated="2026-11-07" data-k="nice niceness renice 우선순위 priority 스케줄러 cfs eevdf weight 가중치 -20 19 0 다툼 contention 실시간 rt sched_fifo chrt cpuweight cpuaffinity taskset 스레드 nice top ni">
+          <div class="c-head"><h3>nice와 CPU 우선순위</h3></div>
+          <p class="why"><b>왜 알아야 하나</b>같은 서버에서 중요한 일과 덜 중요한 일이 CPU를 나눠 쓰면, 바쁠 때 중요한 일이 늦어진다. nice는 이 다툼에서 누구에게 더 많은 시간을 줄지를 정하는 가장 간단한 손잡이다.</p>
+          <ul>
+            <li><b>정의</b>: 일반 스케줄링 정책(SCHED_OTHER)의 스레드에 붙는 우선순위 값이다. 범위는 −20(가장 높음)부터 19(가장 낮음)까지이고, 기본값은 0이다.</li>
+            <li><b>동작</b>: 리눅스 스케줄러(CFS, 6.6부터 EEVDF)는 nice 값을 가중치로 바꾼다. nice가 1 오를 때마다 가중치가 약 1.25배 작아진다. 그래서 CPU를 두고 다툴 때 받는 시간 몫이 약 10%씩 준다.</li>
+            <li><b>다툼이 있을 때만 효과가 있다</b>: 놀고 있는 코어가 있으면 nice가 높은 스레드도 바로 돈다. nice는 "덜 받는다"이지 "막는다"가 아니다.</li>
+            <li><b>단위는 스레드다</b>: 리눅스에서 nice는 스레드마다 따로 있다. 그래서 프로그램이 일부 스레드(예: 외부 요청을 처리하는 스레드)만 nice를 올릴 수 있다. <code>renice</code>는 기본으로 프로세스의 스레드 하나에만 적용된다.</li>
+            <li><b>권한</b>: nice를 올리는(우선순위를 낮추는) 일은 누구나 한다. 낮추려면(음수) root나 CAP_SYS_NICE가 필요하다.</li>
+            <li><b>다른 손잡이와 구별</b>
+              <ul>
+                <li>실시간 정책(SCHED_FIFO, SCHED_RR, <code>chrt</code>): nice와 다른 체계다. 일반 스레드보다 항상 먼저 돈다. 잘못 쓰면 시스템을 멈춘다.</li>
+                <li>cgroup의 <code>CPUWeight=</code>: 서비스(cgroup) 사이의 몫이다. nice는 같은 cgroup 안의 스레드 사이에서 작동한다.</li>
+                <li>CPU 고정(<code>taskset</code>, <code>CPUAffinity=</code>): 몫이 아니라 어느 코어에서 도는지를 정한다.</li>
+              </ul>
+            </li>
+          </ul>
+          <div class="warn"><b>자주 하는 오해</b>"nice를 올리면 그 스레드의 CPU 사용량이 그만큼 제한된다." 다툼이 없으면 제한이 없다. 상한을 걸려면 cgroup의 <code>CPUQuota=</code> 같은 다른 손잡이를 쓴다.</div>
+          <p class="ask"><b>생각해 볼 질문</b>덜 중요한 스레드의 nice를 올렸는데도 중요한 스레드가 여전히 늦다. CPU 시간 말고 두 스레드가 함께 다툴 수 있는 자원은 무엇이 있을까?</p>
+          <details class="try"><summary>직접 확인</summary>
+<pre>ps -eLo pid,tid,ni,pri,comm | grep &lt;이름&gt; | head   <span class="cm"># 스레드별 nice</span>
+top -H -p &lt;pid&gt;                                  <span class="cm"># NI 열</span>
+renice -n 5 -p &lt;tid&gt;                             <span class="cm"># 스레드 하나의 nice를 5로</span>
+systemctl show &lt;서비스&gt; -p Nice -p CPUWeight -p CPUQuotaPerSecUSec</pre>
+          </details>
+          <p class="rel">연결: <a href="#cpuusage">CPU 사용량의 단위</a><a href="#numa">NUMA</a><a href="#sysdocker">Docker가 아닌 systemd</a></p>
+        </article>
+
+        <article class="c" id="numa" data-added="2026-11-07" data-updated="2026-11-07" data-k="numa non-uniform memory access 노드 node 소켓 socket 로컬 원격 메모리 local remote first-touch 처음 쓴 interleave bind preferred numactl numastat lscpu numapolicy systemd mbind set_mempolicy nic numa_node 지연 대역폭">
+          <div class="c-head"><h3>NUMA</h3></div>
+          <p class="why"><b>왜 알아야 하나</b>CPU 소켓이 둘 이상인 서버에서는 메모리를 읽는 속도가 "어느 CPU가 어느 메모리를 읽나"에 따라 다르다. 큰 자료구조를 RAM에 두는 프로그램은 그 메모리가 어디에 놓였는지에 따라 성능이 달라진다.</p>
+          <ul>
+            <li><b>정의</b>: NUMA(Non-Uniform Memory Access)는 CPU와 메모리를 여러 묶음(NUMA 노드)으로 나눈 구조다. 각 노드는 자기 CPU 코어와 자기 메모리를 가진다.</li>
+            <li><b>로컬과 원격</b>: CPU는 자기 노드의 메모리(로컬)를 빠르게 읽는다. 다른 노드의 메모리(원격)는 노드 사이의 연결을 거쳐서 지연이 더 길고 대역폭이 더 좁다. 연결 자체도 공유 자원이라 붐빌 수 있다.</li>
+            <li><b>리눅스의 기본 배치: first-touch</b>: 메모리를 할당할 때가 아니라 page를 <b>처음 쓸 때</b>(<a href="#pagefault">page fault</a> 때) frame을 고른다. 그때 그 스레드가 돌던 CPU의 노드에 둔다. 그래서 한 스레드가 큰 자료구조를 혼자 채우면 메모리가 한 노드에 몰린다.</li>
+            <li><b>메모리 정책</b>
+              <ul>
+                <li>local(기본): 처음 쓴 CPU의 노드</li>
+                <li>bind: 정한 노드에만</li>
+                <li>preferred: 정한 노드를 먼저, 모자라면 다른 노드</li>
+                <li>interleave: page마다 노드를 번갈아 둔다. 평균 지연을 고르게 하고, 한 노드의 메모리가 먼저 차는 것을 막는다. 대신 모든 접근의 일부가 원격이 된다.</li>
+              </ul>
+            </li>
+            <li><b>정하는 방법</b>: <code>numactl --interleave=all &lt;명령&gt;</code>, systemd의 <code>NUMAPolicy=</code>와 <code>NUMAMask=</code>(systemd 243부터), 프로그램 안의 <code>set_mempolicy</code>/<code>mbind</code>.</li>
+            <li><b>장치도 노드에 붙는다</b>: NIC와 NVMe도 PCIe로 한 노드에 붙어 있다. 그 장치의 인터럽트와 데이터를 같은 노드의 CPU가 처리하면 원격 접근이 준다.</li>
+            <li><b>판단의 순서</b>: 먼저 재고 나서 바꾼다. 노드별 메모리가 한쪽으로 크게 치우쳤는지, 원격 접근이 많은지 본 뒤에 정책을 바꾼다.</li>
+          </ul>
+          <div class="warn"><b>자주 하는 오해</b>"메모리는 할당할 때 어느 노드에 둘지 정해진다." 기본 정책에서는 처음 쓸 때 정해진다. 그래서 할당한 스레드가 아니라, 처음 채운 스레드가 어느 CPU에서 돌았는지가 배치를 정한다.</div>
+          <p class="ask"><b>생각해 볼 질문</b>한 프로세스가 RAM의 대부분을 쓰는 서버에서, 그 프로세스를 bind 정책으로 한 노드에 묶으면 어떤 일이 생길까? 다른 노드에 빈 메모리가 많아도 그럴까?</p>
+          <details class="try"><summary>직접 확인</summary>
+<pre>lscpu | grep -i numa                      <span class="cm"># 노드 수, 노드별 CPU 번호</span>
+numactl --hardware                        <span class="cm"># 노드별 메모리, 노드 사이 거리</span>
+numastat -p &lt;pid 또는 이름&gt;               <span class="cm"># 프로세스의 노드별 메모리</span>
+cat /sys/class/net/&lt;nic&gt;/device/numa_node <span class="cm"># NIC가 붙은 노드</span>
+systemctl show &lt;서비스&gt; -p NUMAPolicy -p NUMAMask</pre>
+          </details>
+          <p class="rel">연결: <a href="#page">page</a><a href="#pagefault">page fault</a><a href="#nice">nice</a><a href="#anonpage">익명 페이지</a></p>
+        </article>
       </div>
     </section>
 
@@ -1341,6 +1438,68 @@ cat /proc/loadavg</pre>
       <h2>Solana 노드 <small>SOLANA</small></h2>
       <p class="lead">노드가 무엇을 받아 무엇을 쌓고, 무엇을 지켜야 하나.</p>
       <div class="cards">
+
+        <article class="c" id="solacct" data-added="2026-11-07" data-updated="2026-11-07" data-k="계정 account 계정 모델 lamports data owner executable 지갑 wallet system program 프로그램 계정 programdata upgradeable loader upgrade authority 데이터 계정 토큰 계정 token account mint 계정 ata associated token account pda sysvar vote stake 병렬 실행 코드와 상태 분리">
+          <div class="c-head"><h3>Solana의 계정 모델</h3></div>
+          <p class="why"><b>왜 알아야 하나</b>Solana에서는 지갑, 프로그램, 토큰 잔고, 투표 정보가 모두 "계정"이다. 계정의 구조와 owner 규칙을 알아야 RPC 조회와 색인이 무엇을 찾는지 설명할 수 있다.</p>
+          <ul>
+            <li><b>모든 계정의 구조는 같다</b>: <code>lamports</code>(잔고), <code>data</code>(바이트 배열), <code>owner</code>(소유 프로그램), <code>executable</code>(실행 가능 여부). 종류는 구조가 아니라 owner와 executable의 값으로 나뉜다.</li>
+            <li><b>규칙</b>: 계정의 data를 고치고 lamports를 빼는 일은 <b>owner 프로그램만</b> 한다. owner는 항상 프로그램이다. 서명하는 지갑은 코드가 없어서 owner가 될 수 없다.</li>
+            <li><b>하는 일로 본 세 갈래</b>: Solana는 코드와 상태를 다른 계정에 나눈다.
+              <ol>
+                <li>서명하는 계정(지갑): 개인키가 있다. 트랜잭션에 서명하고 수수료를 낸다. owner는 System Program이고 data가 없다. SOL 잔고만 직접 가진다.</li>
+                <li>실행하는 계정(프로그램): <code>executable = true</code>. 코드만 있고 상태는 없다. 업그레이드할 수 있는 프로그램은 둘로 나뉜다: 주소만 가진 프로그램 계정과, 바이트코드를 가진 programdata 계정. owner는 로더 프로그램이다.</li>
+                <li>저장하는 계정(데이터): 상태만 있다. owner 프로그램만 고친다. 예: 토큰 계정, mint 계정, Vote·Stake 계정, sysvar(Clock, Rent 등 클러스터 상태).</li>
+              </ol>
+            </li>
+            <li><b>owner와 authority</b>: 계정의 owner = 고치는 <b>코드</b>(프로그램). data 안의 authority 칸 = 허락하는 <b>사람</b>(서명자). 예: 프로그램을 업그레이드할 수 있는 사람은 programdata의 data 안 upgrade authority 칸에 적는다. 이 칸을 비우면 아무도 고칠 수 없다.</li>
+            <li><b>토큰</b>
+              <ul>
+                <li>mint 계정: 토큰 종류 하나를 정의한다. 그 주소가 토큰의 ID다. 총 발행량, 소수점 자리수, 발행 권한(mint authority), 동결 권한을 가진다. 누가 얼마를 가졌는지는 갖지 않는다.</li>
+                <li>토큰 계정: "어느 mint의 토큰을, 어느 지갑이, 얼마" 가졌는지를 data에 적는다. 계정의 owner는 Token 프로그램이고, data 안의 owner 칸이 지갑 주소다. 지갑은 토큰을 보낼 때 그 owner로서 서명한다.</li>
+                <li>ATA(Associated Token Account): 지갑 하나와 mint 하나에 두는 기본 토큰 계정이다. 주소는 지갑 주소와 mint 주소로 계산한다.</li>
+              </ul>
+            </li>
+            <li><b>PDA</b>: 프로그램이 주소를 계산해서 만든 계정이다. 개인키가 없다. 그 프로그램만 그 주소로 서명할 수 있다.</li>
+            <li><b>왜 나누나</b>: 트랜잭션은 읽고 쓸 계정을 미리 적는다. 상태가 계정마다 따로 있어서, 쓰는 계정이 겹치지 않는 트랜잭션은 병렬로 실행할 수 있다.</li>
+          </ul>
+          <div class="warn"><b>자주 하는 오해</b>(1) "프로그램 계정의 주인은 서명하는 계정이다." 계정의 owner는 항상 프로그램이다. 사람의 권한은 data 안의 authority 칸에 있다. (2) "mint 계정에 보유자가 등록되어 있다." 방향이 반대다. mint는 보유자를 모른다. 토큰 계정이 mint 주소를 가리킨다. (3) "지갑은 SOL만 거래한다." 지갑은 토큰도 보내고 받는다. 다만 토큰 잔고가 지갑 안이 아니라 따로 있는 토큰 계정에 있다.</div>
+          <p class="ask"><b>생각해 볼 질문</b>"이 지갑이 가진 토큰 전부"를 찾으려면 노드는 무엇을 훑어야 할까? 그 일이 자주 들어오면 노드는 무엇을 미리 만들어 둘 수 있을까?</p>
+          <details class="try"><summary>직접 확인 (Solana CLI)</summary>
+<pre>solana account &lt;주소&gt;              <span class="cm"># lamports, owner, executable, data 길이</span>
+solana program show &lt;프로그램 주소&gt;  <span class="cm"># programdata 주소, upgrade authority</span>
+spl-token display &lt;mint 주소&gt;       <span class="cm"># 발행량, 소수점, 권한</span>
+spl-token accounts --owner &lt;지갑&gt;    <span class="cm"># 지갑의 토큰 계정들</span></pre>
+          </details>
+          <p class="rel">연결: <a href="#secidx">RPC 노드의 보조 색인</a><a href="#txmeta">트랜잭션 meta</a><a href="#snapshot">snapshot</a><a href="#keys">키</a></p>
+        </article>
+
+        <article class="c" id="secidx" data-added="2026-11-07" data-updated="2026-11-07" data-k="색인 index 기본 색인 보조 색인 secondary index 계정 주소 위치 getprogramaccounts gettokenaccountsbyowner gettokenlargestaccounts getsupply owner mint 토큰 계정 훑기 scan 해시표 hash map ram 익명 메모리 rpc 스레드 replay 잠금 lock">
+          <div class="c-head"><h3>RPC 노드의 보조 색인</h3></div>
+          <p class="why"><b>왜 알아야 하나</b>RPC 노드가 받는 조회의 일부는 "이 조건에 맞는 계정 전부"다. 색인이 없으면 이 조회 하나가 모든 계정을 훑는다. 색인이 있으면 빠르지만 RAM을 크게 쓴다. 이 둘 사이의 선택이 RPC 노드의 RAM 계획을 정한다.</p>
+          <ul>
+            <li><b>기본 색인</b>: 계정 주소 → 그 계정의 최신 버전이 저장소의 어디에 있나. "이 주소의 계정"을 바로 찾는다. 트랜잭션을 실행할 때도 매번 쓴다. 그러나 "이 조건에 맞는 계정 전부"는 찾지 못한다.</li>
+            <li><b>보조 색인</b>: <b>키 → 그 키에 속한 계정 주소들</b>을 미리 만든 표다. Agave에는 세 가지가 있다.
+              <ul>
+                <li>프로그램별: owner 프로그램 → 그 프로그램이 owner인 계정들. 모든 계정이 들어간다(지갑은 System Program 아래). <code>getProgramAccounts</code>가 쓴다.</li>
+                <li>토큰 owner별: 지갑 주소 → 그 지갑의 토큰 계정들. 토큰 계정만 들어간다. <code>getTokenAccountsByOwner</code>가 쓴다.</li>
+                <li>토큰 mint별: mint 주소 → 그 토큰의 토큰 계정들. 토큰 계정만 들어간다. mint 필터가 있는 <code>getProgramAccounts</code>, <code>getTokenLargestAccounts</code>가 쓴다.</li>
+              </ul>
+            </li>
+            <li><b>토큰 색인의 키는 data 안에 있다</b>: 토큰 owner별 색인의 "owner"는 계정의 owner(Token 프로그램)가 아니라, 토큰 계정 data 안의 owner 칸(지갑)이다. 두 토큰 색인 모두 결과는 <b>토큰 계정</b>이다. 사람이나 토큰 이름이 아니다.</li>
+            <li><b>대가</b>
+              <ul>
+                <li>RAM: 보조 색인은 RAM의 해시표다. 힙에 있는 <a href="#anonpage">익명 메모리</a>라서 RAM이 모자라도 커널이 버릴 수 없다. 계정 수가 많을수록 커진다.</li>
+                <li>쓰기 비용: 계정이 바뀔 때마다 색인도 고친다. 실행(replay)이 이 일을 함께 한다.</li>
+              </ul>
+            </li>
+            <li><b>색인이 없으면</b>: 그 조회는 해당 프로그램의 계정을 모두 훑은 뒤 거른다. 요청 하나가 RPC 스레드와 CPU를 오래 잡는다. </li>
+            <li><b>무거운 조회는 실행을 늦출 수 있다</b>: 큰 결과를 모으는 동안 색인의 일부에 잠금을 잡으면, 같은 자리를 고치려는 실행이 기다린다. 그래서 요청 수 제한, 필터 없는 요청 거절, 스레드 우선순위(<a href="#nice">nice</a>) 같은 보호를 함께 생각한다.</li>
+          </ul>
+          <div class="warn"><b>자주 하는 오해</b>(1) "토큰 owner별 색인은 사용자가 가진 토큰의 종류를, mint별 색인은 그 토큰을 가진 사용자를 돌려준다." 둘 다 <b>토큰 계정</b>을 돌려준다. 종류(mint)와 사용자(owner)는 그 토큰 계정의 data 안에 있다. (2) "색인이 RAM에 있다 = 파일을 mmap해 둔 상태다." 보조 색인은 힙의 익명 메모리다.</div>
+          <p class="ask"><b>생각해 볼 질문</b>RAM이 모자라 색인 하나를 꺼야 한다. 무엇을 기준으로 고를까? 끄기 전에 할 수 있는 중간 단계는 무엇이 있을까?</p>
+          <p class="rel">연결: <a href="#solacct">계정 모델</a><a href="#anonpage">익명 페이지</a><a href="#nice">nice</a><a href="#numa">NUMA</a></p>
+        </article>
 
         <article class="c" id="slot" data-added="2026-11-06" data-updated="2026-11-06" data-k="slot 슬롯 leader 리더 leader schedule 일정표 leader window 4 slot epoch 432000 block height 블록 높이 skip 빈 slot stake 블록 최대 하나">
           <div class="c-head"><h3>slot, leader, epoch</h3></div>
@@ -1508,6 +1667,35 @@ tracepath &lt;상대 주소&gt;                        <span class="cm"># 경로
 nstat -az UdpInErrors UdpRcvbufErrors</pre>
           </details>
           <p class="rel">연결: <a href="#slot">slot</a><a href="#sockbuf">소켓 버퍼</a><a href="#disksplit">accounts와 ledger</a><a href="#lsmbtree">LSM-tree와 B-tree</a></p>
+        </article>
+
+        <article class="c" id="txmeta" data-added="2026-11-07" data-updated="2026-11-07" data-k="트랜잭션 meta 메타 실행 결과 transaction status 성공 실패 수수료 fee pre post balance 잔고 log messages 로그 inner instructions cpi cross-program invocation return data gettransaction getblock 보관 기간 rpc 노드 비교 diff jq">
+          <div class="c-head"><h3>트랜잭션 meta</h3></div>
+          <p class="why"><b>왜 알아야 하나</b>블록과 트랜잭션을 조회하는 RPC 노드는 트랜잭션 원문만으로는 부족하다. 사용자는 "실행 결과"를 묻는다. 결과 기록을 저장할지, 얼마나 자세히 저장할지가 응답의 내용과 디스크 사용량을 함께 정한다.</p>
+          <ul>
+            <li><b>원문과 meta</b>
+              <ul>
+                <li>트랜잭션 원문: 누가 무엇을 요청했나. 서명, 계정 목록, 명령(instruction).</li>
+                <li>meta: 실행한 뒤의 결과. 성공·실패와 오류, 수수료, 실행 전후의 잔고(SOL, 토큰), 쓴 계산 단위.</li>
+              </ul>
+            </li>
+            <li><b>meta 안의 자세한 칸</b>
+              <ul>
+                <li>log messages: 프로그램이 실행 중에 남긴 로그 문자열</li>
+                <li>inner instructions: 프로그램이 실행 중에 <b>다른 프로그램을 부른 기록</b>(CPI, cross-program invocation). 예: 교환 프로그램이 Token 프로그램을 불러 토큰을 옮긴다.</li>
+                <li>return data: 프로그램이 돌려준 값</li>
+              </ul>
+            </li>
+            <li><b>노드의 선택</b>: 노드는 meta를 저장하지 않을 수도, 저장할 수도 있다. 저장해도 크기가 큰 자세한 칸을 버릴 수 있다. Agave는 기본으로 meta를 저장하지 않고, 저장을 켜도 자세한 세 칸은 기본으로 버린다. 그래서 <code>getBlock</code>, <code>getTransaction</code>의 응답 내용이 노드 설정에 따라 다르다.</li>
+            <li><b>같은 응답인지 확인하는 방법</b>: 같은 slot이나 서명으로 두 노드에 같은 요청을 보낸다. 결과를 정렬해서(<code>jq -S</code>) 비교한다(<code>diff</code>). 이때 두 노드가 모두 그 slot을 보관하고 있어야 한다. 보관 기간 밖이면 한쪽만 오류를 준다.</li>
+            <li><b>대가</b>: meta는 트랜잭션마다 생긴다. 자세한 칸까지 저장하면 기록 저장소가 커진다. 용량 계산에 이 몫을 넣는다.</li>
+          </ul>
+          <div class="warn"><b>자주 하는 오해</b>"meta를 저장하는 설정만 켜면 공개 RPC와 같은 응답이 된다." 자세한 칸을 버리는 설정이 따로 있으면, 저장은 해도 응답의 칸이 빠진다. 그리고 보관 기간이 다르면 오래된 slot의 응답이 다르다.</div>
+          <p class="ask"><b>생각해 볼 질문</b>두 노드의 응답을 diff로 비교했더니 한 칸만 다르다. 설정 차이 말고 무엇이 그 차이를 만들 수 있을까?</p>
+          <details class="try"><summary>직접 확인</summary>
+<pre>curl -s &lt;RPC&gt; -H 'Content-Type: application/json' -d '{"jsonrpc":"2.0","id":1,"method":"getTransaction","params":["&lt;서명&gt;",{"encoding":"json","maxSupportedTransactionVersion":0}]}' | jq '.result.meta | keys'</pre>
+          </details>
+          <p class="rel">연결: <a href="#solacct">계정 모델</a><a href="#shred">shred</a><a href="#lsmbtree">LSM-tree와 B-tree</a></p>
         </article>
       </div>
     </section>
